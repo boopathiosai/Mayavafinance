@@ -1,0 +1,133 @@
+ <div id="content_div">
+ <?php
+  unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+//print_r($menu);
+//print_r(can_edit($_SESSION[$app->session_usertype1], $module_name));
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td ><a href="javascript:;">Transactions</a> &raquo;<a href="javascript:;">Customer Receipt</a></td >
+        <td >
+        <span class="btn-rht">
+        <?php 
+        if(can_add($_SESSION['session_usertype'], $module_name))
+        {       
+        ?>
+        <a href="javascript:;" onclick = "return create_function('content_div', '<?php echo $module_name; ?>','<?php echo $search_args; ?>');" class="greybtn">ADD NEW</a>
+        <?php
+        }
+        if(can_delete($_SESSION['session_usertype'], $module_name))
+        {
+        ?>
+        <a href="javascript:;" onclick = "delete_all('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" class="greybtn">DELETE</a>      
+        <?php
+        }
+        ?>
+        </span>
+        </td>
+      </tr>
+      </table>
+ </div>
+ <div id="contentarea">  
+ <br>
+    <form>
+     <table class="list-tbl" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+     <tr>
+        <td class="title" colspan="9">Customer Receipt</td>
+     </tr>    
+     <tr class="headings">
+      <td align="center" width="4%"><input type="checkbox" name="selall" id="selall" onclick="chk_all(),highlight_all();"/></td>
+      <td width="10%"><strong>Loan ID</strong></td>
+      <td width="20%"><strong>Customer Name</strong></td>
+       <?php 
+      if($_SESSION['session_usergroupname'] == 'Super Admin'){
+      ?>
+      <td width="15%" align="left"><strong>Branch Name</strong></td>
+      <?php } ?>
+      <td width="15%" align="center"><strong>Loan Amount</strong></td>
+      <td width="15%" align="center"><strong>Loan Issue Date</strong></td>
+      <td width="10%" align="center"><strong>Status</strong></td>
+      <?php
+           if(can_edit($_SESSION['session_usertype'], $module_name) || can_delete($_SESSION['session_usertype'], $module_name))
+           {
+           ?>
+           <td colspan="2"  width="40%" align="left"><strong>Action</strong></td>
+           <?php
+           }
+           ?>
+     </tr>
+        <?php
+                if(count($data) > 0) {
+                    for($i=0;$i<count($data);$i++){ 
+                  $change_status = ($data[$i]['status'] == 1) ? 0 : 1;
+                ?>
+    
+     <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+      <td align="center"><input type="checkbox" name="list[]" id="list[]" onclick="chkselcount('list[]'),highlight(this);" value='<?php echo $data[$i]['id']; ?>'/></td>
+      <td align="left"><?php echo htmlentities(stripslashes($data[$i]['loan_id']), ENT_QUOTES); ?> </td>
+      <td align="left"><?php echo $data[$i]['customer_name']; ?> </td>
+      <?php      if($_SESSION['session_usergroupname'] == 'Super Admin'){?>
+      <td align="left"><?php echo htmlentities(stripslashes($data[$i]['branch_name']), ENT_QUOTES); ?></td>
+      <?php } ?>
+      <td align="center"><?php echo number_format($data[$i]['loan_amount'], 2,'.',''); ?></td> 
+      <td align="center"><?php echo htmlentities(stripslashes($data[$i]['loan_date']), ENT_QUOTES); ?></td>
+       <td align="center">
+       <div id="status_div<?php echo $data[$i]['id']; ?>">
+        <a href="javascript:;" onclick="change_status('status_div<?php echo $data[$i]['id']; ?>', '<?php echo $module_name; ?>', <?php echo $data[$i]['id']; ?>, <?php echo $change_status; ?>);">
+        <img src="images/<?php echo $data[$i]['status_text']; ?>.gif" /></a> 
+        <div></td>
+      <?php
+      if(can_edit($_SESSION['session_usertype'], $module_name))
+      {
+      ?><td width="2%" valign="middle"><a href="javascript:;" onclick="edit_function('content_div','<?php echo $module_name; ?>','<?php echo $data[$i][id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" title="Edit"><img src="images/edit.jpg" /></a></td>
+      <?php
+      }else{
+      ?><td width="2%" valign="middle">&nbsp;</td>
+      <?php
+      }
+      if(can_delete($_SESSION['session_usertype'], $module_name))
+      {
+      ?><td width="5%" valign="middle"><a href="javascript:;" onclick="delete_function('content_div', '<?php echo $module_name; ?>', '<?php echo $data[$i]['id'] ?>', '<?php echo $page_no; ?>','<?php echo $search_args; ?>')" title="Delete"><img src="images/delete.jpg" border="0" /></a></td>
+      <?php 
+      }else{
+      ?><td width="5%" valign="middle">&nbsp;</td>
+      <?php
+      }?>
+     
+      </tr>  
+       
+        <?php
+            }
+
+        } else {
+        ?>
+        <tr class="bg-row">
+        <td colspan="10" align="center" height="50">No records found</td>
+        </tr>
+        <?php
+        }
+        ?>
+    </table>
+      <div class="pagination">      
+        <div class="pagi-rht">
+            <div class="no-list">
+            <?php
+            if ($count > ROWS_PER_PAGE) { 
+             include ADMIN_LAYOUT_PATH . 'common/paging.html'; 
+            }
+            ?>
+            </div>
+       </div>
+     </div> 
+    
+     <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>

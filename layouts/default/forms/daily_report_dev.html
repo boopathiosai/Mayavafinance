@@ -1,0 +1,92 @@
+<style>
+.frm-tbl td{
+  font-weight: normal !important;
+}
+</style>
+<div id="print_content">
+<?php
+    $i=1;
+
+         ?>
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="5" class="name-head"><?php
+            $page_title = 'Daily Report';
+            if($heading_suffix == "")
+            echo $title = $page_title."-". $branch_name." - Date:".date("d-m-Y h:i:sa");
+        elseif($search_sdate != "" AND $search_edate !="")
+            echo $title = $page_title."(FROM ".$search_sdate." To ".$search_edate.")".$heading_suffix_cur."-". $branch_name." - Date:".date("d-m-Y h:i:sa");
+        else
+            echo $title = $page_title." ".$heading_suffix_cur."-". $branch_name." - Date:".date("d-m-Y h:i:sa");//   ($heading_suffix=="") ? //strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix); ?></td>
+
+         <!-- old element
+          <td colspan="5" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix); ?></td>
+        -->
+
+          </tr>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+            <?php if(($search_sdate!=$search_edate)||(($search_sdate=='')&&($search_edate==''))){ ?>
+          <td width="15%">Date</td>
+          <?php } ?>
+          <!--<td width="20%">Branch Name</td>-->
+          <td>Particulars</td>
+
+          <td width="20%" align="left" valign="middle">Cash In</td>
+          <td width="20%" align="left" valign="middle">Cash Out</td>
+
+
+           </tr>
+
+          <?php
+          $j=1;
+          $i=$i+1;
+          if(count($daily_report)>0) {
+            // echo "<pre>";print_r($daily_report);exit;
+          foreach($daily_report as $rows)
+          {
+				$particulars = $rows['particulars'] == 'Pay interest' ? 'Interest' : $rows['particulars'];
+        if(($rows['cash_in'])||($rows['cash_out'])!=0){
+             ?>
+
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+              <?php if(($search_sdate!=$search_edate)||(($search_sdate=='')&&($search_edate==''))){ ?><td align="left"><?php echo htmlentities(stripslashes($rows['trans_date']), ENT_QUOTES); ?></td><?php } ?>
+              <!--<td align="left" valign="middle"><?php echo htmlentities(stripslashes($rows['branch_name']), ENT_QUOTES); ?></td>-->
+              <?php //if((!empty($rows['cash_in']))) {?>
+              <td align="left" valign="middle"><?php echo htmlentities(stripslashes($particulars), ENT_QUOTES); ?></td>
+              <?php //} ?>
+
+              <!-- <td align="left"><?php echo convertToCurrency(stripslashes($rows['cash_in']),false); ?></td>
+              <td align="left"><?php echo convertToCurrency(stripslashes($rows['cash_out']),false); ?></td> -->
+
+              <td align="left"><?php echo $rows['cash_in']; ?></td>
+              <td align="left"><?php echo $rows['cash_out']; ?></td>
+         </tr>
+         <?php
+            $i++;
+            $j++;
+          }
+        }
+          }else{
+          ?>
+          <tr><td colspan=5 align="center">No Records Found</td></tr>
+          <?php
+          }
+?>
+       </table>
+
+
+</div>
+
+<iframe id="print_frame" name="print_frame" title="<?php echo ($heading_suffix=="") ? ($page_title) : ($page_title . " - ".$heading_suffix); ?>" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>
+
+
+
+
+
+
+
+
+
+
+
+

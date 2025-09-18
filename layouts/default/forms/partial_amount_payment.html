@@ -1,0 +1,517 @@
+
+   <?php  
+    
+    $pay_interest_details = PayInterest::getInterestDetails($product_data['pledge_id'],0,'',date("Y-m-d"),$type,$module_name);
+    
+    if($product_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+
+    //echo "<PRE>";
+    //print_r($product_details);
+    //echo stripslashes($product_data['loan_date']);
+    $present_time = date("Y-m-d H:i:s");
+    $loan_date = stripslashes($product_data['loan_date']) !='' ? stripslashes($product_data['loan_date']) : date_format_fun($present_time) ;
+    stripslashes($product_data['loan_date']);
+    
+    //$category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);  
+    //$category_options = build_select_options($category_data);
+
+    include "fetch_pledge_product.php";
+                    
+    ?>
+<div class="clear clearfix"></div>
+
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td ><a href="javascript:;">Transactions</a> &raquo;<a href="<?php echo $module_name;?>.php">Partial Amount Payment</a></td >
+        <td width="50%">
+        <span class="btn-rht">
+       <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">PAY</a>
+        <a href="javascript:;" class="greybtn" 
+            onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">
+                RESET
+        </a>  
+        <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">
+            BACK
+        </a>
+        </span>
+        </td>
+      </tr>
+      </table>
+ </div> 
+<div id="contentarea">
+    <div class="sub-hdr">     
+    </div>  
+<!--<span class="customer-order"> Please complete the form below. Mandatory fields marked <span class="star">*</span></span>-->
+
+<form name="partial_payment_form" id="partial_payment_form" method="post" style="margin: 0px;">       
+   <!--content area starts here-->
+            <div class="lftarea"><!--left area starts here-->               
+<!--Customer Details -->
+
+    <?php include ADMIN_LAYOUT_PATH . "elements/customer_details.html";   ?>
+                          
+      </div>
+
+<!--Pleged Product Details -->
+
+    <?php include ADMIN_LAYOUT_PATH . "elements/pledged_product_details.html";   ?>
+    
+  
+<!-- Old Loan Details -->            
+               
+<?php include ADMIN_LAYOUT_PATH . "elements/old_loan_detail.html"; ?>
+
+
+<!-- Loan Interest Details -->            
+               
+<?php include ADMIN_LAYOUT_PATH . "elements/loan_interest_detail.html"; ?>
+
+
+<!-- Waver Details -->
+
+<?php include ADMIN_LAYOUT_PATH . "elements/wavier_detail.html"; ?>
+
+<!-- Cash Flow Details -->
+
+<?php include ADMIN_LAYOUT_PATH . "elements/cashflow_detail.html"; ?>
+
+
+ <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width=50%>
+        <span class="btn-rht">
+       <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">PAY</a>
+        <a href="javascript:;" class="greybtn" 
+            onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">
+                RESET
+        </a>  
+        <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">
+            BACK
+        </a>
+        </span>
+        </td>
+      </tr>
+      </table>
+
+
+
+
+
+
+<input name="pval[branch_id]" id="pledge_branch_id" type="hidden"  value = "<?php echo $product_data['pledged_branch'];?>">
+      <input name="pp_pval[branch_id]" id="branch_id" type="hidden"  value = "<?php echo stripslashes($product_data['branch_id']); ?>">
+      
+      <?php if($uval[renew_id] > 0){ 
+      ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="renew_id"  type="hidden"  value = "<?php echo $uval[renew_id];?>">
+          <?php  }else{ ?>
+          
+          <input name="type"  type="hidden"  value = "save">
+          
+          <?php }
+          
+          //echo $product_data['branch_id'];
+          ?>
+          </form>
+   
+      </div><!--right area ends here-->
+  <div class="clear clearfix"></div>   
+  <!--
+  <div class="round-lftbutton">
+      <a href="javascript:;">Customer Slip</a>  
+              
+      <a href="javascript:;">Customer Receipt</a>  </div>
+            
+    <div class="clear clearfix"></div>   
+    -->     
+</div><!--contentarea ends here-->
+
+    <?php include ADMIN_LAYOUT_PATH . "elements/product_more_edit_dialog.html";   ?>
+     
+            
+
+<div class="clear clearfix"></div>
+<!--
+</body>
+</html>
+-->
+
+
+
+<script>
+
+
+var isShiftPress = false;
+jQuery(document).ready(function() {
+
+    form_enter_focus(jQuery('#cat_id_0'),16,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+    enable_save_action();
+    setNumberKeyEvent();
+    
+    $("input").focus(function(event){ remove_red(this.id); });
+    
+    pledgeProductCount = '<?php echo $pledgeProductCount ?>';  
+    set_date_picker();
+    setTotalAmount();
+    collapse_all_view();
+});
+
+
+var old_ld_scheme_id = "";
+
+
+function presetNewAmount(){
+
+    //4/24/2012
+    //Getting Details
+    if(!isNaN(parseFloat(jQuery("#customer_amt").val())))
+        cus_amt = parseFloat(jQuery("#customer_amt").val());
+    else
+        cus_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#principle_remain").val())))
+        old_amt = parseFloat(jQuery("#principle_remain").val());
+    else
+        old_amt = 0;
+        
+    if(!isNaN(parseFloat(jQuery("#interest_amt").val())))
+        interest_amt = parseFloat(jQuery("#interest_amt").val());
+    else
+        interest_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#add_amt").val())))
+        add_amt = parseFloat(jQuery("#add_amt").val());
+    else
+        add_amt = 0;
+        
+        
+   //Setting Initial Loan Amount 
+    ini_new_amt = (old_amt + interest_amt + add_amt) - cus_amt;
+    jQuery("#ini_loan_amt").val(ini_new_amt.toFixed(2));
+    
+    ini_loan_amount_display('<?php echo $module_name; ?>');
+    
+
+    //Calculate the Service Charge        
+    type = jQuery("#ld_scheme_type").val().toLowerCase();
+    service_rate = parseFloat(jQuery("#ld_service_rate").val());
+
+    if(type=="flat")
+        ser_chr = service_rate * (ini_new_amt / 1000);
+    else    
+        ser_chr = service_rate * (ini_new_amt / 100);
+
+     ser_chr = roundServiceAmount(ser_chr);
+    //alert(ser_chr);
+    //Setting Service Charge
+    jQuery("#service_crg").val(ser_chr.toFixed(2));
+    jQuery("#service_rate").val(service_rate.toFixed(2));
+    
+    //Display Service Charge Amount Details
+    service_charge_display('<?php echo $module_name; ?>');
+    
+    new_amt = ini_new_amt+ser_chr; 
+    jQuery("#loan_amt").val(new_amt.toFixed(2));
+    jQuery("#actual_loan_amt").val(new_amt.toFixed(2));
+    
+    
+    //Calculate Display Revised Loan Amount Details
+    revised_loan_amount_display('<?php echo $module_name; ?>');
+    
+    serviceFlatResetCheck('<?php echo $module_name; ?>');
+    
+    //Calculate revised Loan Amount
+    /*if(type=="flat"){
+        
+        //alert(" 1 - "+ser_chr);
+        
+        new_amt = ini_new_amt+ser_chr; 
+        ini_div = parseInt(ini_new_amt/1000);
+        new_div = parseInt(new_amt/1000);
+        
+        if(ini_div < new_div){
+             ser_chr = service_rate * (new_amt / 1000);
+             ser_chr = roundServiceAmount(ser_chr);
+            //alert(" 2 - "+ser_chr);
+            //Setting Service Charge
+            jQuery("#service_crg").val(ser_chr.toFixed(2));
+            jQuery("#service_rate").val(service_rate.toFixed(2));
+
+            //Display Service Charge Amount Details
+            reset_service_charge_display('<?php echo $module_name; ?>');
+
+
+            new_amt = new_amt+ser_chr; 
+            jQuery("#loan_amt").val(new_amt.toFixed(2));
+            jQuery("#actual_loan_amt").val(new_amt.toFixed(2));
+
+
+        }
+        
+    } */   
+
+
+}
+
+
+
+
+
+function resetNewAmount(){
+
+    new_amt = parseFloat(jQuery("#loan_amt").val());
+    
+    roundLoanAmount(new_amt);
+  
+    partial_amount_details();
+    
+    final_loan_amount_display('<?php echo $module_name; ?>');
+    reset_partial_totalpay()
+
+    cashin_display('<?php echo $module_name; ?>');
+    cashout_display('<?php echo $module_name; ?>');  
+}
+
+
+
+function reset_trans_amount(man){
+
+    act_loan_amt = jQuery("#actual_loan_amt").val();
+    new_loan_amount = jQuery("#loan_amt").val();
+    to_receive_amt = jQuery("#to_receive_amt").val();
+    to_return_amt = jQuery("#to_return_amt").val();
+
+    //manual entry calculation for new loan amount
+	/*if(man == 'manual') {		
+		setTotalAmount(man);		
+	} */   
+   
+    if(isNaN(parseFloat(act_loan_amt))) act_loan_amt = 0;
+    else act_loan_amt = parseFloat(act_loan_amt);
+    
+    if(isNaN(parseFloat(new_loan_amount))) new_loan_amount = 0;
+    else new_loan_amount = parseFloat(new_loan_amount);
+    
+
+    
+    if(isNaN(parseFloat(to_receive_amt))) to_receive_amt = 0;
+    else to_receive_amt = parseFloat(to_return_amt);
+    //alert(to_receive_amt);
+    if(isNaN(parseFloat(to_return_amt))) to_return_amt = 0;
+    else to_return_amt = parseFloat(to_receive_amt);
+    
+    
+
+    if(new_loan_amount > act_loan_amt){
+    
+        to_receive_amt = 0;
+        to_return_amt = new_loan_amount - act_loan_amt;
+    
+    }else{
+    
+        to_receive_amt = act_loan_amt - new_loan_amount;
+        to_return_amt = 0;
+   
+    }
+
+    if(to_receive_amt> 100 || to_return_amt>100){
+        
+        msg = "Please enter valid new loan amount. <br>";
+        msg += "New loan amount entry is for round the revised loan amount.<br>";
+        msg += "So the rounded additional or reduced amount should be in the range between Rs 0 to Rs. 100.<br>";
+        jalert(msg,'alert');
+        roundLoanAmount(act_loan_amt);
+
+    }
+    else{
+        jQuery("#to_receive_amt").val(to_receive_amt.toFixed(2));
+        jQuery("#to_return_amt").val(to_return_amt.toFixed(2));
+
+
+        part_amt = cus_amt - to_rec + to_ret;
+        //jQuery("#actual_partial_amount").val(part_amt.toFixed(2));
+        jQuery("#partial_amt").val(part_amt.toFixed(2));
+
+        partial_amount_details();
+
+        final_loan_amount_display();
+        reset_partial_totalpay()
+
+        cashin_display();
+        cashout_display();  
+    }
+
+}
+
+
+function cashin_display(){
+    
+    if(!isNaN(parseFloat(jQuery("#principle_remain").val())))
+        old_loan_amt = parseFloat(jQuery("#principle_remain").val());
+    else
+        old_loan_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#interest_amt").val())))
+        interest_amt = parseFloat(jQuery("#interest_amt").val());
+    else
+        interest_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#add_amt").val())))
+        add_amt = parseFloat(jQuery("#add_amt").val());
+    else
+        add_amt = 0;
+
+    cash_in =   old_loan_amt +   interest_amt + add_amt;
+    
+    
+    
+    jQuery("#cashin_amt").val(cash_in.toFixed(2));
+    
+    disp_cashin = "<table class='disp_calc' width=95% align=center>";
+    disp_cashin += "<tr><td> </td><td class='disp_calc'>Old Loan Amount/ Principle Remain   :</td> <td align=right class='disp_calc'>"+old_loan_amt.toFixed(2)+"</td><td> </td><td> + </td></tr>";
+    disp_cashin += "<tr><td> </td><td class='disp_calc'>Interest Amount  :</td> <td align=right class='disp_calc'>"+interest_amt.toFixed(2)+"</td><td> </td><td> + </td></tr>";
+    disp_cashin += "<tr><td> </td><td class='disp_calc'>Additional Charge:</td> <td align=right class='disp_calc'>"+add_amt.toFixed(2)+"</td><td> </td><td> </td></tr>";
+    disp_cashin += "<tr><td> </td><td>Total Cashin :</td> <td colspan=3 align=right>Rs. "+cash_in.toFixed(2)+"</td></tr>";
+    disp_cashin += "</table>";
+    
+    
+    
+    jQuery("#disp_cash_in_details").html(disp_cashin);
+
+}
+
+function cashout_display(){
+    
+    if(!isNaN(parseFloat(jQuery("#principle_remain").val())))
+        old_loan_amt = parseFloat(jQuery("#principle_remain").val());
+    else
+        old_loan_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#interest_amt").val())))
+        interest_amt = parseFloat(jQuery("#interest_amt").val());
+    else
+        interest_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#add_amt").val())))
+        add_amt = parseFloat(jQuery("#add_amt").val());
+    else
+        add_amt = 0;
+
+    cash_in =   old_loan_amt +   interest_amt + add_amt;
+    
+    
+
+    if(!isNaN(parseFloat(jQuery("#loan_amt").val())))
+        loan_amt = parseFloat(jQuery("#loan_amt").val());
+    else
+        loan_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#service_crg").val())))
+        service_crg = parseFloat(jQuery("#service_crg").val());
+    else
+        service_crg = 0;
+
+
+    cash_out = cash_in - (loan_amt - service_crg);
+    
+    
+    
+    
+    jQuery("#cashout_amt").val(cash_out.toFixed(2));
+    
+    disp_cashout = "<table class='disp_calc' width=95% align=center>";
+    disp_cashout += "<tr><td> </td><td class='disp_calc'>Return amount with Interest Pay  :</td> <td align=right class='disp_calc'>"+cash_in.toFixed(2)+"</td><td> </td><td> - </td></tr>";
+    disp_cashout += "<tr><td> [ </td><td class='disp_calc'>New Loan Amount:</td> <td align=right class='disp_calc'>"+loan_amt.toFixed(2)+"</td><td> </td><td> - </td></tr>";
+    disp_cashout += "<tr><td> </td><td class='disp_calc'>Service Charge:</td> <td align=right class='disp_calc'>"+service_crg.toFixed(2)+"</td><td>] </td><td> </td></tr>";
+    if(cash_out>=0){
+    disp_cashout += "<tr><td> </td><td>Total Cashout :</td> <td colspan=3 align=right>Rs. "+cash_out.toFixed(2)+"</td></tr>";
+    }
+    disp_cashout += "</table>";
+    
+    jQuery("#disp_cash_out_details").html(disp_cashout);
+    
+
+}
+
+function partial_amount_details(){
+
+    //Partial Amount Display
+    if(!isNaN(parseFloat(jQuery("#customer_amt").val())))
+        cus_amt = parseFloat(jQuery("#customer_amt").val());
+    else
+        cus_amt = 0;
+        
+    if(!isNaN(parseFloat(jQuery("#to_return_amt").val())))
+        to_ret = Math.round(jQuery("#to_return_amt").val());
+    else
+        to_ret = 0;
+        
+    if(!isNaN(parseFloat(jQuery("#to_receive_amt").val())))
+        to_rec = Math.round(jQuery("#to_receive_amt").val());
+    else
+        to_rec = 0;
+        
+        
+    disp_part = "<table class='disp_calc' width=95% align=center>";
+    disp_part += "<tr><td> </td><td class='disp_calc'>Customer Amount :</td> <td align=right class='disp_calc'>"+cus_amt.toFixed(2)+"</td><td> </td>";
+
+    if(to_ret > 0){
+        part_amt = cus_amt - to_ret;
+        disp_part += "<td>-</td></tr>";
+        disp_part += "<tr><td> </td><td class='disp_calc'>To Return :</td> <td align=right class='disp_calc'>"+to_ret.toFixed(2)+"</td><td> </td><td>&nbsp;</td></tr>";
+    }
+    if(to_rec > 0)
+    {
+        part_amt = cus_amt + to_rec;
+        disp_part += "<td>+</td></tr>";
+        disp_part += "<tr><td> </td><td class='disp_calc'>To Recieve :</td> <td align=right class='disp_calc'>"+to_rec.toFixed(2)+"</td><td> </td><td></td></tr>";
+    }
+    
+    if(to_ret <= 0 && to_rec <= 0){ part_amt = cus_amt; }
+    
+    if(cus_amt>0){
+        disp_part += "<tr><td> </td><td class='disp_calc'><b>Partial Amount</b> :</td> <td colspan=3 align=right>Rs. "+part_amt.toFixed(2)+"</td></tr>";
+    }
+    disp_part += "</table>";
+    
+    jQuery("#disp_partial_amount").html(disp_part);
+    //jQuery("#actual_partial_amount").val(part_amt.toFixed(2));
+    jQuery("#partial_amt").val(part_amt.toFixed(2));
+
+}
+
+function reset_partial_totalpay(){
+
+    tot_amt = parseFloat(jQuery("#partial_amt").val());
+    
+    //tot_amt = partial_amt;
+
+    //jQuery("#total_amt").html(tot_amt.toFixed(2));
+    //jQuery("#disp_total_amount").html("Rs. "+tot_amt.toFixed(2));
+    
+    
+    //tot_amt = parseFloat(jQuery("#customer_amt").val());
+
+    if(tot_amt < 0){
+        totals = 0;
+    }else if(tot_amt > 0){
+        totals = tot_amt;
+    } else {
+        totals = 0;
+    }
+
+    
+    lbl_tot_amt = "Customer Payable amount";
+    
+    jQuery("#label_total_amount").html(lbl_tot_amt);   
+    jQuery("#disp_total_amount").html("Rs."+totals.toFixed(2));
+    jQuery("#total_amt").val(tot_amt.toFixed(2));
+
+}
+</script>

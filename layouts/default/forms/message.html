@@ -1,0 +1,133 @@
+<?php
+ if(isset($_SESSION['success_msg']))
+ {
+ echo $_SESSION['succes_msg'];
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+?>
+<div class="clear clearfix"></div>
+<div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td ><a href="javascript:;">Home</a> &raquo;<a href="javascript:;"><a href="javascript:;">Message</a></td >
+        <td ><span class="btn-rht"><a href="inbox.php" class="greybtn">Inbox</a>  
+            <a href="sent_items.php" class="greybtn">Sent Items</a>
+            <a href="message.php" class="greybtn">Compose</a> </span></td>
+      </tr>
+      </table>
+ </div>
+<div id="contentarea">
+<form name="frmsend" id="frmsend" method="post" style="margin: 0px;">
+        
+<table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+        <td class="title">Compose Mail</td>
+        <td width="50%" class="title">
+                <span class="btn-lft">
+                <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">Send</a>
+                <a href="javascript:;" class="greybtn" onclick="window.location.reload();">Reset</a>
+                
+                <input type="hidden" name="id" id="id" value="<?php echo $id; ?>">
+        <input type="hidden" name="mod" id="mod" value="add"></span></td>
+  </tr>
+
+<tr>
+   <td colspan=2 width="50%">
+    <table class="frm-tbl" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">          
+          <tr>
+            <td align="left"><span id="from">From <span class="star">*</span></span></td>
+            <td align="left"><label><?php echo $_SESSION['session_username'];?></label>
+            <input maxlength="50" type="hidden" style="width:40%;" class="textfield-m" value ="<?php echo $_SESSION['session_username'];?>">
+          </tr>
+          <tr>
+          <?php  
+                        $branchdata ="Select DISTINCT branch.id,branch.name 
+                        FROM ".BRANCH."  AS branch
+                        INNER JOIN ".USERS." AS users ON branch.id = users.branch_id";
+                        $branchdetails =$app->getrows($branchdata);
+           ?>
+      
+            <td align="left"><span id="branch_id">Branch<span class="star">*</span></span></td>
+            <td align="left">
+            <?php
+            if(count($branchdetails)>0){
+            foreach($branchdetails as $key => $value) {
+            $options.= '<option value="'.$value[id].'">'.$value[name].'</option>';
+            }
+              
+            }?>
+            <select name="pval[branch_id]" style="width:40%;" onchange="remove_red('branch_id');get_emailid(this.value);" >
+            <option value="">-- Select Branch --</option>
+            <?php echo $options?>
+            </select> </td>
+          </tr>
+		        
+         <tr>
+            <td align="left"><span id="to_lable">To<span class="star">*</span></span></td>
+            <td align="left"><div style="padding-right:393px;">
+            <select name="to[]" id="to" style="width:75%;height:80px;"  multiple="multiple" size="6" onfocus="remove_red('to')">
+            <option value=""></option>
+            </select></div> <div style="height:10px;"></div>
+            Hold down the ctrl key to select multiple 
+           </td>
+          </tr>
+          
+                  
+          <tr>
+            <td align="left"><span id="subject"> Subject <span class="star">*</span></span></td>
+            <td align="left"><input name="pval[subject]" onfocus="remove_red('subject');"  maxlength="50" type="text" style="width:40%;" class="textfield-m">
+          </tr>
+        
+        <tr>
+            <td align="left"><span id="message">Message </span></td>
+            <td align="left"><textarea name="pval[message]" rows="7" style="width: 40%;" onfocus="remove_red('message');"></textarea></td>
+        </tr>       
+    </table>
+ </form>  
+      </td>
+      </tr>
+        <tr>
+        <td colspan="2" class="title">
+        <span class="btn-lft">
+        <!--a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">Send</a-->
+        <input type="hidden" name="id" id="id" value="<?php echo $id; ?>">
+        <input type="hidden" name="mod" id="mod" value="add"></span></td>
+             
+      </tr>
+    </table>
+
+<div class="clear clearfix"></div>
+</div>
+</body>
+</html>
+
+<script language="javascript" type="text/javascript">
+jQuery(document).ready(function(){
+
+    enable_save_action();
+
+});
+
+function get_emailid(id)
+{
+  $.ajax({
+  type:"GET",
+  url:"message.php?type=getemail",
+  data:"branch_id="+id,
+  success: function(msg)
+  {
+   $("#to").html(msg);
+  }
+  });
+    
+}
+ function message_validation(id){
+
+    $.ajax({
+    type:"GET",
+    url:"message.php?type=formvalidation"
+    });
+}
+
+</script>

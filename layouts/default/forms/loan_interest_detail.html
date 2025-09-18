@@ -1,0 +1,130 @@
+<div id="other-detail" class="box-hd-bg">
+<h3>Loan Interest Details</h3>
+<table class="frm-tbl" border="0" cellpadding="0" cellspacing="0" width="98%">
+  <tr>
+    <td id="loan_amount" width="40%"><span class="add">Old Loan Amount <span class="star">*</span></span></td>
+    <td>
+        <font color=#A33D98><?php echo convertToCurrency($product_data['loan_amount']); ?></font>
+
+        <input name="old_loan_amount" maxlength="40" type="hidden" class="textfield-m" id="old_loan_amt" onfocus="remove_red('loan_amount');" value ="<?php if($product_data['loan_amount'] != ''){ echo number_format(stripslashes($product_data['loan_amount']), 2,'.','');} ?>" onkeypress="return decimalformat(event,this,10,2);">
+    </td>
+  </tr>
+<tr>
+<td><span class="add">Next Due Date</span></td>
+<td><?php echo $pay_interest_details['due_date']; ?> </td>
+</tr>
+<?php
+if($pay_interest_details['time_status']=='Period End'){
+?>
+<tr>
+<td><span class="add"><b>Time Status</b></span></td>
+<td><font color=#A33D98><b><?php echo $pay_interest_details['time_status']; ?></b></font></td>
+</tr>
+<?php
+}
+
+if($pay_interest_details['penalty_status'] == 'Over Due' ){
+?>
+<!-
+********************************************************************
+        Commented the overdue intial month calculation
+        on 06-Nov-2011  To activate the initial month Calculation remove the below commented code
+        If you remove this comment you have to remove the comment in following
+                payinterest.class.php method getInterestDetails, forms/payinterest.html,
+                elements/loan_interest_details.html and
+                remove JS script comment form the function_common_module.js pay_wavier_interest();
+**********************************************************************
+-->
+
+
+
+<!--<tr>
+<td>NIA (<span id="normal_interest_days_disp"><?php echo $pay_interest_details['normal_interest_days']; ?></span> Days) </td>
+<td><strong>
+    <span id="normal_interest_amount_disp"><?php echo convertToCurrency($pay_interest_details['normal_interest_amount']); ?></span>
+    ( <span id="normal_interest_rate_disp">
+    <?php echo $pay_interest_details['normal_interest_rate']; ?> %
+      </span>
+    )
+</strong></td>
+</tr>
+<tr>
+<td>PIA (<span id="penalty_interest_days_disp"><?php echo $pay_interest_details['penalty_interest_days']; ?></span> Days) </td>
+<td><strong>
+    <span id="penalty_interest_amount_disp"><?php echo convertToCurrency($pay_interest_details['penalty_interest_amount']); ?></span>
+    (<span id="penalty_interest_rate_disp">
+    <?php echo $pay_interest_details['penalty_interest_rate']; ?> %
+    </span>
+    )
+</strong></td>
+</tr>
+
+<tr><td colspan=100%>
+<span id="mand_note"><b>NIA</b> - Normal Interest Amount</span><br>
+<span id="mand_note"><b>PIA</b> - Penalty Interest Amount</span>
+
+</td></tr>-->
+
+
+<?php
+}
+?>
+<tr>
+<td id="interest_rate"><span class="add">Rate of Interest</td>
+<td><span id="roi_display">
+<?php echo $pay_interest_details['interest_rate']; ?> %
+</span>
+<input id="rate_of_interest" name="pval[interest_rate]" maxlength="40" type="hidden" class="textfield-m" value="<?php echo $pay_interest_details['interest_rate']; ?>" />
+</td>
+</tr>
+<tr>
+<td id="interest_days">Interest for the Days of </td>
+<td><span id="nod_disp">
+<?php echo $pay_interest_details['no_of_days']; ?>
+</span> Days
+<input id="no_of_days" name="pval[interest_days]" maxlength="40" type="hidden" class="textfield-m" value="<?php echo $pay_interest_details['no_of_days']; ?>" />
+</td>
+</tr>
+
+<tr>
+<td id="interest_amount"><span class="add">Interest Amount</td>
+<td><span id="interest_display">
+<?php
+    $interest =  $pay_interest_details['interest'];
+    echo convertToCurrency($interest);
+?>
+</span>
+<input class="calc" id="interest_amt" name="pval[interest_amount]" maxlength="40" type="hidden" class="textfield-m" value="<?php echo unitDisplay($interest,false); ?>" />
+</td>
+</tr>
+<tr>
+<td><span class="add">Additional Amount</span></td>
+<td>
+
+<input id="add_amt" class="calc currency" name="pval[additional_charge]" maxlength="40" value="<?php echo ($product_data['additional_charge']!='' && $type=='edit') ? number_format(stripslashes($product_data['additional_charge']), 2,'.','') : '0.00'; ?>" type="text" class="textfield-m" onchange="setTotalAmount()" />
+Rs.
+</td>
+
+</tr>
+<!--<tr>
+  <td id="service_charge">Service Charge </td>
+  <td><span id="ser_charge">
+   <?php echo ($pay_interest_details['service'] == "") ? "-": convertToCurrency(stripslashes($pay_interest_details['service'])); ?> [ <?php echo $pay_interest_details['slab_service_rate']; ?> %]</span>
+   <input name="pval[service_charge]" type="hidden" id="service_crg" class="calc textfield-m" onfocus="remove_red('service_charge');" value ="<?php echo number_format(stripslashes($pay_interest_details['service']), 2,'.',''); ?>" onkeypress="return decimalformat(event,this,10,2);" onchange="cal_total();">
+
+   </td>
+</tr>-->
+<tr>
+<td><span class="add"><span id="amount">Total Amount To Pay</span></span></td>
+<td align="left"><font color=#A33D98>
+<?php //$tot_amount = ($interest+$principle_to_add)+$product_data['additional_charge'];   ?>
+<input type="hidden" id="total_amt" name="pval[total_paid_amount]" value="<?php echo unitDisplay($tot_amount,false); ?>">
+<div id="total_display"><?php echo convertToCurrency($tot_amount); ?></div></font></td>
+</tr>
+<tr>
+<td><span class="add">Amount Received Date</span></td>
+<td><?php echo date("d-M-Y"); ?></td>
+</tr>
+
+
+</table></div>

@@ -1,0 +1,160 @@
+<div id="print_content">
+<?php
+    $i=1;
+    //echo "<pre>";print_r($data);exit;
+         ?>
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="9" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix); ?></td>
+            <td>Date:</td>
+            <td><?php echo date("d-m-Y h:i:sa"); ?></td>
+          </tr>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+              <td rowspan=2 width="6%">Loan Id</td>
+              <td rowspan=2  width="10%">Loan Date</td>
+              <td rowspan=2  width="15%">Loan Amount(<?php echo CURRENCY_SYMBOL;?>)</td>
+              <td rowspan=2  width="15%">Customer Details</td>
+              <td rowspan=2  width="15%">Product</td>
+              <td rowspan=2  width="20%">Scheme Name</td>
+              <td rowspan=2  width="5%">Quantity</td>
+              <td colspan=2  width="10%" align=center>Weight</td>
+              <td rowspan=2  width="6%" align="center">Status</td>
+              <td rowspan=2  width="8%">Return Date</td>
+           </tr>
+
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+              <td align=right>G</td>
+              <td align=right>Mg</td>
+          </tr>
+
+          <?php
+          $j=1;
+          $i=$i+1;
+         if(count($data)>0) {
+          foreach($data as $rows)
+          {
+
+            /*$weight_in = floatval($rows['net_weight']);
+
+            $weight_in_gs =  intval($weight_in);
+            $weight_in_mgs =  intval(floatval($weight_in - intval($weight_in)) * 1000);
+
+            $loan_id = $rows['pledge_id'];
+            $loan_code = $rows['loan_code'];
+            $paid_on = '-';
+
+            $pquery = "SELECT COUNT(id) FROM ".PRODUCT_AUCTION." WHERE loan_id =  ".$loan_id;
+            $pc = $app->getrow($pquery);
+            if((int)$pc[0] > 0){
+              $status_text = "Bidded";
+
+                $pquery = "SELECT  DATE_FORMAT(paid_on,'%d-%b-%y') FROM ".PRODUCT_AUCTION." WHERE loan_id =  ".$loan_id;
+                $pc = $app->getrow($pquery);
+                $paid_on = $pc[0];
+
+
+            }else{
+                //$rquery = "SELECT COUNT(id)  FROM ".REDEMPTION." WHERE loan_id =  ".$loan_id;
+                $pquery = "SELECT COUNT(id) FROM ".RENEWAL." WHERE old_loan_id =  ".$loan_id;
+                $pc = $app->getrow($pquery);
+                if((int)$pc[0] > 0){
+                  $status_text = "Renewed";
+
+                $pquery = "SELECT  DATE_FORMAT(paid_on,'%d-%b-%y') FROM ".RENEWAL." WHERE old_loan_id =  ".$loan_id;
+                $pc = $app->getrow($pquery);
+                $paid_on = $pc[0];
+
+
+                }else{
+                    $pquery = "SELECT COUNT(id) FROM ".PAY_EXCESS_AMOUNT." WHERE old_loan_id =  ".$loan_id;
+                    $pc = $app->getrow($pquery);
+                    if((int)$pc[0] > 0){
+
+                      $status_text = "Excess paid";
+                        $pquery = "SELECT  DATE_FORMAT(paid_on,'%d-%b-%y') FROM ".PAY_EXCESS_AMOUNT." WHERE old_loan_id =  ".$loan_id;
+                        $pc = $app->getrow($pquery);
+                        $paid_on = $pc[0];
+
+
+
+                    }else{
+                        $pquery = "SELECT COUNT(id) FROM ".PARTIAL_AMOUNT_PAYMENT." WHERE old_loan_id =  ".$loan_id;
+                        $pc = $app->getrow($pquery);
+                        if((int)$pc[0] > 0){
+                          $status_text = "Partial paid";
+                        $pquery = "SELECT  DATE_FORMAT(paid_on,'%d-%b-%y') FROM ".PARTIAL_AMOUNT_PAYMENT." WHERE old_loan_id =  ".$loan_id;
+                        $pc = $app->getrow($pquery);
+                        $paid_on = $pc[0];
+
+                        }else{
+                            $pquery = "SELECT COUNT(id)  FROM ".REDEMPTION." WHERE loan_id =  ".$loan_id;
+                            $pc = $app->getrow($pquery);
+                            if((int)$pc[0] > 0){
+                              $status_text = "Redeemed";
+                        $pquery = "SELECT  DATE_FORMAT(paid_on,'%d-%b-%y') FROM ".REDEMPTION." WHERE loan_id =  ".$loan_id;
+                        $pc = $app->getrow($pquery);
+                        $paid_on = $pc[0];
+
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            if(@$rows['status_text'] != '' && $rows['status_text'] != 'Open'){
+                $rows['status_text'] .= '-'.$status_text;
+            }
+
+            if(@$rows['return_date'] == ''){
+
+
+                $rows['return_date'] = $paid_on;
+            }*/
+
+
+           ?>
+         <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1';?>">
+
+
+                    <td align="left" class="disp-light"><?php echo $rows['loan_code'];?></td>
+                    <td align="left"><?php echo htmlentities(stripslashes($rows['loan_date']), ENT_QUOTES); ?></td>
+                    <td align="left" class="disp-light"><?php echo convertToCurrency(stripslashes($rows['loan_amount']),false);?></td>
+                    <td align="left" class="disp-light"><?php echo nl2br($rows['customer_details']);?></td>
+                    <td align="left" class="disp-light"><?php echo nl2br($rows['product_details']);?></td>
+                    <td align="left" class="disp-light"><?php echo nl2br($rows['scheme_name']);?></td>
+                    <td align="left" class="disp-light"><?php echo htmlentities(stripslashes($rows['quantity']), ENT_QUOTES); ?></td>
+                    <td align="right"><?php echo htmlentities(stripslashes($rows['weight_in_gs']), ENT_QUOTES); ?></td>
+                    <td align="right"><?php echo htmlentities(stripslashes($rows['weight_in_mgs']), ENT_QUOTES); ?></td>
+                    <td align="center" class="disp-light"><?php echo htmlentities(stripslashes($rows['status_text']), ENT_QUOTES); ?></td>
+                    <td align="left" class="disp-light"><?php echo htmlentities(stripslashes($rows['return_date']), ENT_QUOTES); ?>
+                    </td>
+         </tr>
+         <?php
+            $i++;
+            $j++;
+          }
+          }else{
+          ?>
+          <tr><td colspan=11 align="center"> No records found </td></tr>
+          <?php
+          }
+?>
+       </table>
+
+ </div>
+
+<iframe id="print_frame" name="print_frame" title="<?php echo ($heading_suffix=="") ? $page_title : ($page_title . " - ".$heading_suffix); ?>" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>
+
+
+
+
+
+
+
+
+
+
+
+
+

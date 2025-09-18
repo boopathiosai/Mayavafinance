@@ -1,0 +1,166 @@
+    <?php  if($category_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+
+if($category_data['product_with'] == "0") {
+        $without="checked";
+    }else{
+        $with="checked";
+    }
+    ?>
+<script src="js/common.js" type="text/javascript"></script>
+<script src="js/tamil.js" type="text/javascript"></script>
+<div class="clear clearfix"></div>
+<div id="HelpDiv" style="width:825px;margin:auto;"></div> 
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Masters  &raquo;<a href="categories.php">Sub Branch Loan Id Generation</a></td >
+        <td ><span class="btn-rht">
+        <a href="javascript:;" id="save" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a>  <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+ 
+<div id="contentarea">
+<form name="category_form" method="post" style="margin: 0px;">
+
+<table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+ <tr>
+    <td class="title">Sub Branch Loan Id Generation</td>
+  </tr>
+  <tr>
+    <td width="50%"><table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+      
+               <tr>
+               <td id="branch_id"><span class="add"> Branch Name <span class="star">*</span></span></td>
+               <td>
+                        
+                <?php 
+                if($_SESSION['session_usertype']!=1)
+                { 
+                    echo "<input type='hidden' name='pval[branch_id]'  value='$_SESSION[session_user_branch_id]'/>";
+                    echo $_SESSION['session_user_branch_name'];
+                } 
+                else 
+                {
+                    //Get Branch name from branch table
+                       $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH); 
+                       $sub_branch = get_dropdown_list_with_field('id', 'name', SUB_BRANCH);
+                       //echo "<prE>";print_r($sub_branch_data);
+                ?>
+                 <select name="pval[branch_id]" onchange="remove_red('branch_id');get_sub_branch_id(this.value);">
+                <option value="">-- Select Branch --</option>
+                   <?php              
+                    echo build_select_options($branch_data,$sub_branch_data['branch_id']); 
+                   ?>
+                </select>
+                <?php
+                }?>
+                            
+                        </td>
+                      </tr>
+          <tr>
+
+	  <tr>
+            <td align="left"><span id="sub_branch_id">Sub branch name<span class="star">*</span></span></td>
+            <td align="left"><div style="padding-right:393px;">
+            <select name="pval[sub_branch_id]" id="sub_id" onchange="get_subbranch_code(this.value);">
+            <option value="">Select</option>
+             <?php              
+                    echo build_select_options($sub_branch,$sub_branch_data['sub_branch_id']); 
+                   ?>
+            </select></div> <div _style="height:10px;"></div>
+            
+           </td>
+          </tr>
+
+      <tr>
+        <td id="loan_no" width="12%">Loan Number</td>
+        <td width="61%" align="left">
+        <input name="pval[loan_no]" id="loan_number"  maxlength="40" type="text" class="textfield-m" onfocus="remove_red('quality');" value = "<?php echo stripslashes($sub_branch_data['loan_no']); ?>"/>    
+        
+        </td>
+      </tr>         
+      
+    <tr>
+        <td colspan="2"><span id="mand_note">* indicates mandatory fields</span> </td>
+    </tr> 
+    </table>
+     <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+          
+          <?php }?>
+
+     </form>    
+      </td>
+      </tr>  
+    </table>     
+<div class="clear clearfix"></div>
+</body>
+
+<script type="text/javascript">
+    $(document).ready(function(){   
+       // $('#cat_name').focus(); 
+	   //document.category_form.cat_name.focus();        form_enter_focus(jQuery('input[name=pval[category]]'),4,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        enable_save_action();
+        
+    });
+  
+
+	function get_sub_branch_id(id)
+  {
+      $.ajax({
+      type:"GET",
+      url:"sub_branch_loanid_generate.php?type=sub_branch_name",
+      data:"branch_id="+id,
+      success: function(msg)
+      {
+       $("#sub_id").html(msg);
+       if(msg)
+       {
+       get_subbranch_code();
+    }
+      }
+      });
+      
+  }
+function get_subbranch_code(id){
+  if(id)
+  {
+    $sub_branch_id=id;
+  }
+  else{
+ $sub_branch_id=$("#sub_id").val();
+ }
+ //alert()
+ $.ajax({
+  type:"GET",
+  url:"sub_branch_loanid_generate.php?type=sub_branch_id",
+  data:"sub_branch_id="+$sub_branch_id,
+  success: function(msg)
+  {
+    //print_r(msg);
+    var divs = msg.split('~~');
+    if(divs[1]=='0')
+    {
+      $("#loan_number").val(divs[0]);
+      $("#save").css('display','block');
+      $('#loan_number').attr('readonly',false);
+    }
+    else{
+      $("#loan_number").val(divs[0]);
+      $("#save").css('display','none');
+      $('#loan_number').attr('readonly',true);
+    }
+  }
+  });
+}
+</script>
+</html>

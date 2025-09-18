@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>சரவணா பைனான்ஸியர்ஸ்</title>
+<link href="css/style_print.css" rel="stylesheet" type="text/css" />
+<link href="css/fonts_print.css" rel="stylesheet" type="text/css" />
+</head>
+<?php
+$fetch_loan_id = $product_data[0]['loan_id'];
+	  $query = "SELECT DISTINCT P.id, P.sub_branch_id, P.loan_id, P.customer_id, PD.pledge_id, PD.product_id,PS.name, C.name, B.name as sub_branch_name, B.sub_branch_code, B.license_no, B.address, B.location, B.contact_no
+                FROM mf_pledge as P
+                LEFT JOIN mf_pledge_details as PD ON P.id = PD.pledge_id
+                LEFT JOIN mf_customers as C ON C.id = P.customer_id
+		        LEFT JOIN mf_products as PS ON PS.id = PD.product_id
+                LEFT JOIN mf_sub_branch as B ON P.sub_branch_id = B.id
+		        WHERE 1 = 1 AND P.loan_id = '$fetch_loan_id'";
+                
+                $data = $app->getrows($query);
+?>
+<body>
+<table width="700" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td colspan="2" align="center" style="font-size:10px">உ</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center" style="font-size:10px">சிவமயம்</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+    <h1><?php echo $data[0]['sub_branch_name']; ?></h1>
+    <p><?php echo $data[0]['license_no']; ?><br>
+    <strong>( தங்கம், வெள்ளி நகை அடகு கடை )</strong><br>
+	<?php echo $data[0]['address'].','; echo "\n\n\n\n\n\n"; ?>
+	<?php echo $data[0]['location']; ?>
+   <br/>
+   போன்:<?php echo $data[0]['contact_no']; ?><br>
+	</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="593" align="right" style="font-size:11px">தேதி</td>
+    <td width="107" align="right"><label for="textfield"></label>
+    <b><?php //echo  date("d/m/Y"); ?></b></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><h2>ஏல இறுதி அறிவிப்பு நோட்டீஸ்</h2></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><p class="main-content">எங்களது நகை அடகுக் கடையில் கீழ்கண்ட விபரப்படி நீங்கள் அடகு வைத்த நகைகளுக்கு கெடு முடிந்து விட்டபடியால் <b><?php //echo  date("d/m/Y"); ?><font style="padding-right:100px;"></font></b> தேதி <strong>CERTIFICATE OF POSTING</strong> மூலம் ஏல முன் அறிவிப்பு நோட்டீஸ் அனுப்பியும்,
+<b><?php //echo  date("d/m/Y"); ?><font style="padding-right:100px;"></font></b> தேதி மேற்படி ஏல விற்பனை கேட்லாக் <strong>REGISTERED WITH AD</strong> மூலம் அனுப்பியும், இது நாள் வரை கீழ்கண்ட நகைகள் மீட்டுக் கொள்ளப்படவில்லை. ஏல நாள்
+<b><?php //echo  date("d/m/Y"); ?><font style="padding-right:100px;"></font></b> தேதி ஆகும். கெடு கடந்த நகைகள் குறிப்பிட்ட தேதிக்குள் மீட்கப்படாமல் ஏலம் போனால் நிர்வாகம் பொறுப்பல்ல.</p></td>
+  </tr>
+  <tr>
+    <td colspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="33%" align="center"><p><strong>அடகு எண்</strong></p></td>
+        <td width="34%" align="center"><p><strong>தேதி</strong></p></td>
+        <td width="33%" align="center"><p><strong>ரூபாய்</strong></p></td>
+      </tr>
+      	  <?php				
+	  if(count($product_data>0))
+	  {
+		foreach($product_data as $product_datas)
+			{
+	  ?>
+      <tr>
+        <td align="center">
+        <?php echo (trim($product_datas['loan_pro_name']) == "")? "-":stripslashes($product_datas['loan_pro_name']); ?></td>
+        <td align="center"><?php echo (trim($product_datas['loan_date']) == "")? "-":stripslashes($product_datas['loan_date']); ?></td>
+        <td align="center"><?php echo (trim($product_datas['loan_amount']) == "")? "-":stripslashes($product_datas['loan_amount']); ?> Rs.</td>
+      </tr>
+	  <?php
+	  }
+	  }
+	  ?> 
+    </table></td>
+  </tr>
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<div id="print_content">
+<?php  
+$categories = $product_data;
+//echo "<pre>";
+//print_r($product_details);
+
+	  $fetch_cust_id = $product_data['customer_id'];
+
+	  $query = "SELECT DISTINCT P.id, P.sub_branch_id, P.loan_id, P.customer_id, PD.pledge_id, PD.product_id,PS.name, C.name, B.name as sub_branch_name, B.sub_branch_code, B.license_no, B.address, B.location
+                FROM mf_pledge as P
+                LEFT JOIN mf_pledge_details as PD ON P.id = PD.pledge_id
+                LEFT JOIN mf_customers as C ON C.id = P.customer_id
+		        LEFT JOIN mf_products as PS ON PS.id = PD.product_id
+                LEFT JOIN mf_sub_branch as B ON P.sub_branch_id = B.id
+		        WHERE 1 = 1 AND P.customer_id = '$fetch_cust_id'";
+                
+                $data_sub_addr = $app->getrows($query);
+
+ ?>
+
+ <div id="contentarea">
+     <form name="customer_form" method="post" style="margin: 0px;">
+<?php
+
+$header_height = 360;
+$address_height = 110;
+$bottom_height = 502;
+
+
+?>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+
+<tr style="height:<?php echo $header_height; ?>px">
+    <td _width="50%" colspan="2" ><center style="margin-top:140px;"><?php echo  date("d/m/Y");?></center></td>
+</tr>
+<tr style="height:<?php echo $address_height; ?>px">
+    <td valign="top" align="left">
+        <table width="95%" border="0" cellpadding="0" cellspacing="0">
+            <tr><th align="center">
+            <font size="+1"><?php 
+			echo $data_sub_addr[0]['sub_branch_name'];
+			//echo $product_data['organization_name'];
+			?></font>
+            <br />
+            <font size="-1">
+            <?php 
+			echo $data_sub_addr[0]['location'];
+			echo "<br/>";
+			echo nl2br($data_sub_addr[0]['address']);
+			//echo nl2br($product_data['branch_address']);
+			/*$address = explode(',',$product_data['branch_address']);
+            for($i=0; $i<=count($address);$i++) {
+                echo $address[$i]."<br />" ;
+            }*/
+             ?>
+            </font>
+            </th></tr>
+        </table>
+    </td>
+    <td valign="top" align="right">
+        <table width="95%" border="0" cellpadding="0" cellspacing="0">
+            <tr><th align="center">
+            <font size="+1"><?php
+			echo $data_sub_addr[0]['sub_branch_name'];
+			//echo $product_data['organization_name'];
+			?></font>
+            <br />
+            <font size="-1">
+            <?php 
+			echo $data_sub_addr[0]['location'];
+			echo "<br/>";
+			echo nl2br($data_sub_addr[0]['address']);
+			//echo nl2br($product_data['branch_address']);
+            /*$address = explode(',',$product_data['branch_address']);
+            for($i=0; $i<=count($address);$i++) {
+                echo $address[$i]."<br>" ;
+            }*/
+             ?>
+            </font>
+            </th></tr>
+        </table>
+    </td>
+</tr>
+<tr style="height:<?php echo $bottom_height; ?>px">
+    <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+    <td valign="top" align="right">
+        <table width="95%" border="0" cellpadding="0" cellspacing="0">
+            <tr><th align="center">
+            <font size="+1"><?php 
+			echo $data_sub_addr[0]['sub_branch_name'];
+			//echo $product_data['organization_name']; 
+			?></font><br />
+            <font size="-1">
+            <?php 
+			echo $data_sub_addr[0]['location'];
+			echo "<br/>";
+			echo nl2br($data_sub_addr[0]['address']);
+			//echo nl2br($product_data['branch_address']);
+            /*$address = explode(',',$product_data['branch_address']);
+            for($i=0; $i<=count($address);$i++) {
+                echo $address[$i]."<br>" ;
+            }*/
+             ?>
+            </font>
+            </th></tr>
+        </table>
+    </td>
+    <td valign="top" style="padding-left:80px">
+        <table width="95%" border="0" cellpadding="0" cellspacing="0">
+            <tr style="height:20px"><th align="left"><font size="+1"><?php echo $product_data['customer_name']; ?></font></th></tr>
+            <tr style="height:20px"><th align="left"><font size="-1"><?php echo $product_data['customer_street']; ?></font></th></tr>
+            <tr style="height:20px"><th align="left"><font size="-1"><?php echo $product_data['customer_location']; ?></font></th></tr>
+            <tr style="height:20px"><th align="left"><font size="-1"><?php echo "PH:".$product_data['contact_no']; ?></font></th></tr>
+            <tr style="height:20px"><th align="left"><font size="-1"><?php echo $product_data['customer_postal_code']; ?></font></th></tr>
+        </table>
+    </td>
+</tr>
+<tr style="height: 72px;">
+	<td colspan="2">&nbsp;</td>
+</tr>
+<tr style="height: 70px;">
+	<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="98%" border="0" cellpadding="0" cellspacing="0" style="padding-left: 54px; padding-top: 42px; height: 122px;">
+			<?php foreach($product_details as $key => $data) {  ?>
+				<tr>
+					<tr style="padding:2px;">
+					<td width="4%"><?php echo $key + 1; ?></td>
+					<td width="17%" align="center"><?php echo $data['loan_id']; ?></td>
+					<td width="17%"><?php echo $data['loan_date']; ?></td>
+					<td width="17%"><?php echo $data['loan_amount']; ?></td>
+					<td width="40%"><span><?php 
+					echo $data['total_gross_weight'].' மி கி &nbsp; '.$data['product_name'];
+					//echo $data['total_gross_weight'].'mg &nbsp; '.$data['product_name'];					
+					?></span><span style="word-spacing:-2px"><?php echo '&nbsp;With &nbsp;'.$data['product_with'].'&nbsp;With out &nbsp;'.$data['product_without']; ?></span></td>
+				</tr>
+			<?php } ?>
+		</table>
+ </form>   
+</div>         
+</div>
+
+
+
+<style>
+	#back_page { width:100%;}
+	#hd div,#print_cont div { float:left;padding:5px 0px; }
+	#hd { height:70px}
+	div#print_cont{clear:left;font-weight:bold; }
+
+</style>
+
+<iframe id="print_frame" name="print_frame" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>

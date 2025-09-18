@@ -1,0 +1,470 @@
+<?php 
+
+//print_r($scheme_data);
+//print_r($scheme_details);
+$len = 8;
+if($scheme_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+    if($scheme_data['interest_type'] == "1") 
+    {
+        $floating="checked";
+        $flat_display = "none";
+        $float_display = "block"; 
+        $total = count($scheme_details);
+        $content ='';
+        $initial = 0;       
+        $content .= "<tr class='bg1'>
+                        <td width='15%' class='slab_td' style='border:1px solid #e6e6e6;background-color:#fff'>1</td>
+                        <td width='22%' style='border:1px solid #e6e6e6;background-color:#fff'>
+                            <input class='currency med' name='mval[]' id='mval_".$initial."' type='text' size='5' 
+                                style='width: 30px;' readonly='true' value = '0' />
+                        </td>
+                        <td width='24%' style='border:1px solid #e6e6e6;background-color:#fff'>
+                            <input class='currency med check_month_validity' name='nval[]' id='nval_".$initial."' size='5' 
+                                style='width: 30px;' type='text' value = '".stripslashes($scheme_details[$initial]['upto'])."' >
+                        </td>  
+                        <td width='14%' style='border:1px solid #e6e6e6;background-color:#fff'> 
+                            <input class='currency med' name='ival[]' id='ival_".$initial."' size='5' 
+                                style='width: 35px;' type='text' 
+                                value = '".stripslashes($scheme_details[$initial]['rate_of_interest'])."' /> %
+                        </td>
+                        <td width='10%' align='center' style='border:1px solid #e6e6e6;background-color:#fff'>&nbsp;</td> 
+                        </tr>";
+        for($i=1;$i<=$total-1;$i++)
+        {
+          $sno = $i+1;
+            
+             $content .= "<tr class='bg1'>
+                                <td width='15%' class='slab_td' style='border:1px solid #e6e6e6;background-color:#fff'> $sno </td>
+                                <td width='22%' style='border:1px solid #e6e6e6;background-color:#fff'>
+                                    <input class='currency med' name='mval[]' id='mval_".$i."' type='text' size='5' 
+                                        style='width: 30px;' readonly='true' value = '".$scheme_details[$i]['above']."' />
+                                </td>
+                                <td width='24%' style='border:1px solid #e6e6e6;background-color:#fff'>
+                                    <input class='currency med check_month_validity' name='nval[]' id='nval_".$i."' size='5' 
+                                        style='width: 30px;' type='text' value = '".$scheme_details[$i]['upto']."'>
+                                </td>
+                                <td width='12%' style='border:1px solid #e6e6e6;background-color:#fff' > 
+                                    <input class='currency med' name='ival[]' id='ival_".$i."' size='5' 
+                                        style='width: 35px;' type='text' 
+                                        value = '".stripslashes($scheme_details[$i]['rate_of_interest'])."'/> %
+                                </td>
+                                <td width='10%' align='center'  style='border:1px solid #e6e6e6;background-color:#fff'>
+                                    <a href='javascript:;' class='remove_row'><img src='images/pledge-edit.jpg' title='delete'/></a>
+                                </td> </tr>";
+        } 
+        $len = 8+(3*intval($i));
+    }
+    else 
+    {
+        $flat="checked";
+        $flat_display = "block";
+        $float_display = "none";
+        
+    }
+
+    ?>
+<script src="js/common.js" type="text/javascript"></script>
+<script src="js/tamil.js" type="text/javascript"></script>
+<div class="clear clearfix"></div>
+<div id="HelpDiv" style="width:825px;margin:auto;"></div>
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td >Masters &raquo;<a href="schemes.php">Scheme Management</a></td >
+        <td ><span class="btn-rht">
+            <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>  
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a>  <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+<div id="contentarea">
+<form name="scheme_form" method="post" >
+<table style="width: 1003px;"><tbody><tr valign="top"><td><input type="checkbox" id="checkshow" onclick="showMap(this)" name="showmap">Show Keymap<br></tbody></table>
+    <div id="msg"></div>
+    <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+      <tr>
+        <td class="title">Scheme Management</td>
+      </tr>
+       <tr>
+        <td width="100%"><table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          
+          <tr>
+            <td id="name" width="15%">Scheme Name * </td>
+            <td width="80%" align="left"><!--input name="pval[name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($scheme_data['name']); ?>" id="sch_name"/-->
+			<input name="pval[name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($scheme_data['name']); ?>" id="sch_name" class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)">
+			</td>
+          </tr>
+          <tr>
+            <td id="description" width="14%" >Scheme Description </td>
+            <td align="left"><textarea name="pval[description]" onfocus="remove_red('description');"><?php echo stripslashes($scheme_data['description']); ?></textarea></td>
+          </tr>          
+          <tr>
+            <td id="interest_flat"><span class="add" width="15%">Interest calculation type*</span></td>
+            <td>
+            <span class="radio-btn"><input class="radio" type="radio" id="interest_flat" name="pval[interest_type]"  value="0" onclick="on_type_click()" checked /> Flat</span>
+            <span class="radio-btn"><input class="radio" type="radio" id="interest_float" name="pval[interest_type]" value="1" onclick="on_type_click()" <?php echo $floating;?> /> Floating</span>
+           </td>
+         </tr>
+        <tr>
+            <td id="service_charge" width="13%">Service Charge <br>
+            <span id="service_details" class="disp_calc">
+            
+            <?php
+            //if($uval['id']=='' || ){
+            ?>
+            Enter Amount value per 1000s of loan amount for flat 
+            
+            Enter Percentage value of loan amount for floating
+            
+            </span>
+            </td>
+            <td><input id="service_charge_input" name="pval[service_charge]" maxlength="40" type="text" class="currency textfield-m" onfocus="remove_red('service_charge');" value = "<?php echo stripslashes($scheme_data['service_charge']); ?>"  width="10px;"/></td>
+          </tr>
+        <tr>
+            <td id="loan_rate" width="13%">Loan Rate * </td>
+            <td>
+            <input id="loan_rate_input" name="pval[loan_rate]" maxlength="40" type="text" class="currency textfield-m" onfocus="remove_red('loan_rate');" value = "<?php echo stripslashes($scheme_data['loan_rate']); ?>"  width="10px;"/>
+            </td>
+          </tr>
+          
+          <tr>
+            <td width="13%" id="interest" ><span class="add"> Interest <span class="star">*</span></span></td>
+            <td>
+                <div id="flat" style="display:<?php echo $flat_display;?>;"><input id="rate_of_interest" name="ival[]" maxlength="40" type="<?php echo $scheme_data['interest_type'] == '1' ? 'hidden': 'text';?> " class="currency textfield-m" onfocus="remove_red('interest');" value = "<?php echo stripslashes($scheme_data['rate_of_interest']); ?>" /> %
+				 <div style="padding-top:4px;">
+					<span style="font-weight: normal; font-size: 11px;">Per Annum</span>
+				</div>
+                </div>
+                <div id="floating" style="display:<?php echo $float_display;?>;">
+                <div id="scheme_content">   
+                <table id="scheme_content_table" class="frm-tbl" width="40%" border="0" cellspacing="0" cellpadding="0" style='border:1px solid #e6e6e6' >
+            
+                 <tr class="bg">
+                    <td>Slab</td>
+                    
+                    <td id="above">Above</td>
+                 
+                    <td id="upto">UpTo</td>
+                 
+                    <td width="25%" class="interest">Interest</td>
+
+                    <td >Action</td>
+
+                  </tr>
+                 
+                <?php if($content == '')
+                {?>
+                  
+                  <tr class="bg1">
+                    <td class="slab_td" class="currency" style='border:1px solid #e6e6e6;background-color:#fff'>1</td>
+                    <td width="22%" style='border:1px solid #e6e6e6;background-color:#fff'><input class="currency med" name="mval[]" id="mval_1" type="text" size="5" style="width: 30px;" readonly="true" value = "0" onfocus="remove_red('above');"  ></td>
+                
+                    <td width="24%" style='border:1px solid #e6e6e6;background-color:#fff'><input class="currency med check_month_validity" name="nval[]" id="nval_0" size="5" style="width: 30px;"  type="text" value = "<?php echo stripslashes($scheme_data['interest']); ?>" onfocus="remove_red('upto');"  ></td>
+                
+                    <td width="24%" style='border:1px solid #e6e6e6;background-color:#fff'> <input class="currency med" name="ival[]" id="ival_0" size="5" style="width: 35px;" type="text" value = "<?php echo stripslashes($scheme_data['interest']); ?>"  onfocus="remove_red('interest');" > %
+                    </td>
+                    <td style='border:1px solid #e6e6e6;background-color:#fff'></td>
+                  </tr>      
+                 
+                    <?php
+                    }
+                    else
+                    {
+                      echo $content; 
+                    }?> 
+                   </table>
+                   </div>
+                <div class="_pagi-lft">
+                <table border=0><tr><td align="left">
+                <a href="javascript:" class="greybtn" style="float:left; margin-left:-10px;" onclick="return append_input();">Add</a> 
+                </td><td align="center"></td> <td><div id="_interest_message" align="center" style="display:none;"></div></td></tr>
+                </table>
+                </div>
+				<div>
+                <span id="mand_note">Upto 1 Month, ie. 1-jan-2011 to 31-jan-2011, enter above 0 and upto 1 </span> <br />
+                <span id="mand_note">After 12 Month, ie. After 31-Dec-2011 to auction date, enter above 12 and upto any value greater than 12 </span> 
+                </div>
+                </div>
+                                                 
+                </td>   
+            </tr>    
+           
+          <tr>
+            <td width="30%">Status </td>
+            <td><label>
+              <input name="pval[status]" type="radio" class="radio" value="1" <?php echo $active; ?> />
+              Active</label>
+                <label>
+                <input name="pval[status]" type="radio" class="radio" value="0" <?php echo $inactive; ?> />
+              Inactive </label>
+              </td>
+           </tr>   
+           <tr>
+             <td colspan="2"><span id="mand_note">* indicates mandatory fields</span> </td>
+           </tr>   
+           
+    </table>            
+      <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+          
+          <?php }?>
+  </form>
+<div class="clear clearfix"></div>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+var count = 0;
+$(document).ready(function () {
+//         $('#sch_name').focus();
+		document.scheme_form.sch_name.focus();
+  var value = $("input[@name=pval[interest_type]]:checked").val(); 
+  count =jQuery('[name="mval[]"]').length-1;  
+ // alternateRowColors($("#scheme_content_table"));
+
+  // focus the first field..
+ /*$("input[name=pval[name]]").focus();
+
+  $("input,select").not( $(":button,:hidden") ).keypress(function (evt) {
+            if (evt.keyCode == 13) {
+                iname = $(this).val();
+                if (iname !== 'Submit'){    
+                    var fields = $(this).parents('form:eq(0),body').find('input:text,textarea,input:radio,input:checkbox,select');                                      
+                    var index = fields.index( this );
+                    if ( index > -1 && ( index + 1 ) < fields.length) {
+                        fields.eq( index + 1 ).focus();
+                    }
+                    else
+                    {                   
+                      scheme_process('content_div','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');
+                    }
+                    return false;
+                }
+            }
+        });
+*/
+        enable_save_action();
+        setNumberKeyEvent();
+        form_enter_focus(jQuery('input[name="pval[name]"]'),<?php echo $len;  ?>,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        $("#service_charge_input,#interest").numeric({allow:"."});
+        
+        on_type_click();
+        
+
+});
+
+
+
+function alternateRowColors(table) 
+{
+
+    $('tbody tr:odd', table).removeClass('bg1').addClass('bg1');
+
+    $('tbody tr:even', table).removeClass('bg1').addClass('bg1');
+
+};
+function on_type_click()
+{
+
+  var value = $("input[@name=pval[interest_type]]:checked").val();
+  
+  if(value == "1")
+  {  
+    
+    //marker = $('<span />').insertBefore('#rate_of_interest');
+    //$('#rate_of_interest').detach().attr('type', 'hidden').insertAfter(marker);
+    //marker.remove();
+    $("#service_details").html("Enter Percentage value of loan amount for floating");
+    
+    $("#flat").css("display", "none");
+    $("#floating").css("display", "block");
+    $("#service_charge_input").focus();
+    var fields = $("#floating").children().find('input:text');
+    form_enter_focus(jQuery('input[name=pval[service_charge]]'),(8+fields.length),'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+
+  }
+  else
+  {    
+    //marker = $('<span />').insertBefore('#rate_of_interest');
+    //$('#rate_of_interest').detach().attr('type', 'text').insertAfter(marker);
+    //marker.remove();
+    $("#service_details").html("Enter Amount value per 1000s of loan amount for flat");
+    
+    $("#flat").css("display", "block"); 
+    $("#floating").css("display", "none");
+    var fields = $("#floating").children().find('input:text');
+
+
+    // TODO:  update the hide element logic to make the input as hidden if the parent div's display is none..
+    //form_enter_focus(jQuery('input[name=pval[name]]'),(8+fields.length),'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+    //marker = $("#scheme_content_table").first().append('<span />');
+    for(i=0;i<fields.length;i++)
+    {       
+    //  $(fields.eq( i ).id).detach().attr('type', 'hidden').insertAfter(marker);
+    }
+    //marker.remove();
+    //alert(fields.length);
+  }
+}
+style='border:1px solid #e6e6e6;background-color:#fff'
+function append_input()
+{    
+    var next_month = get_next_month();          
+    if(next_month)
+    {
+        count ++; 
+        var sno = count+1;  
+        //_class = (count % 2 == 0) ? "bg1" : "bg1";
+        _class = "bg1";
+        var interest_elements =" <tr class='"+_class+"'><td width='15%' class='slab_td' style='border:1px solid #e6e6e6;background-color:#fff'>"+sno+"</td><td width='22%' style='border:1px solid #e6e6e6;background-color:#fff'><input class='currency med' name='mval[]' id='mval_"+count+"' type='text' size='5' style='width: 30px;' readonly='true' value = '"+next_month+"'  onfocus='remove_red(\"above\")'  /></td> <td width='24%' style='border:1px solid #e6e6e6;background-color:#fff'><input class='currency med check_month_validity' name='nval[]' id='nval_"+count+"' size='5' style='width: 30px;' type='text' value = '<?php echo stripslashes($scheme_data['interest']); ?>'  onfocus='remove_red(\"upto\")'></td>    <td width='12%' style='border:1px solid #e6e6e6;background-color:#fff'> <input class='currency med' name='ival[]' id='ival_"+count+"' size='5' style='width: 35px;' type='text' value = '<?php echo stripslashes($scheme_data['interest']); ?>' onfocus='remove_red(\"interest\")'/> %</td><td width='10%' align='center' style='border:1px solid #e6e6e6;background-color:#fff'><a href='#' class='remove_row'><img src='images/pledge-edit.jpg' title='delete'/></a></td> </tr>";          
+        //$("#scheme_content_table").last().append(interest_elements);  
+        
+        
+        
+        $("#scheme_content_table tbody:last").append(interest_elements);        
+        
+        
+        form_enter_focus(jQuery('input[name=nval[]]'),(8+(sno*3)),'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        
+    }
+
+    
+}
+
+// using live() will bind the event to all future
+// elements as well as the existing ones
+$('.remove_row').live('click', function() {    
+    if(confirm("Are you sure you want to delete the item?")==true){ 
+
+        var i = $(this).parent().parent().parent().children().index($(this).parent().parent());
+
+        var months_start = jQuery('[name="mval[]"]');
+        var months_end = jQuery('[name="nval[]"]');
+        
+        if(months_start[i] != undefined)
+        {
+            months_start[i].value  = parseInt(months_end[i-2].value);   
+        }
+        
+        count--;
+        $(this).closest('tr').remove();     
+       
+       // serial numbr automation..
+       var tr_count =  jQuery('.bg').length;        
+       var cnt = 1;
+       $('.slab_td').each(function () {       
+            $(this).text(cnt++);        
+       }); 
+ 
+
+    }
+    return false;
+});
+
+/*
+*  interest part validation.. return the valid next month 
+*/
+function get_next_month()
+{   
+    
+        var months_start = jQuery('[name="mval[]"]');
+        //alert(months_start);
+        var months_end = jQuery('[name="nval[]"]');
+        //alert(months_end);
+        var index = months_start.length-1;
+       // alert(index);
+        var months_start1 = parseInt(months_start[index].value);
+        //alert(months_start1);
+        var total_months = parseInt(months_end[index].value);
+        //alert(total_months);
+
+        if(months_start1 == total_months)
+        {
+           show_interest_status("You must not enter same month to proceed !!",0);
+           months_end[index].focus();
+           return false;
+        }
+        if(total_months  && !isNaN(total_months))
+        {
+            return total_months;
+        }
+       
+        if(isNaN(total_months))
+        {
+            show_interest_status("You must enter valid end month to proceed !!",0);
+            months_end[index].focus();
+        }
+        else
+        {
+            show_interest_status("You have entered details for all months !!",0);
+        }
+
+        var interest = jQuery('[name="ival[]"]');
+ 
+       // TODO:  to check the interest value is valid and proceed further...
+        /*if(isNaN(parseInt(interest[i].value)))
+            {
+               show_status("Enter valid interest value",0); 
+               var ele =interest[i].id;
+               setTimeout("set_focus('"+ele+"')",100);
+               return false;
+            } */
+
+        return false;
+}
+
+// using live() will bind the event to all future
+// elements as well as the existing ones
+
+/*
+* check the month validity to schedule the interest within 12 months..
+*/
+$('.check_month_validity').live('change', function() {          
+    
+    var i = $(this).parent().parent().parent().children().index($(this).parent().parent())-1;   
+    
+    var months_start = jQuery('[name="mval[]"]');
+    var months_end = jQuery('[name="nval[]"]');    
+    
+    if(parseInt(months_end[i].value) < parseInt(months_start[i].value)  ||  isNaN(parseInt(months_end[i].value)) || parseInt(months_end[i].value) > 80)
+    {                   
+            //console.log(jQuery("#nval_0").attr('class'));
+            show_interest_status("Enter valid end month",0);
+            months_end[i].value = '';
+            var ele =months_end[i].id;
+            setTimeout("set_focus('"+ele+"')",100);             
+            return false;
+    }  
+    
+    if(months_start[i+1] != undefined )
+    {        
+         months_start[i+1].value  = parseInt(months_end[i].value);  
+    }  
+    
+    return false;
+});
+
+
+function set_focus(ele)
+{
+    $("#"+ele).focus(); 
+}
+
+
+/*jQuery(document).ready(function() {
+
+    setNumberKeyEvent();
+    
+    $("input").focus(function(event){ remove_red(this.id); });
+    
+    collapse_all_view();
+    setTotalAmount();
+});*/
+</script>

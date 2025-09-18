@@ -1,0 +1,138 @@
+ <div id="content_div">
+ <?php
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td >&nbsp;Prints &raquo;<a href="customer_slip.php">Customer Id Report</a></td >
+        <td >
+        <span class="btn-rht">
+            <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div> 
+        </span>
+        </td>
+     </tr>
+   </table>
+ </div>
+ <div id="contentarea">  
+  <br>
+    
+     <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">   
+         <tr>
+            <td colspan="100%"> 
+            <?php include ADMIN_LAYOUT_PATH . 'elements/customer_id_report_search.html'; ?>
+              </td>
+         </tr>
+     </table>
+<div>
+       <br>
+     <?php   
+     
+     if($search_args!="")   
+     {
+     ?>
+    <form>
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+     <tr>
+        <td class="title" colspan="9">Customer Id Report</td>
+     </tr>    
+     <tr class="headings">
+          <td width="6%">Code</td>
+          <td width="12%">Branch Name</td>      
+          <td width="14%">Customer Name</td>      
+          <td width="15%">Relation Details</td>    
+          <td width="12%">Location</td>      
+          <td width="12%">Mobile no</td>
+          <td width="12%">Ref Person Name</td>      
+          <td width="5%" align="center"><strong>Status</strong></td>
+          <td colspan="2"  align="Center"><strong>Action</strong></td>
+     </tr>
+        <?php
+            if(count($data) > 0) {
+                    for($i=0;$i<count($data);$i++){ 
+                  $change_status = ($data[$i]['status'] == 1) ? 0 : 1;
+                ?>
+    
+     <tr class="row0" id="<?php echo $data[$i]['id']; ?>" height=40>
+      <!--<td align="center"><?php echo $data[$i]['id']; ?></td>-->
+          <td align="left"><?php echo htmlentities(stripslashes($data[$i]['customer_id']), ENT_QUOTES); ?></td>  
+          <td align="left"><?php echo htmlentities(stripslashes($data[$i]['branch']), ENT_QUOTES); ?></td>     
+          <td align="left"><?php echo $data[$i]['name']; ?></td>     
+          <td align="left"><?php echo $data[$i]['relation']; ?></td>
+          <td align="left"><?php echo $data[$i]['location']; ?></td>
+          <td align="left"><?php echo htmlentities(stripslashes($data[$i]['contact_no']), ENT_QUOTES); ?></td>
+          <td align="left"><?php echo $data[$i]['reference_name']; ?></td>  
+		  <?php      
+if(can_change_status($_SESSION['session_usergroupname'])){      ?>
+      <td align="center">
+       <div id="status_div<?php echo $data[$i]['id']; ?>">
+      <!--  <a href="javascript:;" onclick="change_status('status_div<?php echo $data[$i]['id']; ?>', '<?php echo $module_name; ?>', <?php echo $data[$i]['id']; ?>, <?php echo $change_status; ?>);">
+        <img src="images/<?php echo $data[$i]['status_text']; ?>.gif" /></a>-->
+		<img src="images/<?php echo $data[$i]['status_text']; ?>.gif"  alt="Active" title="Active"/>
+        </div>
+      </td>
+<?php
+}else{
+?>
+      <td align="center">
+       <!--<a href="javascript:;" onclick="jalert(this.title)" title="<?php echo NO_STATUS_PRIVILEGE; ?>">
+        <img src="images/<?php echo $data[$i]['status_text']; ?>.gif" border=0 /></a>
+       </a>-->
+	   <img src="images/<?php echo $data[$i]['status_text']; ?>.gif" border=0 title="<?php echo NO_STATUS_PRIVILEGE; ?>" alt="<?php echo NO_STATUS_PRIVILEGE; ?>"/>
+      </td>
+
+<?php
+}
+?>
+
+      <?php
+
+      if(can_act($_SESSION['session_usertype'], $module_name))
+      {
+      ?>
+        <td align="right">
+        <a href="javascript:;" class=button onclick="prints_previews('customer_id_report','print_dialog','&id=<?php echo $data[$i]['id']; ?>','','Customer Id Report - Print Preview',900,450);" title="Print Preview">View</a>
+        </td>
+      </tr>  
+      <?php
+      }else{
+        ?>
+        <td align="right">
+        <a href="javascript:;" class="button-off" onclick="jalert(this.title)" title="<?php echo NO_ACTION_PRIVILEGE; ?>">View</a>
+        </td>
+        <?php
+      }
+            }
+
+        } else {
+        ?>
+        <tr class="bg-row">
+        <td colspan="10" align="center" height="50">No records found</td>
+        </tr>
+        <?php
+        }
+        ?>
+     <tr class="headings">
+     <td colspan=10>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+  </table>
+</form> 
+        <?php
+        }
+        ?>
+     <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>
+</div>
+<script>
+
+</script>   

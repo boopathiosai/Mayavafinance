@@ -1,0 +1,45 @@
+<?php
+
+
+?>
+<div id="contentarea">
+    <form id="auction_del_form" name="auction_del_form" method="post" style="margin: 0px;">
+    <input type="hidden" id="pa_id" name="pval[id]" value="<?php echo htmlentities(stripslashes($customer_data['pa_id']), ENT_QUOTES); ?>">
+    <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+        <td class="title">Are you sure to delete the following Auction Record. Please Confirm ? </td>
+        </tr>
+        <tr>
+        <td>
+        <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+        <td width="35%"><span class="add">Loan Id</span></td>
+        <td>
+        <input type="hidden" name="pval[loan_id]" id="loan_id" value="<?php echo htmlentities(stripslashes($customer_data['pledge_id']), ENT_QUOTES); ?>">
+        <?php echo htmlentities(stripslashes($customer_data['loan_id']), ENT_QUOTES); ?></td>
+        </tr>
+        <tr>
+        <td><span class="add">Auction Amount</span></td>
+        <td> <?php echo (trim($customer_data['auction_amount']) == "")? "-":number_format(stripslashes($customer_data['auction_amount']), 2,'.',''); ?></td> 
+        </tr>
+        <tr>
+        <td><span class="add">Auction Date</span></td>
+        <td> <?php echo (trim($customer_data['auction_date']) == "")? "-":$customer_data['auction_date']; ?></td> 
+        </tr>
+    </table>    
+</form>
+</div>
+
+<script>
+
+formAct = "delete"; 
+formSearch = "<?php echo $search_args; ?>";
+formParam = "type="+formAct;
+formId = "auction_del_form";
+formPage = "auction_management";
+
+confirmYesFunction = "form_action_save()";
+confirmNoFunction = "welcome='No'";
+</script>
+
+

@@ -1,0 +1,88 @@
+<div id="other-detail" class="box-hd-bg">
+<h3>Auction Form Entry</h3>
+<table class="frm-tbl" border="0" cellpadding="0" cellspacing="0" width="98%">
+<tr>
+  <td width=30%  id="serial_no">Serial No * </td>
+  <td>
+   <input name="pval[serial_no]" type="text" id="serial" class="textfield-m" onfocus="remove_red('serial_no');"   value ="<?php echo ($product_data['serial_no']!='' && $type=='edit') ? stripslashes($product_data['serial_no']) : ''; ?>">
+   </td>
+</tr>
+<tr>
+  <td width=30%  id="auction_charge">Total Auction Charge * </td>
+  <td>
+   <input name="pval[auction_charge]" type="text" readonly id="auction_cha" class="calc currency textfield-m" onfocus="remove_red('auction_charge');"   value ="<?php echo ($product_details['auction_charge']!='' && $type=='edit') ? unitDisplay(stripslashes($product_details['auction_charge']),false) : '0.00'; ?>">
+   </td>
+</tr>
+<tr>
+  <td id="auction_amount">Total Auction Amount * </td>
+  <td>
+   <input name="pval[auction_amount]" type="text" readonly id="auction_amt" class="currency textfield-m" onfocus="remove_red('auction_charge');"   value ="<?php echo ($product_details['auction_charge']!='' && $type=='edit') ? unitDisplay(stripslashes($product_details['auction_charge']),false) : '0.00'; ?>">
+   <input name="pval[amount_difference]" type="hidden" readonly id="amount_diff" class="currency textfield-m" onfocus="remove_red('amount_difference');"   value ="<?php echo ($product_details['amount_difference']!='' && $type=='edit') ? unitDisplay(stripslashes($product_details['amount_difference']),false) : '0.00'; ?>">
+   </td>
+</tr>
+<!--<tr>
+  <td id="amount_difference">Auction Amount Difference </td>
+  <td>
+   
+   </td>
+</tr>-->
+
+<tr>
+<td id="label_paid_on"><span class="add">Auction Date *</span></td>
+<td>
+
+<?php 
+/*p_arr($product_data);
+if($uval['pa_id']!=""){
+echo date("d-m-Y",strtotime($product_data['auction_date'])); 
+?>
+<input class="textfield-m" type="text" id="paid_on" name="pval[paid_on]" value="<?php echo ($product_data['auction_date']=='') ? date("d-m-Y") : date("d-m-Y",strtotime($product_data['auction_date'])); ?>">
+<?php
+}else{*/
+?>
+<input class="calendar textfield-m" type="text" id="paid_on" name="pval[paid_on]" value="<?php echo ($product_data['auction_date']=='') ? date("d-m-Y") : date("d-m-Y",strtotime($product_data['auction_date'])); ?>"  onfocus="remove_red('paid_on');">
+&nbsp; <a href="javascript:" id="calender_trigger" onclick="date_picker('paid_on', 'calender_trigger', '%d-%m-%Y' )" title="Click to select date"><img src="images/calendar.png" border=0></a>
+&nbsp; <a href="javascript:" onclick="remove_red('paid_on');get_interest_details('<?php echo $pledge_id; ?>','<?php echo $pay_id; ?>','<?php echo $module_name; ?>')" title="Click to reset loan details for the selected auction date"><img src="images/refresh.png" border=0></a>
+
+<!--<a class="flexi_btn" href="javascript:" onclick="remove_red('paid_on');get_interest_details('<?php echo $pledge_id; ?>','<?php echo $pay_id; ?>','<?php echo $module_name; ?>')">Reset</a>-->
+
+<?php
+//}
+?>
+
+</td>
+</tr>
+
+
+
+<tr>
+  <td id="loan_amount" width="40%"><span class="add">Status </span></td>
+  <td>
+
+  <span id="auction_status">
+  -
+  
+  </span>
+<input name="pval[profit_status]" type="hidden" readonly id="profit_sts" class="textfield-m" onfocus="remove_red('profit_status');"   value ="<?php echo ($product_details['profit_status']!='' && $type=='edit') ? unitDisplay(stripslashes($product_details['profit_status']),false) : '0'; ?>">
+  
+  </td>
+</tr>
+   <tr>
+    <td>
+        <span id="mand_note">* indicates mandatory fields </span>
+    </td>
+    <td>
+    <?php
+    
+    if($_SESSION['session_usertype'] <= 3){
+    ?>
+        <a href="javascript:" onclick="drop_div('cashflow_detail');" class="button">Cash Flow</a>
+
+    <?php
+    }
+    ?>
+    </td>
+    </tr>
+</table>
+ </div>
+ 

@@ -1,0 +1,420 @@
+  <?php
+  $module_name = "expenses";
+  include("config.php");
+  $app = $GLOBALS['app'];
+
+  // Get expense data for editing (if edit_id is present)
+  $expenses_data = [];
+  $edit_id = isset($_GET['edit_id']) ? (int)$_GET['edit_id'] : 0;
+  if ($edit_id > 0) {
+      $expenses_data = $app->getrow("SELECT * FROM ".EXPENSES." WHERE id = ".$edit_id);
+  }
+
+  // Branch list
+  $branches = $app->getrows("SELECT id, name FROM ".BRANCH." ORDER BY name ASC");
+
+  // Category list
+  $categories = $app->getrows("SELECT id, name FROM ".EXPENSES_CATEGORY." ORDER BY name ASC");
+
+  // Sub Branch list
+  $sub_branches = [];
+  if (!empty($expenses_data['branch_id'])) {
+      $sub_branches = $app->getrows("SELECT id, name FROM ".SUB_BRANCH." 
+                                    WHERE branch_id=".$expenses_data['branch_id']." 
+                                    ORDER BY name ASC");
+  }
+
+  // Sub Category list (if editing and category is selected)
+  $sub_categories = [];
+  if (!empty($expenses_data['category_id'])) {
+      $sub_categories = $app->getrows("SELECT id, name FROM ".EXPENSES_SUB_CATEGORY." WHERE category_id=".$expenses_data['category_id']." ORDER BY name ASC");
+  }
+  ?>
+
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Transactions  &raquo;<?php echo $page_title?></td>
+        <td>
+          <span class="btn-rht">
+            <a href="javascript:;" class="greybtn" onclick="return preSave();">SAVE</a>
+            <a href="javascript:;" class="greybtn" onclick="return resetForm();">RESET</a>
+            <a href="expenses.php" class="greybtn">BACK</a>
+          </span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="contentarea">
+    <form id="expensesForm" method="post" style="margin:0;">
+      <input type="hidden" id="edit_id" value="<?= $edit_id ?>">
+      <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr><td class="title">Transactions &raquo; Ledger & Expenses</td></tr>
+
+        <tr>
+          <td width="50%">
+            <table class="frm-tbl" width="100%">
+
+              <!-- Expenses Date -->
+              <tr>
+                <td>Expenses Date*</td>
+                <td>
+                  <input type="date" id="expenses_date" class="textfield-m" required
+                    value="<?= !empty($expenses_data['expenses_date']) ? $expenses_data['expenses_date'] : '' ?>">
+                </td>
+              </tr>
+              <!-- Branch -->
+              <tr>
+                <td>Branch* </td>
+                <td>
+                  <select id="branch_id" class="textfield-m" required>
+                      <option value="">-- Select Branch --</option>
+                      <?php foreach($branches as $br): ?>
+                        <option value="<?= $br['id'] ?>" <?= (!empty($expenses_data) && $expenses_data['branch_id']==$br['id'] ? "selected" : "") ?>>
+                          <?= htmlspecialchars($br['name']) ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                </td>
+              </tr>
+
+              <!-- Sub Branch -->
+              <tr>
+                <td>Sub Branch</td> 
+                <td>
+                  <select id="sub_branch_id" class="textfield-m">
+                    <option value="">-- Select Sub Branch --</option>
+                    <?php foreach($sub_branches as $sb): ?>
+                      <option value="<?= $sb['id'] ?>" <?= (!empty($expenses_data) && $expenses_data['sub_branch_id']==$sb['id'] ? "selected" : "") ?>>
+                        <?= htmlspecialchars($sb['name']) ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
+                </td>
+              </tr>
+
+              <!-- License Number (auto fill) -->
+              <!-- <tr>
+                <td>License No</td>
+                <td>
+                  <input type="text" id="license_no" class="textfield-m"
+                        value="<?= !empty($expenses_data['license_no']) ? htmlspecialchars($expenses_data['license_no']) : '' ?>"
+                        readonly>
+                </td>
+              </tr> -->
+
+              <!-- Category -->
+              <tr>
+                <td>Expenses Category* </td>
+                <td>
+                  <select id="category_id" class="textfield-m" required onchange="filterSubCategories(this.value)">
+                    <option value="">-- Select Category --</option>
+                    <?php foreach($categories as $cat): ?>
+                      <option value="<?= $cat['id'] ?>" <?= (!empty($expenses_data) && $expenses_data['category_id']==$cat['id'] ? "selected" : "") ?>>
+                        <?= htmlspecialchars($cat['name']) ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
+                </td>
+              </tr>
+
+              <!-- Sub Category -->
+              <tr>
+                <td>Expenses Sub Category* </td>
+                <td>
+                  <select id="sub_category_id" class="textfield-m" required>
+                    <option value="">-- Select Sub Category --</option>
+                    <?php foreach($sub_categories as $sc): ?>
+                      <option value="<?= $sc['id'] ?>" <?= (!empty($expenses_data) && $expenses_data['sub_category_id']==$sc['id'] ? "selected" : "") ?>>
+                        <?= htmlspecialchars($sc['name']) ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
+                </td>
+              </tr>
+
+              <!-- Opening Balance -->  
+              <tr>
+                <td>Opening Balance*</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <input type="number" step="0.01" id="opening_balance"
+                      class="textfield-m" required placeholder="Enter Opening Balance"
+                      value="<?= ($edit_id > 0 && !empty($expenses_data['opening_balance'])) ? $expenses_data['opening_balance'] : '' ?>"
+                      <?= ($edit_id > 0 ? 'readonly' : '') ?>>
+                    <span id="edit_opening" class="edit-box">✎</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Description -->
+              <tr>
+                <td>Description</td>
+                <td>
+                  <textarea id="description" class="textfield-m" placeholder="Enter description" required><?= !empty($expenses_data['description']) ? htmlspecialchars($expenses_data['description']) : '' ?></textarea>
+                </td>
+              </tr>
+
+              <!-- Amount -->
+              <tr>
+                <td>Amount*</td>
+                <td>
+                  <input type="number" step="0.01" min="0" id="amount"
+                    class="textfield-m" required placeholder="Enter Amount"
+                    value="<?= !empty($expenses_data['amount']) ? $expenses_data['amount'] : '' ?>">
+                </td>
+              </tr>
+
+              <!-- Cash Type -->
+              <tr>
+                <td>Cash Type*</td>
+                <td>
+                  <select id="cash_type" class="textfield-m" required>
+                    <option value="">-- Select Cash Type --</option>
+                    <option value="Cash In" <?= (!empty($expenses_data) && $expenses_data['cash_type']=='Cash In' ? "selected" : "") ?>>Cash In</option>
+                    <option value="Cash Out" <?= (!empty($expenses_data) && $expenses_data['cash_type']=='Cash Out' ? "selected" : "") ?>>Cash Out</option>
+                  </select>
+                </td>
+              </tr>
+
+              
+            </table>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+
+  <style>
+    .edit-box {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:20px;
+      height:20px;
+      border:1px solid #fcf9f9;
+      border-radius:3px;
+      font-size:12px;
+      cursor:pointer;
+      background:#e40b0b;
+    }
+    .edit-box:hover {
+      background:#16fd76;
+    }
+  </style>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+
+// ---------- Auto Fetch Last Opening Balance ----------
+// Sub branch select pannumbodhu thaan check pannum
+$('#sub_branch_id').on('change', function(){
+  let branchId = $('#branch_id').val();
+  let subBranchId = $('#sub_branch_id').val();
+
+  if(branchId && subBranchId){
+    $.post('expenses.php', {type:'getLastOpeningBalance', branch_id:branchId, sub_branch_id:subBranchId}, function(res){
+      // Only prefill if edit form la illa (new entry la)
+      if($('#edit_id').val() == "0"){
+        if(res && res != "0"){ 
+          $('#opening_balance').val(res).prop('readonly', true);
+        } else {
+          $('#opening_balance').val('').prop('readonly', false);
+        }
+      }
+    });
+  } else {
+    $('#opening_balance').val('').prop('readonly', false);
+  }
+});
+  // ---------- Enable Edit Opening Balance ----------
+  $('#edit_opening').on('click', function(){
+    $('#opening_balance').prop('readonly', false).focus();
+  });
+
+    // ---------- Branch → Sub Branch ----------
+  $('#branch_id').on('change', function(){
+    let branchId = $(this).val();
+    $.post('expenses.php', {type:'getSubBranches', branch_id:branchId}, function(res){
+      $('#sub_branch_id').html(res);
+      $('#license_no').val(''); 
+    });
+  });
+
+  $('#sub_branch_id').on('change', function(){
+    let subBranchId = $(this).val();
+    if(subBranchId){
+      $.post('expenses.php', {type:'getLicenseNo', sub_branch_id:subBranchId}, function(res){
+        $('#license_no').val(res);
+      });
+    } else {
+      $('#license_no').val('');
+    }
+  });
+
+  // ---------- Category → Sub Category ----------
+  function filterSubCategories(categoryId){
+    $.post('expenses.php', {type:'getSubCategories', category_id:categoryId}, function(res){
+      $('#sub_category_id').html(res);
+    });
+  }
+
+  // ---------- Reset Form ----------
+  function resetForm(){
+    $('#expensesForm')[0].reset();
+    $('#sub_category_id').html('<option value="">-- Select Sub Category --</option>');
+    return false;
+  }
+
+  // ---------- Save ----------
+  function preSave(){
+    const edit_id = $("#edit_id").val();
+    const data = {
+      branch_id: $("#branch_id").val(),
+      sub_branch_id: $("#sub_branch_id").val(),
+      license_no: $("#license_no").val(), 
+      category_id: $("#category_id").val(),
+      sub_category_id: $("#sub_category_id").val(),
+      opening_balance: $("#opening_balance").val(),
+      description: $("#description").val(),
+      amount: $("#amount").val(),
+      cash_type: $("#cash_type").val(),
+      expenses_date: $("#expenses_date").val() 
+    };
+
+    // Validation
+    if(!data.branch_id){ alert("Branch is required"); return false; }
+    if(!data.category_id){ alert("Category is required"); return false; }
+    if(!data.sub_category_id){ alert("Sub Category is required"); return false; }
+    if(!data.opening_balance || data.opening_balance <= 0){ alert("Enter valid Opening Balance"); return false; }
+    if(!data.amount || data.amount <= 0){ alert("Enter valid Amount"); return false; }
+    if(!data.cash_type){ alert("Cash Type is required"); return false; }
+    if(!data.expenses_date){ alert("Expenses Date is required"); return false; }
+    if(!data.description){ alert("Description is required"); return false; }
+
+
+    // Decide whether to add or update
+    const requestData = edit_id > 0 ? 
+      { type: "update", id: edit_id, pval: data } : 
+      { type: "add", pval: data };
+
+    $.ajax({
+      url: "expenses.php",
+      type: "POST",
+      dataType: "json",
+      data: requestData,
+      success: function(res) {
+        console.log(res);
+        if (res.status || res.content.includes("saved") || res.content.includes("updated")) {
+          alert(res.content);
+          window.location.href = "expenses.php";
+        } else {
+          alert("Error: " + res.content);
+        }
+      },
+      error: function(xhr, status, error) {
+        console.log("AJAX Error:", error);
+        console.log("Response:", xhr.responseText);
+        alert("An error occurred. Please try again.");
+      }
+    });
+    
+    return false; 
+  }
+
+  // ---------- Update Function (for external calls) ----------
+  function updateExpense(id){
+    const data = {
+      branch_id: $("#branch_id").val(),
+      sub_branch_id: $("#sub_branch_id").val(),
+      category_id: $("#category_id").val(),
+      sub_category_id: $("#sub_category_id").val(),
+      opening_balance: $("#opening_balance").val(),
+      description: $("#description").val(),
+      amount: $("#amount").val(),
+      cash_type: $("#cash_type").val(),
+      expenses_date: $("#expenses_date").val() 
+    };
+
+    $.ajax({
+      url: "expenses.php",
+      type: "POST",
+      dataType: "json",
+      data: { type: "update", id: id, pval: data },
+      success: function(res) {
+        if (res.status) {
+          alert(res.content);
+          window.location.href = "expenses.php?type=refresh";
+        } else {
+          alert("Error: " + res.content);
+        }
+      }
+    });
+  }
+
+  // ---------- Delete Function (with proper table refresh) ----------
+  function deleteExpense(id){
+    if(!confirm("Are you sure you want to delete this expense?")) return false;
+    
+    $.ajax({
+      url: "expenses.php",
+      type: "POST",
+      dataType: "json",
+      data: { type: "delete", id: id },
+      success: function(res) {
+        console.log("Delete response:", res);
+        if (res.status || res.success) {
+          alert(res.content);
+          // Force page reload to refresh the table
+          window.location.reload();
+        } else {
+          alert("Error: " + res.content);
+        }
+      },
+      error: function(xhr, status, error) {
+        console.log("Delete AJAX Error:", error);
+        alert("Error deleting record. Please try again.");
+      }
+    });
+    
+    return false;
+  }
+
+  // ---------- Bulk Delete Function ----------
+  function deleteSelected(){
+    var selected = [];
+    $('input[name="selected_ids[]"]:checked').each(function(){
+      selected.push($(this).val());
+    });
+    
+    if(selected.length === 0){
+      alert("Please select items to delete");
+      return false;
+    }
+    
+    if(!confirm("Are you sure you want to delete " + selected.length + " selected item(s)?")) return false;
+    
+    $.ajax({
+      url: "expenses.php",
+      type: "POST",
+      dataType: "json",
+      data: { type: "delete", list: selected },
+      success: function(res) {
+        if (res.status || res.success) {
+          alert(res.content);
+          window.location.reload();
+        } else {
+          alert("Error: " + res.content);
+        }
+      },
+      error: function(xhr, status, error) {
+        console.log("Bulk Delete AJAX Error:", error);
+        alert("Error deleting records. Please try again.");
+      }
+    });
+    
+    return false;
+  }
+  </script>

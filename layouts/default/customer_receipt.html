@@ -1,0 +1,134 @@
+ <div id="content_div">
+ <?php
+  unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+    echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+    unset($_SESSION['success_msg']);
+ } 
+//print_r($menu);
+//print_r(can_edit($_SESSION[$app->session_usertype1], $module_name));
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td >&nbsp;Prints &raquo;<a href="customer_receipt.php"><?php echo $page_title?></a></td >
+        <td >
+        <span class="btn-rht">
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div> 
+        </span>
+        </td>
+      </tr>
+      </table>
+ </div>
+ <div id="contentarea">  
+ <br>
+    
+     <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">   <tr>
+        <td colspan="100%"> 
+        <?php include ADMIN_LAYOUT_PATH . 'elements/customer_search.html'; ?>
+          </td>
+        </tr>  
+       </table>
+<div>
+       <br>
+     <?php   
+     
+     if($search_args!="")   
+     {
+     
+     ?>
+    <form>
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">  
+     <tr>
+        <td class="title" colspan="11">Customer Receipt</td>
+     </tr>    
+     <tr class="headings">
+      <!--<td align="center" width="4%">PID</td>-->
+      <td width="6%"><strong>Loan ID</strong></td>
+      <?php
+      if($_SESSION['session_usergroupname'] == 'Super Admin'){
+      ?>
+      <td width="10%" align="left"><strong>Branch</strong></td>
+      <?php } ?>
+      <td><strong>Customer Name</strong></td>
+      <td width="15%" align="left"><strong>Scheme</strong></td>
+      <td width="6%" align="right"><strong>Gross</strong></td>
+      <td width="6%" align="right"><strong>Net</strong></td>
+      <td width="6%" align="center"><strong>Item</strong></td>
+      <td width="10%" align="right"><strong>Loan Amount(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="10%" align="center"><strong>Loan Date</strong></td>
+      <td width="6%" align="center"><strong>Type</strong></td>
+      <td width="8%" align="center"><strong>Action</strong></td>
+     </tr>
+        <?php
+                if(count($data) > 0) {
+                    for($i=0;$i<count($data);$i++){ 
+                  $change_status = ($data[$i]['status'] == 1) ? 0 : 1;
+                ?>
+    
+     <tr class="row0" id="<?php echo $data[$i]['id']; ?>" height="40">
+      <!--<td align="center"><?php echo $data[$i]['id']; ?></td>-->
+      <td align="left"><?php echo htmlentities(stripslashes($data[$i]['loan_id']), ENT_QUOTES); ?> </td>
+      <?php      
+        if($_SESSION['session_usergroupname'] == 'Super Admin'){      ?>
+      <td align="left"><?php echo htmlentities(stripslashes($data[$i]['branch_name']), ENT_QUOTES); ?></td>
+      <?php } ?>
+      <td align="left"><?php echo $data[$i]['customer_name']; ?> </td>
+      <td align="left"><?php echo $data[$i]['scheme_name']; ?> </td>
+      <td align="right"><?php echo unitDisplay(htmlentities(stripslashes($data[$i]['gross']), ENT_QUOTES),false); ?></td>
+      <td align="right"><?php echo unitDisplay(htmlentities(stripslashes($data[$i]['net']), ENT_QUOTES),false); ?></td>
+      <td align="center"><?php echo htmlentities(stripslashes($data[$i]['item']), ENT_QUOTES); ?></td>
+      <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['loan_amount']),false); ?></td> 
+      <td align="center"><?php echo htmlentities(stripslashes($data[$i]['loan_date']), ENT_QUOTES); ?></td>
+      <td align="center"><?php echo htmlentities(stripslashes($data[$i]['interest_type']), ENT_QUOTES); ?></td>
+      <?php
+      if(can_act($_SESSION['session_usertype'], $module_name))
+      {
+      ?>
+      <td valign="middle" align=center><a href="javascript:;" class=button onclick="prints_previews('customer_receipt','print_dialog','&id=<?php echo $data[$i]['id']; ?>','','Customer Receipt - Print Preview',800,500);" title="View">View</a></td>
+      <?php
+      }else{
+      ?>
+      
+        <td align="right">
+            <a href="javascript:;" class="button-off" onclick="jalert(this.title)" title="<?php echo NO_ACTION_PRIVILEGE; ?>">View</a>
+        </td>
+      
+      <?php
+      }
+     ?>
+      </tr>  
+       
+        <?php
+            }
+
+        } else {
+        ?>
+        <tr class="bg-row">
+        <td colspan="11" align="center" height="50">No records found</td>
+        </tr>
+        <?php
+        }
+        ?>
+     <tr class="headings">
+     <td colspan=11>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+    </form>
+   </table>
+        <?php
+        }
+        ?>
+     <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>
+</div>
+<iframe id="print_frame" name="print_frame" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>
+  <script>
+
+
+  </script>

@@ -1,0 +1,142 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    margin: 0px;
+    padding: 0px;
+    background-color: #FFFFFF;
+}
+
+a:link, a:visited{
+
+    color:#6C2865;
+    text-decoration: none;
+
+}
+
+a:hover{
+
+    color:#A33D98;
+    text-decoration: none;
+
+}
+
+.frm-tbl {
+
+    border:2px solid #000000;
+
+}
+
+.frm-tbl td {
+    padding: 5px;
+    background-color: #FFFFFF;  
+    color: #000000;
+    font-size: 12px;
+    font-weight: bold;
+    padding-bottom: 8px;
+    padding-left: 10px;
+    padding-right: 0;
+    padding-top: 8px;
+    vertical-align: top;
+
+}
+.frm-tbl th {
+    padding: 5px;
+    
+    color: #000000;
+    font-size: 12px;
+    font-weight: bold;
+    padding-bottom: 8px;
+    padding-left: 10px;
+    padding-right: 0;
+    padding-top: 8px;
+    vertical-align: top;
+}
+
+.frm-tbl input {
+    height: 21px;
+    width: 200px;
+    border: 1px solid #C9C9C9;
+    background-image: url(../images/textfiled-bg.jpg);
+}
+.frm-tbl input.med {
+    height: 21px;
+    width: 100px;
+    border: 1px solid #C9C9C9;
+    background-image: url(../images/textfiled-bg.jpg);
+}
+
+.frm-tbl input.radio, .frm-tbl input.checkbox {
+    height: 21px;
+    width: 20px;
+    border: 1px solid #C9C9C9;
+    background-image: url(../images/textfiled-bg.jpg);
+}
+
+table.frm-tbl select    {
+    width: 200px;
+}
+
+.frm-tbl input.nostyle {
+    background-image: url(none);
+    border-style: none;
+    border-width: 0px;
+    width: 180px;
+}
+
+table.frm-cntr {
+    margin-top: 0px;
+}
+
+table.frm-cntr td.title             {
+    line-height: 38px;
+    background: url(../images/frm-title-bg.jpg) repeat-x left top;
+    border-top: 1px solid #E0DFE3;
+    font-size: 12px;
+    padding-left: 5px;
+    color: #A33D98;
+    font-size: 18px;
+    font-weight: bold;
+}
+textarea {
+    font: 12px Arial, Helvetica, sans-serif;
+}
+.frm-tbl textarea {
+    border: 1px solid #CCCCCC;
+}
+.frm-cntr .frm-tbl input.radio {
+    width: auto;
+    background: url(none);
+    border-style: none;
+    border-width: 0px;
+    height: auto;
+}
+.frm-tbl textarea {
+    width: 200px;
+}
+.frm-cntr        .frm-tbl        .subtbl     tr.subtitle td {
+    background: #DFDFDF;
+
+}
+.frm-cntr .frm-tbl .subtbl td {
+    background: #F3F3F3;
+}
+
+.frm-cntr  .frm-tbl  td.name-disp {
+    color: #5A2154;
+    font-size: 14px;
+}
+.frm-tbl .date-picker {
+    display: inline;
+    margin-top: 3px;
+    float: left;
+}
+.frm-cntr .frm-tbl td.disp-light {
+    color: #666666;
+}
+.bg td {
+    background: #E5E5E5;
+}
+.bg1 td{
+    background: #F6F5F2;
+}
+

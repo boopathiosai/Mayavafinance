@@ -1,0 +1,92 @@
+<div id="search_table" <?php echo $diaply_style; ?>>
+<form id="search_form" name="search_form">
+ <table class="search-tbl" width="100%" border="0" cellpadding="0" cellspacing="0"> 
+        <tr class="row0">
+            <td align="left" class="title" colspan="3">Customer Search</td>        
+            <td align="right" class="title">
+			<a href="<?php echo  $module_name; ?>.php" class="button">RESET</a>
+            <a id="search_btn" href="javascript:;" onclick="search_items('<?php echo  $module_name; ?>');" class="button">SEARCH</a>
+            </td>
+        </tr>
+        
+ <?php
+ if($module_name=="auction_management"){
+ 
+ ?>
+ 
+         <tr class="row0">
+             <td align="left" width="10%" id="src_sdate">From Date :</td>
+             <td align="left" >
+             <input name="sdate" type="text" id="sdate"   class="calendar text-field" value="<?php echo  $search_sdate; ?>" />
+             &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('sdate', 'calender_trigger', '%d-%m-%Y' )" onclick="jQuery('#sdate').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+             </td>
+ 
+             <td align="left" width="18%" id="src_edate">To Date :</td>
+             <td align="left">
+             <input name="edate" type="text" id="edate"  class="calendar text-field" value="<?php echo $search_edate;?>" />
+             &nbsp; <a href="javascript:" id="calender_trigger1" _onclick="date_picker('edate', 'calender_trigger1', '%d-%m-%Y' )" onclick="jQuery('#edate').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+             </td>
+             
+ 
+        </tr>
+ 
+ <?php
+ 
+ }
+ ?>
+        <tr class="row0">
+            <td align="left" width="22%">Loan ID</td>
+            <td align="left"> <input name="loan_id" type="text" id="loan_id"  class="text-field"value="<?php echo $search_loan_id; ?>"/></td>
+            <td align="left" width="22%" >Search by Customer Id :</td>
+            <td align="left" ><input name="cus_id" type="text" id="cus_id"   class="text-field" value="<?php echo $search_cus_id; ?>"/></td>
+       </tr>
+            <td align="left" width="22%">Search by Customer Name :</td>
+            <td align="left"><input name="key" type="text" id="key"  class="text-field"value="<?php echo $search_key; ?>"/></td>   
+            <td align="left" width="22%">Search by Customer Relation name :</td>
+            <td align="left"><input name="fhw" type="text" id="fhw"  class="text-field"value="<?php echo $search_fhw;?>"/></td>
+     <tr class="row0">
+            <td align="left" width="22%" >Search by Customer Location :</td>
+            <td align="left"><input name="key_location" type="text" id="key_location"  class="text-field"value="<?php echo $search_key_location; ?>"/></td>
+           <?php
+           if($_SESSION["session_usertype"]==1 || $_SESSION["session_usertype"] == 2){
+           ?>
+            <td align="left" width="22%">Search by Customer's Branch  :</td>
+            <td align="left">
+            <?php
+            
+                //Get Branch name from branch table
+                $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);             
+                ?>
+                <select id="branch_id" name="branch_id">
+                <option value="">-- Select Branch --</option>
+                <?php             
+                echo build_select_options($branch_data,$search_branch_id); 
+                ?>
+                </select>
+            </td>
+      </tr>
+       <?php
+       }else{
+       ?>
+      
+        <td align="left" width="22%" >Search by Customer's Branch :</td>
+        <td align="left">
+        - No Privilege - 
+        </td>
+   </tr>
+      <?php
+       }
+       ?>
+    </table>
+</form>
+</div>
+ 
+<script>
+jQuery(document).ready(function(){ 
+$('#loan_id').focus();
+search_enter_action('<?php echo $module_name; ?>');
+
+
+}
+);
+</script>

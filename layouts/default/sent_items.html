@@ -1,0 +1,98 @@
+ <div id="content_div">
+ <?php
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+//print_r($menu);
+//print_r(can_edit($_SESSION[$app->session_usertype1], $module_name));
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td ><a href="javascript:;">Messages</a> &raquo;<a href="javascript:;">Sent Items</a></td >
+        <td >
+        <span class="btn-rht">
+ <a href="javascript:;" onclick = "delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $data[$i][id]; ?>');" class="greybtn">Delete</a>   
+
+        <!--a href="javascript:;" onclick =  "msgdelete_all('<?php echo $module_name; ?>','<?php echo $page_no; ?>');" class="greybtn">Delete</a-->
+
+        <a href="inbox.php" class="greybtn">Inbox</a>
+        <a href="message.php" class="greybtn">Compose</a> 
+        </span>
+        </td>
+      </tr>
+      </table>
+ </div>
+ <div id="contentarea">  
+ <br>
+    <form>
+     <table class="list-tbl" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+     <tr>
+        <td class="title" colspan="9">Sent Items</td>
+     </tr>    
+     <tr class="headings">
+        <?php
+        if(count($data) > 0)
+        {?>
+          <td align="center" width="4%"><input type="checkbox" name="selall" id="selall" onclick="chk_all(),highlight_all();"/></td>
+        <?php
+        }else{?>
+        
+        <td align="center" width="4%"></td>
+        <?php
+        }?>
+      <td align="left" width="20%"><strong>Date</strong></td>
+      <td align="left" width="20%"><strong>To</strong></td>
+      <td align="left" width="60%" colspan="2"><strong>Subject</strong></td>
+      <!--<td align="left" width="20%"><strong>From</strong></td>-->
+     </tr>
+    <?php 
+        if(count($data) > 0) {
+        for($i=0;$i<count($data);$i++){  ?>
+        
+    
+     <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+     <td align="center" width="5%"><input type="checkbox" name="list[]" id="list[]" onclick="chkselcount('list[]'),highlight(this);" value='<?php echo $data[$i]['id']; ?>'/></td>
+     <td align="left" width="10%"><?php echo htmlentities(stripslashes(date("d M Y,h:i A",strtotime($data[$i]['sent_date']))), ENT_QUOTES); ?></td>
+     <td align="left" width="30%"><?php echo str_replace(",",", ",htmlentities(stripslashes($data[$i]['Username']), ENT_QUOTES)); ?></td>
+     <td align="left" width="30%" colspan="2"><?php echo htmlentities(stripslashes($data[$i]['subject']), ENT_QUOTES); ?></td> 
+     <!--<td align="left" width="30%"><?php echo htmlentities(stripslashes($data[$i]['from']), ENT_QUOTES); ?></td>-->
+     
+     </tr> 
+                   
+           <?php          
+          }// end of for loop
+                } else {
+                ?>
+                <tr class="bg-row">
+                <td colspan="10" align="center" height="50">No records found</td>
+                </tr>
+                <?php
+                }
+                ?>  
+ <tr class="headings">
+     <td colspan=100%>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+
+    </table>
+      <!--div class="pagination">       
+        <div class="pagi-rht">
+            <div class="no-list">
+            <?php
+            
+            if ($count > ROWS_PER_PAGE) { 
+             include ADMIN_LAYOUT_PATH . 'common/paging.html'; 
+             
+            }
+
+            ?>
+            </div>
+       </div-->
+     </div> 
+    </form>
+     <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>

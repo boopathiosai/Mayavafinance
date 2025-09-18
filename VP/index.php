@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Page-Exit" content="Alpha(opacity=100)"/>
+
+<title>Mayavafinance</title>
+<script src="../js/jquery-1.4.2.min.js" type="text/javascript"></script>
+<link href="../css/login.css" rel="stylesheet" type="text/css" />
+<link href="../css/reset.css" rel="stylesheet" type="text/css" />
+</head>
+<body onload="document.getElementById('username').focus();">
+<form name="login-form" method="post" action="" onsubmit="return admin_login();">
+<div id="bg-tree">
+    <div id="container">        
+        <img src="images/conteiner-logo.png" />
+        <div class="content">
+            <div id="msg"></div>     
+            <div id="login">
+                <span>Email Id:</span>
+                <input name="pval[username]" value="" type="text" id="username" size="25" class="inputtext" autocomplete="off" _title="Enter Your Username!" onblur="deselect_element(this,this.title)" onfocus="select_element(this,this.title)" maxlength="100"/>
+                <span>Password:</span>
+                <input name="pval[password]" value="" type="password" id="password" class="inputtext" size="25" _title="Enter Your Password!" onblur="deselect_element(this,this.title)" onfocus="select_element(this,this.title)"  maxlength="15"/>
+                <a href="forgot_password.php" class="forgot_password">Forgot Password?</a>
+                
+                <!--<a href="javascript:;" onclick="return admin_login();"><img src="images/login-button.jpg" /></a>-->
+                <div id="button">
+                <input type="image" src="images/login-button.jpg" alt="Login" style="height:30px; width:69px;  margin-left:250px;" onclick="return admin_login();"/>
+				</div>
+
+            </div>
+        </div>
+        <div id="footer">
+            <span>Copyright © 2011 <a href="https://webmail.pair.com" target="_blank">Mayava Finance</a>. Design: <a href="http://www.angleritech.com/" target="_blank">ANGLER Technologies</a></span>        </div>
+        </div>
+    </div>
+</body>
+</form>
+</html>
+<script type="text/javascript">
+$(document).ready(function(){   
+      // focus the first field..
+    $("#username").focus(); 
+	});
+
+/*    $("input,select,textarea").not( $(":button,:hidden") ).keypress(function (evt) {
+        if (evt.keyCode == 13) {
+            iname = $(this).val();
+            if (iname !== 'Submit'){    
+                var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:password,input:checkbox,textarea,select');            
+                var index = fields.index( this );
+                if ( index > -1 && ( index + 1 ) < fields.length) {
+                    fields.eq( index + 1 ).focus();
+                }
+                else
+                {
+                  admin_login();//department_process('content_div','','','');
+                }
+                return false;
+            }
+        }
+    });
+});
+
+
+ var isNetscape = false;
+   if (navigator.appName == "Netscape"){      
+      isNetscape = true;
+      document.captureEvents(Event.KEYPRESS);      
+   }
+   document.onkeypress=CheckKeyPress;
+
+   function CheckKeyPress(evt){
+      var myKeycode = isNetscape ? evt.which : window.event.keyCode;
+
+      if(myKeycode==13) admin_login(); 
+   } 
+  */
+
+function select_element(obj,lbl){
+    if(obj.value == lbl){
+        obj.value = ''; 
+    }
+}
+
+function deselect_element(obj,lbl){
+    if(obj.value == ''){
+        obj.value = lbl; 
+    }
+}
+  
+function admin_reset()
+{
+    $('#username').val("");
+    $('#password').val("");
+    $('#username').focus();
+}
+
+function admin_login()
+{
+    var username = $("#username").val();
+    var password = $("#password").val();
+    
+    $.ajax({
+           type: "POST",
+           url: "index.php?type=login",
+           data:{
+                "pval[username]" :username,
+                "pval[password]" :password
+           },
+           success: function(msg){
+
+             result_data = msg.replace(/^[\s]+/g," ");
+             if(result_data != '') {
+                 $('#username').focus();
+                 $("#msg").hide();
+                 $("#msg").html(result_data);
+                 $("#msg").fadeIn('slow');
+                 setTimeout(function () {
+                     $("#msg").fadeOut(1000, function() {
+
+                         $("#mg").html("");
+                         $("#mg").fadeIn('slow');
+                        });
+                 }, 2000);
+             }
+             else
+             {
+                document.location="dashboard.php";
+
+             }
+
+            }
+
+         });
+
+    return false;
+}
+</script>
+</body>
+</html>

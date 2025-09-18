@@ -1,0 +1,50 @@
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">  
+  <tr class="headings">
+      <td rowspan=2 width="6%">Loan Id</td>
+      <td rowspan=2  width="10%">Loan Date</td>    
+      <td rowspan=2  width="15%">Loan Amount(Rs)</td>      
+      <td rowspan=2  width="25%">Product</td>    
+      <td rowspan=2  width="5%">Quantity</td>      
+      <td colspan=2  width="10%" align=center>Weight</td>
+      <td rowspan=2  width="6%" align="center">Status</td>
+      <td rowspan=2  width="8%">Return Date</td>
+      <!--<td width="10%">Scheme</td>-->
+  </tr>
+  <tr class="subheadings">
+      <td align=right>Gms</td>
+      <td align=right>MGms</td>
+  </tr>
+    <?php
+      if(count($data) > 0) {
+        for($i=0;$i<count($data);$i++){ 
+
+            $weight_in = floatval($data[$i]['total_net_weight']);
+            
+            $weight_in_gs =  intval($weight_in);
+            $weight_in_mgs =  intval(floatval($weight_in - intval($weight_in)) * 1000);
+
+    ?>
+ <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+  <td align="left"><?php echo $data[$i]['loan_id'];?></td>     
+  <td align="left"><?php echo htmlentities(stripslashes($data[$i]['loan_date']), ENT_QUOTES); ?></td>     
+  <td align="left"><?php echo convertToCurrency(stripslashes($data[$i]['loan_amount']),false); ?></td>
+  <td align="left"><?php echo stripslashes(nl2br($data[$i]['product_details'])); ?></td>
+  <td align="left"><?php echo htmlentities(stripslashes($data[$i]['item_count']), ENT_QUOTES); ?></td> 
+  <td align="right"><?php echo htmlentities(stripslashes($weight_in_gs), ENT_QUOTES); ?></td> 
+  <td align="right"><?php echo htmlentities(stripslashes($weight_in_mgs), ENT_QUOTES); ?></td> 
+  <td align="center"><?php echo htmlentities(stripslashes($data[$i]['status_text']), ENT_QUOTES); ?></td> 
+  <td align="left"><?php echo htmlentities(stripslashes($data[$i]['return_date']), ENT_QUOTES); ?></td> 
+  <!--<td align="left"><?php echo htmlentities(stripslashes($data[$i]['scheme_name']), ENT_QUOTES);?></td> -->
+ </tr> 
+    <?php
+        }
+    } 
+    else {
+    ?>
+    <tr class="bg-row">
+    <td colspan="13" align="center" height="50">No records found</td>
+    </tr>
+    <?php
+    }
+    ?>
+   </table>

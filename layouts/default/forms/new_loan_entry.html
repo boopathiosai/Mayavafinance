@@ -1,0 +1,107 @@
+<div id="other-detail" class="box-hd-bg">
+<h3>New Loan Entry</h3>
+<table class="frm-tbl" border="0" cellpadding="0" cellspacing="0" width="98%">
+
+
+  <?php
+    switch($module_name){
+        case "renewal":
+?>
+  <tr><td align=right>
+  <input type="checkbox" class="checkbox" name="add_to_renew" id="add_to_renew" value="1" onclick="add_to_renewal(this.checked)"/> 
+  </td><td>
+   Add Interest Payment with Renewal Loan Amount
+  </td></tr>
+<?php
+        break;
+        case "partial_amount_payment":
+?>
+
+<tr>
+  <td id="partial_amount">Partial Amount * </td>
+  <td>
+   <input name="pval[partial_amount]" type="text" id="partial_amt" class="currency calc textfield-m" onfocus="remove_red('partial_amount');"   value ="<?php echo ($product_details['partial_amount']!='' && $type=='edit') ? unitDisplay(stripslashes($product_details['partial_amount']),false) : unitDisplay(($product_data['loan_amount']/12),false); ?>"  onchange="setTotalAmount()" >
+   </td>
+</tr>
+
+<?php
+        break;
+        case "pay_excess_amount":
+?>
+        <tr><td colspan=2>
+        <input type="checkbox" name="reduce_from_excess" class="checkbox" id="reduce_from_excess" value="1" onclick="reduce_from_excess_amount(this.checked)" /> 
+        Reduce Interest Payment from Excess Pay Amount
+        </td></tr>
+        <tr>
+        <td id="excess_amount">Excess Amount</td>
+        <td>
+        <input name="pval[excess_amount]" type="text" id="excess_amt" class="currency textfield-m" onfocus="remove_red('excess_amount');"  value ="<?php echo unitDisplay($pay_interest_details['excess_pay_amount'],false); ?>"  onchange="setTotalAmount()" >
+        <input name="max_excess_amount" type="hidden" id="max_excess_amount" class="currency textfield-m"  value ="<?php echo unitDisplay($pay_interest_details['excess_pay_amount'],false); ?>">
+        </td>
+        </tr>
+
+<?php
+
+        break;
+    }
+  ?>
+    <tr>
+      <td id="loan_amount" width="40%"><span class="add">New Loan Amount <span class="star">*</span></span></td>
+      <td>
+      
+      <span id="new_loan_amount"><?php echo convertToCurrency($product_data['loan_amount']); ?></span>
+      
+      <input name="pp_pval[loan_amount]" maxlength="40" type="hidden" class="textfield-m" id="loan_amt" onfocus="remove_red('loan_amount');" value ="<?php if($product_data['loan_amount'] != ''){ echo number_format(stripslashes($product_data['loan_amount']), 2,'.','');} ?>" onkeypress="return decimalformat(event,this,10,2);">
+      </td>
+    </tr>
+
+  
+  <tr>
+    <td id="loan_date"><span class="add">New Loan Date </span></td>
+    <td><?php echo date("d-M-Y"); ?></td>
+  </tr>
+    <tr>
+      <td>New Loan Id</td>
+      <td><?php
+             $query = "SELECT config_value FROM ".SETTINGS." WHERE config_name='loan_count'";
+             $loan_data = $app->getrow($query);
+             $loan_count = $loan_data['config_value'];    
+             $loan_count = $loan_count+1;
+             $loan_id = "MFL".$loan_count;
+             echo $loan_id;
+         ?> <input name="pval[new_loan_id]"  type="hidden"  value = "<?php echo $loan_id;?>">
+       </td>
+  </tr>
+
+   <tr>
+    <td  id="new_scheme">New Scheme Name *</td>
+    <td width="170px">
+    <span id="sch_type">
+                <?php
+                //echo $product_data['pledge_date'];
+                $scheme_data = get_dropdown_list_with_field('id', 'name', SCHEME);
+                ?>
+                <select name="pval[new_scheme]" id="new_scheme_id" onchange="setTotalAmount()" onfocus="remove_red('new_scheme')">
+                <option value="">-- Select Scheme --</option>
+                   <?php              
+                   echo build_select_options($scheme_data,$product_data['new_scheme']); 
+                   ?>
+                </select>   
+                <br />
+                
+
+    </span>
+    <div ></div>
+    </td>
+  </tr>  
+  <tr><td colspan=2 id="scheme_detail"></td></tr>
+   <tr>
+    <td><span id="mand_note">* indicates mandatory fields </span></td>
+    <td></td>
+    </td>
+    
+  </tr>
+
+
+</table>
+ </div>

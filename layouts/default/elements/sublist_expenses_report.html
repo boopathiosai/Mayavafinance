@@ -1,0 +1,53 @@
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+
+   <tr class="headings">
+      <td width="10%">Date</td>
+      <td width="15%">Category</td>
+      <td width="15%">Sub Category</td>
+      <td width="25%">Description</td>
+      <td align="right">Cash In (<?php echo CURRENCY_SYMBOL;?>)</td>
+      <td align="right">Cash Out (<?php echo CURRENCY_SYMBOL;?>)</td>
+   </tr>
+
+   <?php
+   if (count($data) > 0) {
+       foreach ($data as $row) {
+
+           // Fix category / sub category names (join pannirukkum SQL la)
+           $category     = !empty($row['category_name']) ? $row['category_name'] : '-';
+           $sub_category = !empty($row['sub_category_name']) ? $row['sub_category_name'] : '-';
+
+           // Description
+           $description = $row['description'];
+
+           // Split Cash In / Cash Out using cash_type
+           $cash_in  = isset($row['cash_in'])  ? $row['cash_in']  : 0;
+            $cash_out = isset($row['cash_out']) ? $row['cash_out'] : 0;
+
+          
+   ?>
+<tr class="row0" id="<?php echo $row['id']; ?>">
+   <td><?php echo htmlentities($row['report_date'], ENT_QUOTES); ?></td>
+   <td><?php echo htmlentities($category, ENT_QUOTES); ?></td>
+   <td><?php echo htmlentities($sub_category, ENT_QUOTES); ?></td>
+   <td><?php echo htmlentities($description, ENT_QUOTES); ?></td>
+   <td align="right" style="color:green;"> 
+       <?php echo convertToCurrency($cash_in, false); ?>
+   </td>
+   <td align="right" style="color:red;">
+       <?php echo convertToCurrency($cash_out, false); ?>
+   </td>
+</tr>
+   <?php
+           }
+       }
+    else {
+   ?>
+   <tr class="bg-row">
+      <td colspan="6" align="center" height="50">No records found</td>
+   </tr>
+   <?php
+   }
+   ?>
+
+</table>

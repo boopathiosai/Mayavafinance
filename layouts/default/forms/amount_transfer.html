@@ -1,0 +1,195 @@
+<?php  
+    session_start();
+if($customer_data['status'] == "0") { 
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+   if($customer_data['id']!='')
+   {
+        $_SESSION['customer_id'] = $customer_data['id'];
+   }
+   else
+   {
+        $_SESSION['customer_id'] = "temp";
+   }
+  
+  //p_arr($data);
+    ?>
+
+<div class="clear clearfix"></div>
+
+ 
+     <div id="contentarea">
+     <form name="amount_transfer" id="amount_transfer" method="post" style="margin: 0px;">
+      <table class="frm-cntr" width="95%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="100%"><table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          <td>
+            Requesting Branch
+          </td>
+          <td>
+              <input type="hidden" name="pval[id]" value="<?php   echo $uval['id'];?>">
+              <input type="hidden" name="pval[request_id]" value="<?php   echo $trans_data[0]['request_id'];?>">
+
+            <?php $data=Amounttransfer::Get_branch_name($uval[req_id],$uval[trans_id]);?>
+            <?php echo $data[0]['request']?>
+                        <input type="hidden" name="pval[request_branch_id]" value="<?php echo $trans_data[0]['request_branch_id']?>"> 
+                        <input type="hidden" name="pval[id]" value="<?php   echo $uval['id'];?>">
+
+          </td>
+          </tr>
+            <tr>
+              <td>
+                Allocated Branch
+              </td>
+                <td>
+                 <?php echo $data[0]['transfer']?>
+                <input type="hidden" name="pval[transfer_branch_id]" value="<?php echo $trans_data[0]['transfer_branch_id']?>"> 
+                <input type="hidden" name="pval[transfer_amount]" value="<?php echo $trans_data[0]['transfer_amount']?>"> 
+
+                </td>
+                </td>
+          </tr>
+          
+
+          <tr>
+          <td> Requested Amount </td>
+          <td> 
+          <?php
+
+            echo $trans_data[0]['amount_need'];
+          ?>
+          </td>
+          </tr>
+
+          <tr>
+          <td> Allocated Amount </td>
+          <td> 
+          <?php
+              echo $trans_data[0]['transfer_amount'];
+          ?>
+          </td>
+          </tr>
+
+
+            <tr>
+              <td id="transfer_user_id">
+              Allocated Branch User Name *   
+              </td>
+                <td>
+            <?php $datatransfer=Amounttransfer::Get_branch_transfer_users($uval[trans_id]);?>
+            
+                 <select  id="transfer_user_id1"  name="pval[transfer_user_id]" onchange="remove_red('transfer_user_id')">
+                <option value="">-- Select User --</option>
+                   <?php              
+                   for($i=0;$i<count($datatransfer);$i++)
+                   {
+                   
+                   if($_SESSION['session_userid']==$datatransfer[$i]['id']) $selected = "selected"; else $selected = "";
+                   echo  "<option value='".$datatransfer[$i]['id']."' ".$selected.">".$datatransfer[$i]['transfer_user_name']."</option>";
+                   ?>
+                   <?php
+                    }
+                   ?>
+                </select>  
+                </td>
+          </tr>
+           <tr>
+              <td>
+              Received User Name    
+              </td>
+                <td>
+
+                <?php $datareceiver=Amounttransfer::Get_branch_received_users($uval[req_id]);?>
+                 <select  id="receiver_user_id1"  name="pval[receiver_user_id]">
+                <option value="">-- Select User --</option>
+                   <?php              
+                   for($i=0;$i<count($datareceiver);$i++)
+                   {echo  "<option value='".$datareceiver[$i]['id']."'>".$datareceiver[$i]['transfer_user_name']."</option>";
+                   ?>
+                   <?php
+                    }
+                   ?>
+                </select>
+                </td>
+                </td>
+          </tr>
+
+
+          
+          <tr>
+            <td id="transfer_mode" width="39%">Amount Transferred mode * </td>
+            <td width="61%" align="left">
+            <select name="pval[transfer_mode]" id="transf_mode1" onfocus="remove_red('transfer_mode');" onchange="cheque_details_show(this);">
+                <option value="">--Select--</option>
+                <option value="cash" <?php if($customer_data['transf_mode']=='cash'){ ?>selected="1"<?php }?>>Cash</option>
+                <option value="cheque"<?php if($customer_data['transf_mode']=='cheque'){ ?>selected="1"<?php }?>>Cheque</option>
+            </select>
+            </td>
+          </tr> 
+
+          <tr class="cheque_details_div">
+                <td id="cheque_details">Cheque details*</td>
+                <td align="left">
+                <input type="text" name="pval[cheque_details]" id="cheque_details1" onfocus="remove_red('cheque_details');"><?php echo stripslashes($customer_data['cheque_details']); ?>
+                </td>
+          </tr>
+            
+          <tr>
+            <td id="transfer_date">Amount transferred date*  </td>
+            <td align="left">
+            <input name="pval[transfer_date]" id="transf_date1" maxlength="40" type="text" class="calendar textfield-m" value = "<?php echo stripslashes($customer_data['transf_date']); ?>"/>
+            &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('transf_date1', 'calender_trigger', '%d-%m-%Y' )" onclick="jQuery('#transf_date1').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+            
+          </td>
+          </tr>
+       </table>         
+       </form>
+<div class="clear clearfix"></div>
+
+</body>
+<script type="text/javascript">
+<?php if($type=='allocate') { } ?>
+formParam = "type=save";
+formId = "amount_transfer";
+formPage = "amount_transfer";
+
+ $(document).ready(function(){
+        if($("#transf_mode1").val() == 'cash'){
+            $(".cheque_details_div").hide();
+        }
+        $("input,select,textarea").not( $(":button,:hidden") ).keypress(function (evt) {
+            if (evt.keyCode == 13) {
+                iname = $(this).val();
+                if (iname !== 'Submit'){    
+                    var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:radio,input:checkbox,textarea,select');                   
+                    
+                    var index = fields.index( this );
+                    if ( index > -1 && ( index + 1 ) < fields.length) {
+                        fields.eq( index + 1 ).focus();
+                    }
+                    else
+                    {                   
+                      //Save Action
+                    }
+                    return false;
+                }
+            }
+        });
+        
+        enable_save_action();
+        $("#postal_code_input").numeric();
+		$("#contact_no_input").numeric({allow:"+-"});
+        set_date_picker();
+    });
+function cheque_details_show(opt){
+    $(".cheque_details_div").hide();
+    if(opt.value != 'cash'){
+      $("#cheque_details1").val("");
+      $(".cheque_details_div").show();
+    }else{
+      $("#cheque_details1").val("Cash");      
+    }
+}
+</script>

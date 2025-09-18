@@ -1,0 +1,143 @@
+<?php  if($sub_branch_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }  
+?>
+<script src="js/common.js" type="text/javascript"></script>
+<script src="js/tamil.js" type="text/javascript"></script>
+<div class="clear clearfix"></div>
+<div id="HelpDiv" style="width:825px;margin:auto;"></div> 
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Masters</a> &raquo;<a href="sub_branches.php">Sub Branch Master</a></td >
+        <td ><span class="btn-rht">     
+         <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>              
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" tabindex="11">RESET</a> 
+        <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');" tabindex="12">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+
+  <div id="contentarea">
+   <form name="sub_branch_form" method="post" style="margin: 0px;">
+   <table style="width: 1003px;"><tbody><tr valign="top"><td><input type="checkbox" onclick="showMap(this)" name="showmap">Show Keymap<br></tbody></table>
+    <div id="msg"></div>
+   <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+     <tr>
+        <td class="title">Sub Branch Master</td>
+      </tr>
+      <tr>
+      
+        <td width="50%">
+        
+        <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">   
+          <tr>
+               <td id="branch_id"><span class="add"> Branch Name <span class="star">*</span></span></td>
+               <td>
+                        
+                <?php 
+                if($_SESSION['session_usertype']!=1)
+                { 
+                    echo "<input type='hidden' name='pval[branch_id]'  value='$_SESSION[session_user_branch_id]'/>";
+                    echo $_SESSION['session_user_branch_name'];
+                } 
+                else 
+                {
+                    //Get Branch name from branch table
+                       $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);       
+                ?>
+                 <select name="pval[branch_id]" onchange="remove_red('branch_id');">
+                <option value="">-- Select Branch --</option>
+                   <?php              
+                    echo build_select_options($branch_data,$sub_branch_data['branch_id']); 
+                   ?>
+                </select>
+                <?php
+                }?>
+                            
+                        </td>
+                      </tr>
+          <tr>
+            <td id="name"><span class="add">Sub Branch name* </span></td>
+            <td align="left"><!--input name="pval[name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($sub_branch_data['name']);?>" tabindex="2"/-->
+			<input name="pval[name]" maxlength="40" type="text" tabindex="2" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($sub_branch_data['name']); ?>" class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)">
+			</td>
+          </tr>
+          <?php// if(is_superadmin($_SESSION['session_usergroupname'])){ ?>
+          <tr>
+            <td id="sub_branch_code">Sub Branch code </td>
+            <td align="left">
+            <?php 
+           // if($uval[id] > 0){ echo stripslashes($sub_branch_data['sub_branch_code']); ?>
+            
+            <!--<input name="pval[branch_code]" maxlength="40" type="hidden" class="textfield-m" onfocus="remove_red('branch_code');" value ="<?php echo stripslashes($branch_data['branch_code']); ?>" tabindex="3">-->
+            <?php //}else{ ?>
+            <input name="pval[sub_branch_code]" maxlength="40" type="text" tabindex="3" class="textfield-m" onfocus="remove_red('sub_branch_code');" value ="<?php echo stripslashes($sub_branch_data['sub_branch_code']); ?>" tabindex="3">
+            <?php// } ?>          
+            </td>
+          </tr>
+         <?php// } ?>
+          <tr>
+            <td id="description">Sub Branch description* </td>
+            <td align="left"><textarea name="pval[description]" onfocus="remove_red('description');" tabindex="4"><?php echo stripslashes($sub_branch_data['description']); ?></textarea></td>
+          </tr>
+          <tr>
+            <td id="location">License No.* </td>
+            <td align="left"><input name="pval[license_no]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('location');" value = "<?php echo stripslashes($sub_branch_data['license_no']); ?>" tabindex="5"></td>
+          </tr>
+        <tr>
+            <td id="location">Sub Branch location* </td>
+            <td align="left"><!--input name="pval[location]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('location');" value = "<?php echo stripslashes($sub_branch_data['location']); ?>" tabindex="5"-->
+			<input name="pval[location]" maxlength="40" type="text" tabindex="6" class="textfield-m" onfocus="remove_red('location');" value = "<?php echo stripslashes($sub_branch_data['location']); ?>" class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)">
+			</td>
+          </tr>
+          <tr>
+            <td id="address">Sub Branch address* </td>
+            <td align="left"><!--textarea name="pval[address]" onfocus="remove_red('address');" tabindex="6"><?php echo stripslashes($sub_branch_data['address']); ?></textarea-->
+			<textarea class="converters" name="pval[address]" tabindex="7" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)" onfocus="remove_red('address');"><?php echo stripslashes($sub_branch_data['address']); ?></textarea>
+			</td>
+          </tr>
+          <tr>
+            <td id="additional_info">Additional information</td>
+            <td align="left"><textarea name="pval[additional_info]" onfocus="remove_red('additional_info');" tabindex="8"><?php echo stripslashes($sub_branch_data['additional_info']); ?></textarea></td>
+          </tr>
+           <tr>
+            <td>Status </td>
+            <td><label>
+              <input name="pval[status]" type="radio" class="radio" value="1" <?php echo $active; ?> tabindex="9"/>
+              Active</label>
+                <label>
+                <input name="pval[status]" type="radio" class="radio" value="0" <?php echo $inactive; ?> tabindex="10"/>
+              Inactive </label></td>
+          </tr>
+        <tr>
+           <td colspan="2"><span id="mand_note">* indicates mandatory fields</span> </td>
+        </tr> 
+        </table>
+
+         <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+          
+          <?php }?>
+      </td>
+      </tr>
+  
+    </table> 
+    </form> 
+    <div class="clear clearfix"></div><!--contentarea ends here-->
+  </div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){
+       
+        form_enter_focus(jQuery('#name_select'),8,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        enable_save_action();
+
+    });
+</script>
+</html>

@@ -1,0 +1,159 @@
+<?php  
+//$lastpage      = ceil($count/ROWS_PER_PAGE);
+ //echo paging_disp($rg, $page_no, $prevpage, $lastpage, $nextpage, $search_args); 
+ ?> 
+
+<?php
+if(Paging::getTotalRecords() > 0 ){
+?>
+<div id="paging">
+<table width="100%"  border="0">
+      <tr>
+        <td width=20%><strong>
+        <?php
+        if(Paging::getTotalRecords() > 5 && SHOW_PAGE_LIST == true) {
+        
+        if($module_name == "detailed_stock_report") {
+          $multi=30; 
+        }
+        else{
+          $multi=5; 
+        }
+        ?>
+          <select name="list_count" id="list_count" onChange="callAjaxRequest(this.value, 'type=paging', '#content_div', 'POST', 'html', true, true)">
+        <?php 
+
+          $i=1;
+          while($j<=100)
+          {
+            $j = $i * $multi;
+            $i++;
+            ?>
+            <option value="?<?php echo $search_args; ?>&start=0&pcount=<?php echo $j?>" <?php echo ((Paging::getPerPage()==$j)? "selected" : "")?>>
+            <?php echo $j?>
+        Rec. Per Page</option>
+            <?php
+
+          }
+          ?>
+          </select>
+          
+         <?php
+         }
+         ?>
+        </strong></td>
+        
+        <td class="numbercurrent" width=20%>
+        <?php
+        if(Paging::getTotalRecords() > Paging::getPerPage()) {
+        ?>
+        <strong>Go to 
+       
+          <select name="pagelist" id="pagelist" onChange="callAjaxRequest(this.value, 'type=paging', '#content_div', 'POST', 'html', true, true)">
+            <?php
+          for($i=0;$i<Paging::getTotalPage();$i++)
+          {
+            ?>
+            <option value="?<?php echo  $search_args; ?>&<?php echo Paging::getListMultiCountQuery($i); ?>" <?php echo ((Paging::getCurPage()==($i+1))? "selected" : "")?>>Page
+            <?php echo ($i+1)?>
+            </option>
+            <?php
+          }
+          ?>
+          </select>
+        </strong>
+        <?php
+        }
+         ?>
+        </td>
+        <td align=center>
+        <?php
+        if(Paging::getTotalPage()>1)
+        {
+        ?>
+        <strong> 
+        <?php
+        if(Paging::getFirstLinkQuery() != ""){
+        ?>
+            <a href="javascript:" title="First Page" onclick="callAjaxRequest('?<?php echo  $search_args; ?>&<?php echo Paging::getFirstLinkQuery();  ?>', 'type=paging', '#content_div', 'POST', 'html', true, true)" >
+                <img src="images/first-arrow.png"  alt="First" >
+            </a> 
+        <?php
+        }else{
+        ?>
+            <img src="images/first-arrow-disabled.png" title="First Page"  alt="First" >
+        <?php
+        }
+        ?>
+
+        &nbsp;&nbsp;&nbsp;
+
+
+        <?php
+        if(Paging::getPreviousLinkQuery() != ""){
+        ?>
+            <a href="javascript:" title="Previous Page" onclick="callAjaxRequest('?<?php echo  $search_args; ?>&<?php echo Paging::getPreviousLinkQuery(); ?>', 'type=paging', '#content_div', 'POST', 'html', true, true)">
+                <img src="images/prev-arrow.png"  alt="Previous" >
+            </a>  
+        <?php
+        }else{
+        ?>
+            <img src="images/prev-arrow-disabled.png" title="Previous Page"  alt="Previous" >
+        <?php
+        }
+        ?>
+
+       
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        <?php
+        if(Paging::getNextLinkQuery() != ""){
+        ?>
+            <a href="javascript:" title="Next Page" onclick="callAjaxRequest('?<?php echo  $search_args; ?>&<?php echo Paging::getNextLinkQuery(); ?>', 'type=paging', '#content_div', 'POST', 'html', true, true)">
+                <img src="images/next-arrow.png"  alt="Next" >
+            </a>         
+        <?php
+        }else{
+        ?>
+            <img src="images/next-arrow-disabled.png" title="Next Page"  alt="Next" >
+        <?php
+        }
+        ?>
+        
+        
+        
+        &nbsp;&nbsp;&nbsp;
+        
+       
+        <?php
+        if(Paging::getLastLinkQuery() != ""){
+        ?>
+            <a href="javascript:" title="Last Page" onclick="callAjaxRequest('?<?php echo  $search_args; ?>&<?php echo Paging::getLastLinkQuery(); ?>', 'type=paging', '#content_div', 'POST', 'html', true, true)">
+                <img src="images/last-arrow.png"  alt="Last" >
+            </a>        
+        <?php
+        }else{
+        ?>
+            <img src="images/last-arrow-disabled.png" title="Last Page"  alt="Last" >
+        <?php
+        }
+        ?>
+       
+        </strong>
+      <?php
+      }
+      ?>
+      </td>
+        <td width=25% align=right><strong>
+        <?php echo Paging::getRecordsDetails()?>
+        </strong></td>
+        <td width=20% align=right><strong>
+        <?php echo Paging::getPageDetails()?>
+        </strong></td>
+      </tr>
+    </table>
+ </div>
+    <?php
+    }
+    ?>

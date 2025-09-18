@@ -1,0 +1,187 @@
+<div id="content_div">
+ <?php
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+?>
+    <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td><a href="javascript:;">Reports</a> &raquo;<a href="javascript:;"><?php echo $page_title?></a></td>
+        <td align="left" width="10%" >
+        <?php
+        if($search_args != "")
+        {
+        $diaply_style ="";
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+        <?php
+        }
+        else{
+        $diaply_style = 'style="display:none;"';
+        ?>
+        <div id="serach_button_div">
+        <a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+        <?php
+        }
+        ?>
+        </td>
+       </tr>
+      </table>
+  </div>
+  <!--Modified by karthik-->
+     <div id="contentarea">
+            <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td colspan="2">
+                    <?php include ADMIN_LAYOUT_PATH . 'elements/loan_report_search.html'; ?>
+                    </td>
+                </tr>
+            </table>
+      <div>
+      <br>
+       <form>
+       <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+    <tr>
+        <td class="title" colspan="3"><?php echo $page_title;?></td>
+        <td class="title" colspan="3" align=right>
+        
+            <a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_pdf&<?php echo $search_args; ?>" class="greybtn" id="pdf_report" onclick= "pdf_report('<?php echo $module_name;?>.php?type=export_pdf&<?php echo $search_args;?>');">PDF</a>
+            <a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_xls&<?php echo $search_args; ?>" class="greybtn" id="xls_report" onclick= "xls_report('<?php echo $module_name;?>.php?type=export_xls&<?php echo $search_args;?>');">XLS</a>
+            <a href="javascript:" onclick="print_preview('<?php echo $module_name; ?>','print_dialog','37','<?php echo $search_args; ?>','<?php echo $page_title; ?> - Print Preview',1070,700);" class="greybtn" id="print_report">Print</a>
+        
+        </td>
+     </tr>  
+        <tr class="headings">
+          <td width="2%"></td>  
+          <td width="8%">Loan Date</td>
+	  <td width="16%">sub_branch</td>    
+          <td width="4%">Loan No</td>
+          <td align="center">Loan Amount(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <td align="">Transaction Type</td>
+          <td align="center">Income(<?php echo CURRENCY_SYMBOL; ?>)</td>
+        </tr>
+        
+        <!--Sathish santhosh kumar - changes-->
+            <?php
+			//echo '<pre>';
+			//print_r($data);
+              if(count($data) > 0) {
+                for($i=0;$i<count($data);$i++) { 
+                 
+                 if($data[$i]['pr_cashin_id'] == $data[$i]['cf_id']) {
+                  $cash_purpose = 'Renewal Interest';
+                 }else if($data[$i]['pt_cashflow_id'] == $data[$i]['cf_id']) {
+                  $cash_purpose = 'Pay Interest';
+                 }else if($data[$i]['pe_cashin_id'] == $data[$i]['cf_id']) {
+                  $cash_purpose = 'Excess Interest';
+                 }else if($data[$i]['pp_cashin_id'] == $data[$i]['cf_id']) {
+                  $cash_purpose = 'Partial Amount Interest';
+                 }else if($data[$i]['r_cashin_id'] == $data[$i]['cf_id']) {
+                  $cash_purpose = 'Reemdemed Interest';
+                 }else {
+                  $cash_purpose = $data[$i]['cf_cash_purpose'];
+                 }
+                 
+                 
+              /*  if($data[$i]['cash_purpose'] == 'Additional Charge') {
+
+					$parent_id = $data[$i]['parent_id']-1;
+
+					$query = "SELECT P.loan_id,P.loan_amount,DATE_FORMAT(P.loan_date,'%Y-%m-%d') AS loan_date FROM ".CASH_FLOW_TRANSACTIONS." as CF LEFT JOIN ". PLEDGE." AS P ON P.cash_flow_id=CF.parent_id LEFT JOIN ".REDEMPTION." AS R ON R.loan_id=P.id LEFT JOIN ".PRODUCT_INTERESTS." AS PA ON PA.loan_id=P.id WHERE  CF.transaction_type = 'cashin' AND CF.editable = 0 AND R.cash_flow_id=".$parent_id." OR PA.cash_flow_id=".$parent_id;
+					$add_data = $app->getrow($query);
+					
+					$loan_date   = $add_data['loan_date'];
+					$loan_id     = $add_data['loan_id'];
+					$loan_amount = $add_data['loan_amount'];
+
+				 } else {
+
+					$loan_date   = $data[$i]['loan_date'];
+					$loan_id     = $data[$i]['loan_id'];
+					$loan_amount = $data[$i]['loan_amount'];
+				 }
+                                 */
+                                 
+                                 
+                 if($cash_purpose == 'Additional Charge') {
+
+					$parent_id = $data[$i]['parent_id']-1;
+
+					$query = "SELECT P.loan_id,P.loan_amount,P.loan_date AS loan_date 
+                                        FROM ".CASH_FLOW_TRANSACTIONS." as CF 
+                                        LEFT JOIN ". PLEDGE." AS P ON P.cash_flow_id=CF.parent_id
+                                        LEFT JOIN ".REDEMPTION." AS R ON R.loan_id=P.id 
+                                        LEFT JOIN ".PRODUCT_INTERESTS." AS PA ON PA.loan_id=P.id 
+                                        WHERE  CF.transaction_type = 'cashin' 
+                                        AND CF.editable = 0 AND R.cash_flow_id=".$parent_id." OR PA.cash_flow_id=".$parent_id;
+					$add_data = $app->getrow($query);
+					
+					$loan_date   = $add_data['loan_date'];
+					$loan_id     = $add_data['loan_id'];
+					$loan_amount = $add_data['loan_amount'];
+
+				 } else {
+
+					$loan_date   = $data[$i]['loan_date'];
+					$loan_id     = $data[$i]['loan_id'];
+					$loan_amount = $data[$i]['loan_amount'];
+				 }
+                                 
+					
+				
+            ?>
+         <tr class="groups" id="<?php echo $data[$i]['id']; ?>">
+          <td align=left>
+          
+          <!--<a href="javascript:" onclick="show_sub_list('<?php echo $module_name; ?>','date','<?php echo $data[$i]['id']; ?>');">
+            <img id="img_drop_<?php echo $data[$i]['id']; ?>" src="./images/plus-sign.jpg" border=0 width="16px">
+          </a>-->
+          <?php //$total_income = round($data[$i]['total_interest'] + $data[$i]['additional_charges'] + $data[$i]['service_charge'],0); ?> 
+          </td>
+          <td align="left"><strong><?php echo date("d-M-Y",strtotime($loan_date)); ?></strong></td>
+	  <td align="left"><?php echo $data[$i]['name'].' - '. $data[$i]['sub_branch_code'] ; ?></td>          
+          <td align="center"><?php echo htmlentities(stripslashes($loan_id), ENT_QUOTES); ?></td>
+          <td align="center"><?php echo convertToCurrency($loan_amount,false); ?></td>
+          <td align=""><?php // echo htmlentities(stripslashes($data[$i]['cash_purpose']), ENT_QUOTES);
+                                 echo htmlentities(stripslashes($cash_purpose), ENT_QUOTES); ?></td>
+          <td align="center"><?php echo convertToCurrency($data[$i]['amount'],false); ?></td>
+
+         </tr> 
+         <tr><td colspan=6>
+         <div id="sublist_<?php echo $data[$i]['id']; ?>" class="display_view"></div>
+         
+         </td></tr>
+            <?php
+                }
+            } else {
+            ?>
+            <tr class="bg-row">
+            <td colspan="6" align="center" height="50">No records found</td>
+            </tr>
+            <?php
+            }
+            ?>
+     <tr class="headings">
+     <td colspan=13>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+   </table>
+        
+   </form>
+    <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>    
+</div>
+
+<!--For the print option, days less 30 to display the results. Default value 30-->
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>

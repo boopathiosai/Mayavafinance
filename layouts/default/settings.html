@@ -1,0 +1,83 @@
+ <div id="content_div">
+ <?php
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+//print_r($menu);
+//print_r(can_edit($_SESSION[$app->session_usertype1], $module_name));
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td ><a href="javascript:;">Masters</a> &raquo;<a href="javascript:;">Settings</a></td >
+        <td >
+        <span class="btn-rht">
+             <a href="javascript:;" onclick = "return create_function('content_div', '<?php echo $module_name; ?>','<?php echo $search_args; ?>');" class="greybtn">ADD NEW</a>
+               <a href="javascript:;" onclick = "delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $data[$i][id]; ?>');" class="greybtn">DELETE</a>     
+        </span>
+        </td>
+      </tr>
+      </table>
+ </div>
+ <div id="contentarea">  
+ <br>
+    <form>
+     <table class="list-tbl" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+     <tr>
+        <td class="title" colspan="5">Settings&nbsp;History</td>
+     </tr>    
+     <tr class="headings">
+          <td align="center" width="4%"><input type="checkbox" name="selall" id="selall" onclick="chk_all(),highlight_all();"/></td>
+          <td width="20%"><strong>Config  Name</strong></td>
+          <td width="20%" align="left"><strong>Config Value</strong></td>
+           <td colspan="2" align="left"><strong>Action</strong></td>
+     </tr>
+        <?php
+       
+                if(count($data) > 0) 
+                {
+                    for($i=0;$i<count($data);$i++)
+                    { 
+                ?>
+                     <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+                           <td align="center">
+                                <input type="checkbox" name="list[]" id="list[]" onclick="chkselcount('list[]'),highlight(this);" value='<?php echo $data[$i]['id']; ?>'/>
+                           </td>
+                           <td align="left">
+                            <?php echo $data[$i]['config_name']; ?>
+                                <!-- <?php echo htmlentities(stripslashes($data[$i]['config_name']), ENT_QUOTES); ?> -->
+                          </td>
+                          <td align="left">
+                                <?php echo htmlentities(stripslashes($data[$i]['config_value']), ENT_QUOTES); ?>
+                          </td> 
+                          <td width="3%" align="left">
+                                <a href="javascript:;" onclick="edit_function('content_div','<?php echo $module_name; ?>','<?php echo $data[$i]['id']; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" title="Edit"><img src="images/edit.jpg" /></a>&nbsp;&nbsp;&nbsp;&nbsp; 
+                          </td>
+                          <td width="3%" align="left">  
+                            <a href="javascript:;" onclick="delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $data[$i][id]; ?>');" title="Delete"><img src="images/delete.jpg" border="0" /></a>
+                          </td>
+                     </tr> 
+                   
+           <?php          
+          }// end of for loop
+                } else {
+                ?>
+                <tr class="bg-row">
+                <td colspan="5" align="center" height="50">No records found</td>
+                </tr>
+                <?php
+                }
+                ?>  
+     <tr class="headings">
+     <td colspan=5>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+    </table>
+    </form>
+     <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>   
+ 

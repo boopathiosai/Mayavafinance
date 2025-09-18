@@ -1,0 +1,218 @@
+<?php
+
+$head_mar_lt_per = 30;  
+$head_mar_rt_per = 25;
+$cont_mar_lt_per = 15;
+$cont_mar_rt_per = 10;
+
+$header_height = 100;
+$address_height = 110;
+$dthead_height = 50;
+
+$mname = isset($_GET['mtype']) ? $_GET['mtype'] : $_POST['mtype'];
+
+$auction_final_notice_dates="";
+if($mname == 'auction_final_notice'){
+    $content_hieght = 484;
+	//$auction_final_notice_dates='style="position: relative; top: 45px;padding-left:20px;"';
+	//$auction_final_notice_dates1='style="position: relative; top: 65px;padding-left:20px;"';
+
+	$auction_final_notice_dates = 'style="height: 68px; padding:0px"';
+	$auction_final_notice_dates1 = 'style="height: 68px; paddin:0px"';
+}elseif($mname == 'notification_letter'){
+    $content_hieght = 220;
+}elseif($mname == 'pre_action_notice'){
+    $content_hieght = 258;
+}
+
+$loan_row_height = 50;
+
+$loan_no_width = 38;
+$loan_dt_width = 32;
+$loan_rs_width = 26;
+$style1='style="position: relative;
+    top: 127px;"';
+$style2='style="position: relative;
+    top: 100px;"';
+
+if($mname == 'auction_final_notice'){
+
+include ADMIN_LAYOUT_PATH . '/elements/auction_final_notice.html';
+exit;
+
+}
+
+// identy for it comes from  Reminder notification letter   
+
+		
+/*if($_SESSION["pre_auction"]!="yes" && $_SESSION["auction_final_notice"]!="yes"){
+		if($mname == 'notification_letter') {
+			$style1='style="position: relative;   top: 88px;"';
+		}elseif($mname == 'pre_action_notice') {
+			$style1='style="position: relative;   top: 88px;"';
+		}else {
+			$style1='style="position: relative;   top: 102px;"';
+		}
+		$style2='style="position: relative;    top: 66px;"';	
+}*/
+
+//Modified by vinoth
+
+if($mname == 'notification_letter') {
+		$style1='style="position: relative;   top: 88px;"';
+	}elseif($mname == 'pre_action_notice') {
+		$style1='style="position: relative;   top: 88px;"';
+	}elseif($mname == 'auction_final_notice'){ 
+			$style1='style="position: relative;   top: 80px;"';  
+			$loan_row_height = 38;
+	}else {
+		$style1='style="position: relative;   top: 102px;"';
+	}
+$style2='style="position: relative;    top: 108px;"';
+
+
+	
+
+//echo $_SESSION["pre_auction"];
+	if($_SESSION["pre_auction"]=="yes"){
+				$mname = 'pre_action_notice';
+				$style1='style="position: relative;
+					top: 119px;"';
+				$content_hieght = 245;
+	}
+	unset($_SESSION["pre_auction"]);
+	unset($_SESSION["auction_final_notice"]);
+
+
+	$line =$_SERVER['HTTP_USER_AGENT'];
+	if (preg_match("/chrome/i", $line, $match)) {
+	   $chr_style = '';
+	   $content_hieght = '202';
+	   if($mname == 'pre_action_notice')
+			$content_hieght = '240';
+	   elseif($mname == 'auction_final_notice')
+			$content_hieght = '492';
+	   $chr_style_p = 'style="padding-left:30px"';
+	} else {
+	   $chr_style = '<tr style="height:26px" >';
+	   $chr_style_p = 'style="padding-left:14px"';
+	}
+
+ 
+
+?>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr style="height:<?php echo $header_height; ?>px">
+    <td width="<?php echo $head_mar_lt_per; ?>%">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td width="<?php echo $head_mar_rt_per; ?>%">&nbsp;</td>
+</tr>
+<tr style="height:<?php echo $address_hieght; ?>px">
+    <td>&nbsp;</td>
+    <td>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr><th align="center">
+            <font size="+1"><?php echo $product_data['organization_name']; ?></font><br />
+            <font size="-3">
+            <?php 
+            echo nl2br($product_data['branch_address']);
+            /*$address = explode(',',$product_data['branch_address']);
+            for($i=0; $i<=count($address);$i++) {
+                echo $address[$i]."<br>" ;
+            }*/
+             ?>
+            </font>
+            </th></tr>
+        </table>
+    </td>
+    <td>&nbsp;</td>
+</tr>
+<tr style="height:<?php echo $dthead_hieght; ?>px;">
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+</tr>
+<tr>
+    <td colspan="3" valign="top">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" <?php echo $style1; ?> >
+            <tr>
+                <td width="<?php echo $cont_mar_lt_per; ?>%">&nbsp;</td>
+                <td>
+                    <table width="93%" border="0" cellpadding="0" cellspacing="0">
+                    <tr><th align="right"><font size="+1"><?php echo  date("d/m/Y");?></font></th></tr>
+                    </table>
+                </td>
+                <td width="<?php echo $cont_mar_rt_per; ?>%">&nbsp;</td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr style="height:<?php echo $content_hieght; ?>px;">
+   
+    <td>&nbsp;</td>
+	 <td><table width="60%" border="0" cellpadding="0" cellspacing="0" align="center" >
+                    <tr><th align="left" <?php echo $auction_final_notice_dates;?> ><font size="+1"><?php if($mname == 'auction_final_notice'){ echo  date("d/m/Y"); }?></font></th></tr>
+					<!--<tr><th align="center">&nbsp;</th></tr>-->
+					<tr><th align="left" <?php echo $auction_final_notice_dates1;?>><font size="+1"><?php if($mname == 'auction_final_notice'){ echo  date("d/m/Y"); }?></font></th></tr>
+                    </table></td>
+    <td>&nbsp;</td>
+</tr>
+<tr>
+    <td colspan="3" valign="top">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" <?php if($mname != 'auction_final_notice'){ echo $style2; }?> >
+            <tr <?php if($mname != 'auction_final_notice'){ echo 'style="height:120px"'; }?>>
+                <td width="<?php echo $cont_mar_lt_per; ?>%">&nbsp;</td>
+                <td>
+				<?php
+				// set hight for first table in loop
+				$flag="true";
+				if(count($product_data>0))
+				{
+					foreach($product_data as $product_datas)
+					{
+					?>
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+					<?php if($flag=="true"){ 
+
+							if($mname == 'notification_letter.php'){ 
+								echo '<tr style="height:50px">';
+							}elseif($mname == "pre_auction_notice"){ 
+								echo '<tr style="height:60px">';
+							}elseif($mname == "notification_letter"){
+								echo '<tr style="height:62px">';
+							}elseif($mname == "auction_final_notice"){
+								echo $chr_style;
+							}else{
+								echo '<tr style="height:26px">';
+							}							
+					?>
+					
+				     
+					  <tr style="height:40px">
+					<?php   $flag="False"; }else{ ?>
+                        <tr style="height:<?php echo $loan_row_height; ?>px"><?php }?>
+                            <th width="<?php echo $loan_no_width;?>%" align="left" <?php echo $chr_style_p; ?> >
+                            <font size="+1"><?php echo (trim($product_datas['loan_pro_name']) == "")? "-":$product_datas['loan_pro_name']; ?></font>
+                            </th>
+							
+
+                            <th width="<?php echo $loan_dt_width;?>%" align="center">
+                            <font size="+1"><?php echo (trim($product_datas['loan_date']) == "")? "-":stripslashes($product_datas['loan_date']); ?></font>
+                            </th>
+                            <th width="<?php echo $loan_rs_width;?>%" align="center">
+                            <font size="+1"><?php echo (trim($product_datas['loan_amount']) == "")? "-":stripslashes($product_datas['loan_amount']); ?> Rs.</font>
+                            </th>
+                        </tr>
+                    </table>
+					<?php
+					}
+				}
+				?>
+                </td>
+                <td width="<?php echo $cont_mar_rt_per; ?>%">&nbsp;</td>
+            </tr>
+        </table>
+    </td>
+</tr>
+</table>

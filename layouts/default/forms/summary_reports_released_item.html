@@ -1,0 +1,72 @@
+<div id="print_content">
+<?php  
+    $i=1;
+    
+
+    
+
+         ?>          
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="6" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix); ?></td>
+          </tr>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+      <td width="10%"><strong>Date</strong></td>
+      <td width="15%" align="left" valign="middle"><strong>Branch</strong></td>
+      <td width="15%" align="left" valign="middle"><strong>Released Loan</strong></td>
+      <td width="15%"  align="right"><strong>Total Weight</strong></td>
+      <td width="10%"  align="right"><strong>Total Items</strong></td>
+      <td width="15%"  align="right"><strong>Total Amount</strong></td>      
+           </tr>
+            
+          <?php
+          $j=1;
+          $i=$i+1;
+    if(count($data)>0) {
+          foreach($data as $rows)
+          {
+            
+            $weight_in = floatval($rows['released_weight']);
+            
+            
+            $weight_in_gs =  intval($weight_in);
+            $weight_in_mgs =  intval(floatval($weight_in - intval($weight_in)) * 1000);
+             ?>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+
+      <td align="left"><?php echo htmlentities(stripslashes($rows['report_date']), ENT_QUOTES); ?> </td>
+      <td align="left"><?php echo htmlentities(stripslashes($rows['branch_name']), ENT_QUOTES); ?></td>
+            <td align="left"><?php echo htmlentities(stripslashes($rows['no_of_release']), ENT_QUOTES); ?></td>
+       <td align="right"> <?php echo $weight_in_gs. ' G'. $weight_in_mgs . ' Mg'; ?> </td>
+       <td align="right"> <?php echo $rows['released_items']; ?> </td>
+       <td align="right"> <?php echo convertToCurrency($rows['released_amount']); ?> </td>
+
+         </tr> 
+         <?php
+            $i++; 
+            $j++;
+          }
+          }else{
+          ?>
+          <tr><td colspan=6 align="center">No Records Found</td></tr>
+          <?
+          }
+?>
+       </table>
+
+</div>           
+<iframe id="print_frame" name="print_frame"  title="<?php echo ($heading_suffix=="") ? ($page_title) : ($page_title . " - ".$heading_suffix); ?>" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>           
+            
+           
+
+   
+
+
+
+
+
+
+
+
+
+

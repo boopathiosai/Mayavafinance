@@ -1,0 +1,186 @@
+  <div id="content_div">
+ <?php
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ }
+ //print_r($_SESSION);
+?>
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="90%">&nbsp;Transactions &raquo;<a href="redemption.php"><?php echo $page_title?></a></td >
+        <td align="left" width="10%" >
+        <?php
+        $diaply_style ="";
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">
+        Close</a></div>
+        </td >
+      </tr>
+      </table>
+  </div>
+
+ <div id="contentarea">
+ <div id="form_div" align="center"></div>
+  <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+        <td colspan="2">
+        <?php include ADMIN_LAYOUT_PATH . 'elements/customer_search.html'; ?>
+          </td>
+        </tr>
+       </table>
+<div>
+       <br>
+
+     <?php
+
+     if($search_args!="")
+     {
+
+     ?>
+
+    <form>
+
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+     <tr>
+        <td class="title" colspan="12"><?php echo $page_title?></td>
+         <td class="title" colspan="7">
+        <span class="btn-rht">
+        <?php
+
+        if(can_delete($_SESSION['session_usertype'], $module_name))
+        {
+        ?>
+        <a href="javascript:;" onclick = "delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_argss; ?>','');" class="greybtn">DELETE</a>
+        <?php
+        }
+        ?>
+        </span>
+        </td>
+     </tr>
+      <tr class="headings">
+      <td align="center" width="4%">
+      <?php
+      if(date("Y-m-d",strtotime($data[$i]['loan_date'])) == date("Y-m-d")  || $_SESSION['session_usergroupname'] == 'Super Admin'){
+      ?>
+      <input type="checkbox" name="selall" id="selall" onclick="chk_all(),highlight_all();"/></td>
+      <?php
+      }
+      ?>
+      <td width=6%><strong>Loan ID</strong></td>
+      <?php
+      if($_SESSION['session_usergroupname'] == 'Super Admin'){
+      ?>
+      <td width="10%" align="left"><strong>Branch</strong></td>
+      <?php } ?>
+      <td><strong>Customer Name</strong></td>
+      <td align="left"><strong>Products</strong></td>
+      <td width="6%" align="right"><strong>Items</strong></td>
+      <td width="6%" align="right"><strong>Gross</strong></td>
+      <td width="6%" align="right"><strong>Net</strong></td>
+      <td width="10%" align="right"><strong>Loan Amount(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="8%" align="right"><strong>ROI</strong></td>
+      <td width="9%" align="right"><strong>Interest(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+     <?PHP if($_SESSION['session_userid']!=1){?><td width="1%" colspan='5'  align="center"><strong>Action</strong></td><?php } else { ?><td width="1%" colspan='5'  align="center"><strong>Action</strong></td><?php } ?>
+
+      <!--  <td></td> -->
+
+    </tr>
+        <?php
+          if(count($data) > 0) {
+             for($i=0;$i<count($data);$i++){
+                  $change_status = ($data[$i]['status'] == 1) ? 0 : 1;
+                  $interest_details = @PayInterest::getInterestDetails($data[$i]['pledge_id']);
+                  $last_pay_on = $interest_details['last_pay_date'];
+                  $last_paid_amount = $interest_details['last_paid_amount'];
+                  $current_interest = "(".$interest_details['interest_rate']."%) - ".convertToCurrency($interest_details['interest']);
+
+                ?>
+      <tr class="row0" id="<?php echo $data[$i]['pledge_id']; ?>" height="40">
+        <?php
+         if($_SESSION['session_userid']==1)
+        { ?>
+        <td align="center"><input type="checkbox" name="list[]" id="list[]" onclick="chkselcount('list[]');" value='<?php echo $data[$i]['pledge_id']; ?>'/></td>
+        <?php } else{?><td></td><?php }?>
+
+       <td align="left"> <?php echo ($data[$i]['loan_id']=="") ? "-" : htmlentities(stripslashes($data[$i]['loan_id']), ENT_QUOTES); ?></td>
+      <?php
+        if($_SESSION['session_usergroupname'] == 'Super Admin'){      ?>
+      <td align="left"><?php echo htmlentities(stripslashes($data[$i]['branch_name']), ENT_QUOTES); ?></td>
+      <?php } ?>
+       <td align="left"> <?php echo ($data[$i]['customer_name']=="") ? "-" : $data[$i]['customer_name']; ?></td>
+       <td align="left" width="19%"><?php echo ($data[$i]['products']=="") ? "-" : $data[$i]['products']; ?></td>
+       <td align="right" ><?php echo ($data[$i]['item_count']=="") ? "-" : htmlentities(stripslashes($data[$i]['item_count']), ENT_QUOTES); ?></td>
+      <td align="right"><?php echo unitDisplay(htmlentities(stripslashes($data[$i]['gross']), ENT_QUOTES),false); ?></td>
+      <td align="right"><?php echo unitDisplay(htmlentities(stripslashes($data[$i]['net']), ENT_QUOTES),false); ?></td>
+       <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['loan_amount']),false); ?></td>
+      <td align="right"><?php echo htmlentities(stripslashes($interest_details['interest_rate']), false); ?> %</td>
+      <td align="right"><?php echo convertToCurrency(stripslashes($interest_details['interest']),false); ?></td>
+
+
+        <?php
+
+
+        if( can_add($_SESSION['session_usertype'], $module_name)  && $data[$i]['pledged_branch'] == $_SESSION['session_user_branch_id'] )
+        {
+
+        ?>
+        <td width="3%"></td>
+        <td width="6%" colspan=2 valign="middle"><a href="javascript:;" onclick="edit_function('content_div','<?php echo $module_name; ?>','<?php echo $data[$i]['pledge_id']; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" title="Redeem" class=button style="margin-left:26px;"  >Redeem</a> </td>
+        <td></td>
+        <?php
+
+        }else{
+
+        $alert = ($data[$i]['pledged_branch'] != $_SESSION['session_user_branch_id'] ) ? OTHER_BRANCH_ALERT : NO_ACTION_PRIVILEGE;
+
+        ?>
+        <td width="3%" valign="middle"></td>
+        <td width="6%" colspan=2 valign="middle"><a href="javascript:;" onclick="jalert(this.title)" title="<?php echo $alert; ?>" class=button-off>Redeem</a> </td>
+        <td></td>
+        <?php
+
+        }
+        if($_SESSION['session_userid']==1){
+        ?>
+        <td width="3%" valign="middle"><a href="javascript:;" onclick="delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_argss; ?>','<?php echo $data[$i]['pledge_id']; ?>');" title="Delete"><img src="images/delete.jpg" border="0" /></a></td>
+        <?php } else{ ?><td></td> <?php } ?>
+
+      </tr>
+
+        <?php
+            }
+
+        } else {
+        ?>
+        <tr class="bg-row">
+        <td colspan="16" align="center" height="50">No records found</td>
+        </tr>
+        <?php
+        }
+        ?>
+     <tr class="headings">
+     <td colspan=16>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+    </table>
+    </form>
+    <?php
+    }
+    ?>
+    <div class="clear clearfix"></div><!--contentarea ends here-->
+
+    </div>
+  </div>
+</div>
+
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>

@@ -1,0 +1,22 @@
+Options -indexes
+php_value memory_limit 600M
+php_value max_execution_time 18000
+php_value upload_max_filesize 60M
+php_value post_max_size 60M
+php_flag display_startup_errors off
+php_flag display_errors off
+php_flag html_errors off
+php_value docref_root 0
+php_value docref_ext 0
+
+
+
+RewriteEngine On
+RewriteCond %{SERVER_PORT} !^443$
+
+# Below Rules Added for LED-DISPLAY to avoid SSL block on 12-06-2019
+RewriteCond %{REQUEST_URI} !^/LED-DISPLAY
+# Below Rules Added for LED-DISPLAY to avoid SSL block on 12-06-2019
+
+RewriteRule ^(.*)$ http://23.20.153.186/$1 [L,R=301]
+

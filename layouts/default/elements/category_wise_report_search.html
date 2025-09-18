@@ -1,0 +1,93 @@
+<div id="search_table" <?php echo $diaply_style; ?>>
+<form id="search_form" name="search_form">
+ <table class="search-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">
+ 
+        <tr class="row0">
+          <td align="left" class="title" colspan="3">Report Filter Search</td>        
+          <td align="right" class="title">
+            <a href="<?php echo  $module_name; ?>.php" class="button">View All</a>
+            <a id="search_btn" href="javascript:;" onclick="search_items('<?php echo  $module_name;?>');" class="button">SEARCH</a>
+          </td>
+        </tr>
+        
+        <tr class="row0">
+            <td align="left" width="10%" id="src_sdate">From Date :</td>
+            <td align="left" >
+            <input name="sdate" type="text" id="sdate"   class="calendar text-field" value="<?php echo  $search_sdate; ?>" />
+             &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('sdate', 'calender_trigger', '%d-%m-%Y' )" onclick="jQuery('#sdate').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+            </td>
+
+            <td align="left" width="18%" id="src_edate">To Date :</td>
+            <td align="left">
+            <input name="edate" type="text" id="edate"  class="calendar text-field" value="<?php echo $search_edate;?>" />
+             &nbsp; <a href="javascript:" id="calender_trigger1" _onclick="date_picker('edate', 'calender_trigger1', '%d-%m-%Y' )" onclick="jQuery('#edate').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+            </td>
+
+        </tr>
+        
+     <tr class="row0">
+            <td align="left" width="15%" id="src_sdate">Loan Amount Range</td>
+            <td align="left" >
+            <input name="sloanamt" id="sloanamt" maxlength="40" type="text" value="<?php echo $search_sloanamt;?>" class="text-field" onkeypress="return decimalformat(event,this,10,2);"
+            />
+            </td>
+            <td align="left" width="18%" id="src_edate">To</td>
+            <td align="left">
+            <input  name="eloanamt" id="eloanamt" maxlength="40" type="text" value="<?php echo $search_eloanamt;?>"  class="text-field"   onkeypress="return decimalformat(event,this,10,2);"/></td> 
+        </tr>
+
+        <tr class="row0">
+            <td align="left" width="10%" id="src_sdate">Loan Rate Range:</td>
+            <td align="left" >
+            <input name="sloanrate" id="sloanrate" maxlength="40" type="text" value="<?php echo $search_sloanrate;?>"  class="text-field"  onkeypress="return decimalformat(event,this,10,2);" />
+            </td>
+            <td align="left" width="18%" id="src_edate">To</td>
+            <td align="left">
+            <input name="eloanrate" id="eloanrate" maxlength="40" type="text" value="<?php echo $search_eloanrate;?>"  class="text-field"  onkeypress="return decimalformat(event,this,10,2);"/></td> 
+        </tr>
+       <tr class="row0">
+	               
+        <?php
+        if($_SESSION["session_usertype"]==1)
+        {
+       ?>
+     <td align="left"  >Search by Branch :</td>
+        <td align="left">
+        <?php
+        
+        //print_r($_SESSION);
+        
+            //Get Branch name from branch table
+            $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);             
+            ?>
+            <select id="branch_id" name="branch_id">
+            <option value="">-- Select Branch --</option>
+            <?php             
+            echo build_select_options($branch_data,$search_branch_id); 
+            ?>
+            </select>
+        </td>       
+       <?php
+       }else{
+       ?>
+        <td align="left" colspan="2">&nbsp;
+        <input type=hidden id="branch_id" name="branch_id" value="<?php echo $search_branch_id; ?>">
+    </td>
+	<?php } ?>
+        <td align="left" width="22%" >Search by Customer ID :</td>
+        <td align="left">
+            <input type=text id="customer_id" name="customer_id" class="text-field" value="<?php echo $search_customer_id; ?>">        
+        </td>
+        
+       </tr>
+    </table>
+</form>
+    </div>
+<script>
+jQuery(document).ready(function(){ 
+
+search_enter_action('<?php echo $module_name; ?>');
+
+}
+);
+</script>

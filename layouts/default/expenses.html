@@ -1,0 +1,331 @@
+<div id="content_div">
+  <?php
+  unset($_SESSION['start']);
+  unset($_SESSION['pcount']);
+
+  if(isset($_SESSION['success_msg'])) {
+    echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+    unset($_SESSION['success_msg']);
+  } 
+  ?>           
+    <div class="breadcrumbs">
+        <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+                <td><a href="javascript:;">Reports</a>&raquo;<a href="javascript:;"><?php echo $page_title?></a></td>
+                <td align="left" width="10%" >
+                    <?php
+                    if($search_args != "")
+                    {
+                    $diaply_style ="";
+                    ?>
+                    <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search(); return false;">Search</a></div>
+                    <?php
+                    }
+                    else{
+                    $diaply_style = 'style="display:none;"';
+                    ?>
+                    <div id="serach_button_div">
+                        <a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search(); return false;">Close</a></div>
+                    <?php
+                    }
+                    ?>
+                </td>
+            </tr>
+        </table>
+    </div>  
+  
+
+  <div id="contentarea">      
+    <!-- Search Panel -->
+    <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+      <tr>
+        <td colspan="2">
+          <?php include ADMIN_LAYOUT_PATH . 'elements/expenses_main_report_search.html'; ?>   
+        </td>
+      </tr>   
+    </table>
+
+    <div><br>   
+      <form>
+        <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+          <tr>
+            <td class="title" colspan="10" style="background:none !important;">
+              <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                
+                <!-- Left side Title -->
+                <span style="font-weight:bold; font-size:18px; color:#A33D98;">
+                  List of Expenses
+                </span>
+                
+                <!-- Right side Buttons -->
+                <span style="display:flex; gap:10px;">
+                  <?php 
+                   if(can_delete($_SESSION['session_usertype'], $module_name)) { ?>
+                    <a href="javascript:;" onclick="delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" class="greybtn">DELETE</a>
+                  <?php }
+                  if(can_add($_SESSION['session_usertype'], $module_name)) { ?>       
+                    <a href="javascript:;" onclick="return create_function('content_div', '<?php echo $module_name; ?>','<?php echo $search_args; ?>');" class="greybtn">ADD NEW</a>  
+                  <?php } ?>
+                </span>
+ 
+              </div>
+            </td>           
+          </tr> 
+
+          <!-- Table Headings -->
+<tr class="headings">
+  <td align="center" width="5%">
+    <input type="checkbox" id="selall" onclick="chk_all(),highlight_all();"/>
+  </td>
+  <td width="10%">Expenses Date</td> <!-- 👈 First column -->
+  <td>Branch Details</td>
+  <td width="15%">Category Details</td>
+  <td width="10%">Opening Balance</td>    
+  <td width="20%">Description</td>
+  <td width="10%">Amount</td>
+  <td width="10%">Cash Type</td>
+  <td width="5%">Action</td>
+</tr>
+
+<?php if(count($data) > 0) { foreach($data as $i=>$row){ ?>
+<tr class="row0" id="row_<?php echo $row['id']; ?>">
+  <td align="center">
+    <input type="checkbox" name="list[]" value="<?php echo $row['id']; ?>" onclick="chkselcount('list[]'),highlight(this);"/>
+  </td>
+
+  <!-- Expenses Date -->
+  <td><?php echo date("d-m-Y", strtotime($row['expenses_date'])); ?></td>
+
+  <!-- Branch + Sub Branch -->
+<td>
+  <span style="font-weight:bold; font-size:13px; color:#222;">
+    <?php echo htmlentities($row['branch_name']); ?>
+  </span><br>
+  <span style="font-weight:600; font-size:12px; color:#666; margin-left:5px;">
+    - <?php echo htmlentities($row['sub_branch_name']); ?>
+  </span>
+</td>
+
+<!-- Category + Sub Category -->
+<td>
+  <span style="font-weight:bold; font-size:13px; color:#222;">
+    <?php echo htmlentities($row['category']); ?>
+  </span><br>
+  <span style="font-weight:600; font-size:12px; color:#666; margin-left:5px;">
+    - <?php echo htmlentities($row['sub_category']); ?>
+  </span>
+</td>
+
+  <!-- Opening Balance -->
+  <td><?php echo htmlentities($row['opening_balance']); ?></td>
+
+  <!-- Description -->
+  <td><?php echo htmlentities($row['description']); ?></td>
+
+  <!-- Amount -->
+<td style="color:<?php echo ($row['cash_type'] == 'Cash In') ? 'green' : 'red'; ?>; font-weight:bold;">
+  <?php echo number_format((float)$row['amount'],2); ?>
+</td>
+
+<!-- Cash Type -->
+<td><?php echo htmlentities($row['cash_type']); ?></td>
+
+  <!-- Action -->
+  <td align="center">
+    <a href="javascript:;" onclick="editRow('<?php echo $row['id']; ?>')" title="Edit">
+      <img src="images/edit.jpg"/>
+    </a>
+    <a href="javascript:;" onclick="deleteRow('<?php echo $row['id']; ?>')" title="Delete">
+      <img src="images/delete.jpg"/>
+    </a>
+  </td>
+</tr>
+<?php } } else { ?>
+<tr id="no_records_row">
+  <td colspan="9" align="center" height="50">No records found</td>
+</tr>
+<?php } ?>
+          <tr class="">
+            <td colspan="11"><?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+
+  <!-- Styling -->
+  <style>
+    .expand-table {
+      border-collapse: collapse;
+      margin-top: 8px;
+      width: 98%;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 13px;
+      background: #fff;
+      border: 1px solid #ddd;
+      box-shadow: 0px 2px 4px rgba(0,0,0,0.05);
+      border-radius: 4px;
+    }
+    .expand-table th {
+      background: #e6e6f9;
+      padding: 8px;
+      border: 1px solid #d3d3f5;
+      text-align: center;
+      font-weight: bold;
+      color: #444;
+    }
+    .expand-table td {
+      padding: 6px 8px;
+      border: 1px solid #eee;
+      text-align: center;
+      color: #333;
+    }
+    .expandable-row {
+      display: none;
+      background: #fafafa;
+    }
+
+    /* Table UI Improvements */
+.list-tbl {
+  border-collapse: collapse;
+  width: 98%;
+  margin: 10px auto;
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.08);
+}
+
+
+.list-tbl th {
+  padding: 5px;
+  border: 1px solid #eee;
+  text-align: center!important;
+  vertical-align: middle;
+}
+
+.list-tbl td{
+
+  padding: 5px;
+  border: 1px solid #eee;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.list-tbl .headings td {
+  background: #A33D98;
+  font-weight: bold;
+  color: #fff;
+  text-align: center!important;
+  font-size: 13px;
+}
+
+
+
+/* Hover effect */
+.list-tbl tr:hover {
+  background: #fafafa;
+}
+.list-title {
+    text-align: right;
+    font-size: 15px;
+    font-weight: bold;
+    color: #6a1b9a; /* existing purple theme */
+    padding: 8px 15px;
+}
+  </style>
+
+  <!-- JavaScript -->
+  <script>
+  // Edit Row
+  function editRow(id) {
+    create_function('content_div', '<?php echo $module_name; ?>', 'edit_id=' + id);
+  }
+
+  // Delete Row - FIXED VERSION
+  function deleteRow(id) {
+    if (!confirm("Are you sure you want to delete this record?")) return;
+
+    $.ajax({
+        url: "expenses.php",
+        type: "POST",
+        dataType: "json",
+        data: { type: "delete", id: id },
+        success: function(res) {
+            console.log("Delete response:", res);
+            
+            if (res.status === true || res.success === true) {
+                alert(res.content);
+                
+                // Remove the row from table immediately
+                $("#row_" + id).fadeOut(300, function() {
+                    $(this).remove();
+                    // Also remove the expandable row
+                    $("#expand_row_" + id).remove();
+                    
+                    // Check if no more rows left
+                    if ($('tr[id^="row_"]').length === 0) {
+                        $('tr#no_records_row').show();
+                    }
+                });
+                
+            } else {
+                alert("Delete failed: " + res.content);
+            }
+        },
+        error: function(xhr, status, err) {
+            console.log("AJAX error:", err);
+            console.log("Response text:", xhr.responseText);
+            alert("AJAX error: " + err);
+        }
+    });
+  }
+
+  // Bulk Delete
+  function delete_selected(div_id, module, page, search) {
+    var selected = [];
+    $('input[name="list[]"]:checked').each(function(){
+      selected.push($(this).val());
+    });
+    
+    if(selected.length === 0){
+      alert("Please select items to delete");
+      return false;
+    }
+    
+    if(!confirm("Are you sure you want to delete " + selected.length + " selected item(s)?")) return false;
+    
+    $.ajax({
+      url: "expenses.php",
+      type: "POST",
+      dataType: "json",
+      data: { type: "delete", list: selected },
+      success: function(res) {
+        if (res.status === true) {
+          alert(res.content);
+          
+          // Remove each deleted row
+          if (res.deleted_ids && res.deleted_ids.length > 0) {
+            res.deleted_ids.forEach(function(id) {
+              $("#row_" + id).fadeOut(300, function() {
+                $(this).remove();
+                $("#expand_row_" + id).remove();
+              });
+            });
+            
+            // Check if no more rows left
+            setTimeout(function() {
+              if ($('tr[id^="row_"]').length === 0) {
+                $('tr#no_records_row').show();
+              }
+            }, 350);
+          }
+        } else {
+          alert("Delete failed: " + res.content);
+        }
+      }
+    });
+  }
+  </script>
+</div>

@@ -1,0 +1,47 @@
+       <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+     
+          <tr class="headings">
+          <td width="6%">Date</td>
+          <td width="6%">Customer</td>
+          <td width="6%">Loan</td>
+          <!--<td width="15%">Product</td>      -->
+          <td>Transaction Details</td>    
+          <td width="8%">Pledged (<?php echo CURRENCY_SYMBOL;?>)</td>
+          <td width="6%">Interest (<?php echo CURRENCY_SYMBOL;?>)</td>      
+          <td width="6%">Redeem (<?php echo CURRENCY_SYMBOL;?>)</td>   
+          <td width="6%">Partial (<?php echo CURRENCY_SYMBOL;?>)</td>      
+          <td width="7%">Excess (<?php echo CURRENCY_SYMBOL;?>)</td>      
+          <td width="8%">Auction (<?php echo CURRENCY_SYMBOL;?>)</td> 
+          <td width="6%">Auction Lose (<?php echo CURRENCY_SYMBOL;?>)</td> 
+          </tr>
+            <?php
+              if(count($data) > 0) {
+                for($i=0;$i<count($data);$i++){ 
+
+            ?>
+         <tr class="row0">
+          <td align="left"><?php echo htmlentities(stripslashes($data[$i]['report_date']), ENT_QUOTES); ?></td>  
+          <td align="center"><?php echo "MFC".$data[$i]['customer_no'];?></td>     
+          <td align="center"><?php echo $data[$i]['loan_no'];?></td>     
+          <!-- <td align="left"><?php if($data[$i]['product_details']=='') echo "-"; else echo stripslashes(nl2br($data[$i]['product_details'])); ?></td> --> 
+          <td align="left"><?php if($data[$i]['transaction_detail']=='') echo "-"; else   echo htmlentities(stripslashes($data[$i]['transaction_detail']), ENT_QUOTES); ?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['pleged_amount']),false); ?></td>   
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['interest_amount']),false);?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['redeam_amount']),false); ?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['partial_amount']),false); ?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['excess_amount']),false); ?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['auction_amount']),false); ?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['auction_lose']),false); ?></td>
+          
+         </tr> 
+            <?php
+                }
+            } else {
+            ?>
+            <tr class="bg-row">
+            <td colspan="11" align="center" height="50">No records found</td>
+            </tr>
+            <?php
+            }
+            ?>
+        </table>

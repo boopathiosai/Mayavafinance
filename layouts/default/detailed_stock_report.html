@@ -1,0 +1,230 @@
+<div id="content_div">
+    <?php
+    unset($_SESSION['start']);
+
+    if(isset($_SESSION['success_msg']))
+    {
+    echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+    unset($_SESSION['success_msg']);
+    } 
+    ?>
+    <div class="breadcrumbs">
+        <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+                <td><a href="javascript:;">Reports</a> &raquo;<a href="javascript:;"><?php echo $page_title?></a></td>
+                <td align="left" width="10%" >
+                    <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+                   <!--  <?php
+                    if($search_args != "")
+                    {
+                    $diaply_style ="";
+                    ?>
+                    <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+                    <?php
+                    }
+                    else{
+                    $diaply_style = 'style="display:none;"';
+                    ?>
+                    <div id="serach_button_div">
+                        <a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+                    <?php
+                    }
+                    ?> -->
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="contentarea">
+        <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+                <td colspan="2">
+                    <?php include ADMIN_LAYOUT_PATH . 'elements/detailed_stock_report.html'; ?>
+                </td>
+            </tr>
+        </table>
+        <div>
+            <br>
+              <?php   
+
+             if($search_args == "")  {
+                //exit;
+             }
+         ?>
+             
+            <form>
+                <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+                    <tr>
+                        <td class="title" colspan="4"><?php echo $page_title;?></td>
+                        <td class="title" colspan="4" align=right>
+
+                            <a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_pdf&<?php echo $search_args; ?>" class="greybtn" id="pdf_report" onclick= "pdf_report('<?php echo $module_name;?>.php?type=export_pdf&<?php echo $search_args;?>');">PDF</a>
+                            <!--<a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_xls&<?php echo $search_args; ?>" class="greybtn" id="xls_report" onclick= "xls_report('<?php echo $module_name;?>.php?type=export_xls&<?php echo $search_args;?>');">XLS</a>-->
+                            <a href="javascript:" onclick="print_preview('<?php echo $module_name; ?>', 'print_dialog', '37', '<?php echo $search_args; ?>', '<?php echo $page_title; ?> - Print Preview', 1070, 700);" class="greybtn" id="print_report">Print</a>
+
+                        </td>
+                    </tr>  
+
+
+                    <?php 
+                    $s=0;
+                    $k=0;
+
+                    if(count($data) > 0 && count($data) <=5) { ?>
+                    <tr class="headings">
+                        <td width="5%"></td>  
+                        <!--<td >Loan Date</td>-->    
+                        <td align="center" width="10%">Loan ID</td>  
+                        <td align="right" width="30%">Loan Amount(<?php echo CURRENCY_SYMBOL; ?>)</td>      
+                        <td align="right" width="10%">Weight</td>  
+                        <td width="30%" align="right"></td>    
+                        <td width="40%" align="right"></td>    
+                        <!--td width="15%" align="right">Total Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>    
+                        <td width="15%" align="right">Total Wavier(<?php echo CURRENCY_SYMBOL; ?>)</td>      -->
+                    </tr>
+                    <?php
+                    for($i=0;$i<count($data);$i++){ 
+                    $change_status = ($data[$i]['status'] == 1) ? 0 : 1;
+                    ?>
+                    <tr class="groups" id="<?php echo $data[$i]['id']; ?>">
+                        <td align=left>
+                            <?php $total_income = round($data[$i]['total_interest'] + $data[$i]['additional_charges'] + $data[$i]['service_charge'],0); ?> 
+                        </td>
+                        <!--<td align="left"><strong><?php echo htmlentities(stripslashes($data[$i]['loan_date']), ENT_QUOTES); ?></strong></td>-->     
+                        <td align="center"><?php echo htmlentities(stripslashes($data[$i]['loan_id']),false); ?></td>
+                        <td align="right"><?php echo convertToCurrency($data[$i]['loan_amount'],false); ?></td>
+                        <td align="right"><?php //echo convertToCurrency($total_income,false); ?></td> 
+                        <td align="right"><?php echo htmlentities(stripslashes($data[$k]['weight']),false); ?></td>
+                        <td  align="right"></td>    
+                    </tr> 
+                    <tr><td colspan=8>
+                            <div id="sublist_<?php echo $data[$i]['id']; ?>" class="display_view"></div>
+
+                        </td></tr>
+                    <?php
+                    }
+                    }
+
+                    if(count($data) >0 && count($data) > 5 && count($data) <30) {
+                    echo "<tr>";
+                    $count_data =  (int)count($data)/10;
+                    $per_td = (int)count($data)/2;
+                    for($i=0;$i<2;$i++) { 
+                    $cols = $s*3;
+                    ?>
+                    <td colspan="<?php echo $cols ?>" style="border: 1px solid #E5E5E5;">
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0" class="list-tbl" style="padding-right:50px;">
+                            <!--<tr><td width='30%'>Loan Date</td>-->    
+                            <td align='center' width='30%'>Loan ID</td>  
+                            <td align='right' width='40%'>Loan Amount(<?php echo CURRENCY_SYMBOL; ?>)</td>
+                            <td align="right" width="10%">Weight</td>    
+                            </tr>
+                            <?php
+                            for($j=0;$j<$per_td;$j++) { ?>
+                            <tr class="groups" id="<?php echo $data[$k]['id']; ?>">
+                                <?php $total_income = round($data[$k]['total_interest'] + $data[$k]['additional_charges'] + $data[$k]['service_charge'],0); ?> 
+
+                                <!--<td align="left"><strong><?php echo htmlentities(stripslashes($data[$k]['loan_date']), ENT_QUOTES); ?></strong></td>-->  
+
+                                <td align="center"><?php echo htmlentities(stripslashes($data[$k]['loan_id']),false); ?></td>
+
+                                <?php
+                                if(convertToCurrency($data[$k]['loan_amount'],false) != 0.00) {
+                                $loan_amount = convertToCurrency($data[$k]['loan_amount'],false); 
+                                } 
+                                else {
+                                $loan_amount ="&nbsp;";
+                                }?>
+                                <td align="right"><?php echo $loan_amount; ?></td>   
+                                <td align="right"><?php echo htmlentities(stripslashes($data[$k]['weight']),false); ?></td>
+                            </tr> 
+                            <!--<tr><td colspan=8>
+                                   <div id="sublist_<?php echo $data[$i]['id']; ?>" class="display_view"></div>
+                                   
+                                   </td></tr>-->
+                            <?php 
+
+                            $k++;
+                            }
+                            ?>                           
+                        </table>
+                    </td>
+                    <?php }
+                    $s++;
+                    }
+
+
+                    if(count($data)>0 && count($data) >=30)  { 
+                    echo "<tr>";
+                    //$count_data =  (int)count($data)/10;
+                    $per_td =  (int)count($data)/3;
+                    for($i=0;$i<3;$i++) { 
+                    $cols = $i*4;
+                    ?>
+                    <td colspan="<?php echo $cols ?>" style="border: 1px solid #E5E5E5;">
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0" class="list-tbl"  style="padding-right:10px;">
+                            <!--<tr><td width='30%'>Loan Date</td>-->    
+                            <td align='center' width='30%'>Loan ID</td>  
+                            <td align='right' width='40%'>Loan Amount(<?php echo CURRENCY_SYMBOL; ?>)</td>
+                            <td align="right" width="10%">Weight</td>    
+                            </tr>
+                            <?php
+                            for($j=0;$j<$per_td;$j++) { ?>
+                            <tr class="groups" id="<?php echo $data[$i]['id']; ?>">
+                                <?php $total_income = round($data[$k]['total_interest'] + $data[$k]['additional_charges'] + $data[$k]['service_charge'],0); ?> 
+
+
+                                <!--<td align="left"><strong><?php echo htmlentities(stripslashes($data[$k]['loan_date']), ENT_QUOTES); ?></strong></td>-->  
+
+                                <td align="center"><?php echo htmlentities(stripslashes($data[$k]['loan_id']),false); ?></td>
+
+                                <?php 
+
+                                if(convertToCurrency($data[$k]['loan_amount'],false) != 0.00) {
+                                $loan_amount = convertToCurrency($data[$k]['loan_amount'],false); 
+                                } 
+                                else {
+                                $loan_amount ="&nbsp;";
+                                }?>
+                                <td align="right"><?php echo $loan_amount; ?></td>         
+                                <td align="right"><?php echo htmlentities(stripslashes($data[$k]['weight']),false); ?></td>
+
+                            </tr> 
+                            <?php 
+                            $k++;
+                            }
+                            ?>                           
+                        </table>
+                    </td>
+                    <?php }
+                    $s++;
+                    }  
+                    ?>
+                    </tr>   
+
+                    <?php 
+                    if(count($data) == 0) { ?>
+                    <tr class="headings">
+                        <td colspan=8>
+                            No records found
+                        </td>
+                    </tr>
+                    <?php } ?>
+                    <tr class="headings">
+                        <td colspan=8>
+                            <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </form>
+            <div class="clear clearfix"></div><!--contentarea ends here-->  
+        </div>
+    </div>    
+</div>
+
+<!--For the print option, days less 30 to display the results. Default value 30-->
+<script>
+        <?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+        var max_days = <?php echo $maximum_days;?>;
+</script>

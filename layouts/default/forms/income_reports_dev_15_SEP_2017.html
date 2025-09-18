@@ -1,0 +1,193 @@
+<div id="print_content">
+<?php
+		  $l=1;
+          $k=$k+1;
+
+         ?>
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="5" class="name-head">
+               
+                <?php
+                // DSSK changes 14_SEP_2017 //
+            $page_title = 'Income Report';
+            if($heading_suffix == "")
+            echo $title = $page_title;
+            elseif( $search_edate != "" && $search_sdate != "" )
+            echo $title = $page_title."(FROM ".$search_sdate." To ".$search_edate.")".$heading_suffix_cur;
+             else
+            echo $title = $page_title." ".$heading_suffix_cur;//   ($heading_suffix=="") ? //strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix); 
+                
+                // echo ($heading_suffix=="") ? //strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix);
+                ?>
+            </td>
+          </tr>
+
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+            <td >Loan Date</td>
+			<td >Loan No</td>
+			<td >Loan Amount(<?php echo CURRENCY_SYMBOL; ?>)</td>
+			<td >Transaction Type</td>
+			<td >Income(<?php echo CURRENCY_SYMBOL; ?>)</td>
+
+			  <!--<td >Loan ID</td>
+			  <td >Purpose</td>
+			  <td align="center">Pledge Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+			  <td align="center">Redeem Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+			  <td align="center">Renewal Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+			  <td align="center">Excess Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+			  <td align="center">Partial Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+			  <td align="center">Auction Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+			  <td align="center">Auction Profit(<?php echo CURRENCY_SYMBOL; ?>)</td>
+			  <td align="center">Service Charge(<?php echo CURRENCY_SYMBOL; ?>)</td>
+			  <td align="center">Additional Amount(<?php echo CURRENCY_SYMBOL; ?>)</td>
+			  <td align="right">Total Income(<?php echo CURRENCY_SYMBOL; ?>)</td> -->
+
+          </tr>
+          
+          <!--Sathish santhosh kumar - changes-->
+<?php
+
+//echo $a= count($income_report);exit;
+           if(count($income_report)>0) {
+
+		   for($i=0;$i<count($income_report);$i++)   {
+
+			  //echo '<pre>';
+             // print_r($income_report[$i]);
+             if($income_report[$i]['pr_cashin_id'] == $income_report[$i]['cf_id'] ){
+             $cash_purpose = 'Renewal Interest';
+             }
+             elseif($income_report[$i]['pt_cashflow_id'] == $income_report[$i]['cf_id'] ){
+              $cash_purpose = 'Pay Interest';
+             }
+             elseif($income_report[$i]['pe_cashin_id'] == $income_report[$i]['cf_id'] ){
+              $cash_purpose =  'Excess Interest';
+             }
+             elseif($income_report[$i]['pp_cashin_id'] == $income_report[$i]['cf_id'] ){
+               $cash_purpose =  'Partial Amount Interest';
+             }
+             elseif($income_report[$i]['r_cashin_id'] == $income_report[$i]['cf_id'] ){
+              $cash_purpose =  'Reemdemed Interest';
+             }
+             else{
+              $cash_purpose = $income_report[$i]['cf_cash_purpose'];
+             }
+
+			 /*if($income_report[$i]['cash_purpose'] == 'Additional Charge') { */
+			 if($cash_purpose == 'Additional Charge') { 
+
+					$parent_id = $income_report[$i]['parent_id']-1;
+
+					//$query = "SELECT P.loan_id,P.loan_amount,DATE_FORMAT(P.loan_date,'%Y-%m-%d') AS loan_date FROM ".CASH_FLOW_TRANSACTIONS." as CF LEFT JOIN ". PLEDGE." AS P ON P.cash_flow_id=CF.parent_id LEFT JOIN ".REDEMPTION." AS R ON R.loan_id=P.id LEFT JOIN ".PRODUCT_INTERESTS." AS PA ON PA.loan_id=P.id WHERE  CF.transaction_type = 'cashin' AND CF.editable = 0 AND R.cash_flow_id=".$parent_id." OR PA.cash_flow_id=".$parent_id;
+					$query = "SELECT P.loan_id,P.loan_amount,P.loan_date AS loan_date FROM ".CASH_FLOW_TRANSACTIONS." as CF LEFT JOIN ". PLEDGE." AS P ON P.cash_flow_id=CF.parent_id LEFT JOIN ".REDEMPTION." AS R ON R.loan_id=P.id LEFT JOIN ".PRODUCT_INTERESTS." AS PA ON PA.loan_id=P.id WHERE  CF.transaction_type = 'cashin' AND CF.editable = 0 AND R.cash_flow_id=".$parent_id." OR PA.cash_flow_id=".$parent_id;
+					$add_data = $app->getrow($query);
+
+					$loan_date   = $add_data['loan_date'];
+					$loan_id     = $add_data['loan_id'];
+					$loan_amount = $add_data['loan_amount'];
+
+				 } else {
+
+					$loan_date   = $income_report[$i]['loan_date'];
+					$loan_id     = $income_report[$i]['loan_id'];
+					$loan_amount = $income_report[$i]['loan_amount'];
+				 }
+				    $loan_date     = $income_report[$i]['date_transaction'];
+					$dincome      += $income_report[$i]['amount'];
+					$dlamount     += $loan_amount;
+					$total_income += $income_report[$i]['amount'];
+
+					// $cash_purpose = ($old_cash_purpose)? $old_cash_purpose : $income_report[$i]['cash_purpose'];
+					$cash_purpose = ($old_cash_purpose)? $old_cash_purpose : $cash_purpose;
+                                        
+					$old_cash_purpose        = '';
+					$dcount = $dcount+1;
+					$j = $i+1;
+
+
+          ?>
+
+
+          <tr class="<?php echo (($k % 2) == 0) ? 'bg' : 'bg1'; ?>">
+                        <td align="left"><strong><?php echo date("d-M-Y",strtotime($loan_date)); ?></strong></td>
+			<td align="left"><strong><?php echo htmlentities(stripslashes($loan_id), ENT_QUOTES); ?></strong></td>
+			<td align="left"><strong><?php echo convertToCurrency($loan_amount,false); ?></strong></td>
+			<td align="left"><strong><?php echo htmlentities(stripslashes($cash_purpose), ENT_QUOTES); ?></strong></td>
+			<td align="left"><strong><?php echo convertToCurrency($income_report[$i]['amount'],false); ?></strong></td>
+		  </tr>
+		  <?php
+
+				if($income_report[$i]['date_transaction'] != $income_report[$j]['date_transaction']) {
+				$k = $k + 1;
+		  ?>
+
+		  <tr class="<?php echo (($k % 2) == 0) ? 'bg' : 'bg1'; ?>">
+            <td align="left"><strong>Total</strong></td>
+			<td align="left"><strong><?php echo htmlentities(stripslashes($dcount), ENT_QUOTES); ?></strong></td>
+			<td align="left"><strong><?php echo convertToCurrency($dlamount,false); ?></strong></td>
+			<td align="left"><strong>&nbsp;</strong></td>
+			<td align="left"><strong><?php echo convertToCurrency($dincome,false); ?></strong></td>
+		  </tr>
+		  <?php
+					$dincome   = 0;
+					$dlamount  = 0;
+					$dcount    = 0;
+				}
+		  ?>
+
+          <!--<td align="left"><strong><?php echo htmlentities(stripslashes($row['purpose']), ENT_QUOTES); ?></strong></td>
+          <td align="right"><?php echo convertToCurrency($row['pledge_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($row['redeem_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($row['renew_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($row['excess_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($row['partial_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($row['auction_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($row['auction_profit'],false); ?></td>
+
+          <td align="right"><?php echo convertToCurrency($row['service_charge'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($row['additional_amount'],false); ?></td>
+
+
+          <td align="right"><?php echo convertToCurrency($row['income'],false); ?></td>-->
+
+         <?php
+            $k++;
+            $l++;
+          }
+
+		  ?>
+		  <tr class="<?php echo (($k % 2) == 0) ? 'bg' : 'bg1'; ?>">
+            <td align="left"><strong>&nbsp;</strong></td>
+			<td align="left"><strong>&nbsp;</strong></td>
+			<td align="left"><strong>&nbsp;</strong></td>
+			<td align="left"><strong>Total Income</strong></td>
+			<td align="left"><strong><?php echo convertToCurrency($total_income,false); ?></strong></td>
+		  </tr>
+		  <?php
+          }else{
+
+          ?>
+          <tr><td colspan=5 align="center"> No records found </td></tr>
+
+          <?php
+          }
+?>
+       </table>
+
+</div>
+<iframe id="print_frame" name="print_frame" title="<?php echo ($heading_suffix=="") ? $page_title : ($page_title . " - ".$heading_suffix); ?>"  width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

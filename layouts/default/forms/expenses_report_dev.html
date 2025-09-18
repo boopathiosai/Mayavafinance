@@ -1,0 +1,134 @@
+<div id="print_content">
+<?php
+    $i=1;
+    $page_title = 'Expenses Report';
+
+    $total_in  = 0;
+    $total_out = 0;
+    $closing_balance = 0;
+?>
+<table class="frm-tbl" width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+  <!-- Header Title -->
+  <tr>
+    <td colspan="7" class="name-head">
+      <?php
+        if($heading_suffix_cur == "")
+            echo $title = $page_title." - ". $branch_name." - Date:".date("d-m-Y h:i:sa");
+        elseif($search_sdate != "" AND $search_edate !="")
+            echo $title = $page_title." (FROM ".$search_sdate." To ".$search_edate.") ".$heading_suffix_cur." - ". $branch_name." - Date:".date("d-m-Y h:i:sa");
+        else
+            echo $title = $page_title." ".$heading_suffix_cur." - ". $branch_name." - Date:".date("d-m-Y h:i:sa");
+      ?>
+    </td>
+  </tr>
+
+  <!-- Column headers -->
+  <tr class="header-row">
+    <th width="10%">Date</th>
+    <th width="12%">Opening Balance</th>
+    <th width="15%">Category</th>
+    <th width="15%">Sub Category</th>
+    <th width="23%">Description</th>
+    <th align="right">Cash In (<?php echo CURRENCY_SYMBOL;?>)</th>
+    <th align="right">Cash Out (<?php echo CURRENCY_SYMBOL;?>)</th>
+  </tr>
+
+ <?php
+    if(count($expenses_report)>0) {
+      foreach($expenses_report as $row) {
+        $category     = !empty($row['category_name']) ? $row['category_name'] : '-';
+        $sub_category = !empty($row['sub_category_name']) ? $row['sub_category_name'] : '-';
+        $description  = $row['description'];
+        $cash_in      = isset($row['cash_in'])  ? $row['cash_in']  : 0;
+        $cash_out     = isset($row['cash_out']) ? $row['cash_out'] : 0;
+        $opening_balance = isset($row['opening_balance']) ? $row['opening_balance'] : 0;
+
+        $total_in  += $cash_in;
+        $total_out += $cash_out;
+        $last_opening = $opening_balance; // keep track of last opening
+?>
+  <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+    <td><?php echo htmlentities($row['report_date'], ENT_QUOTES); ?></td>
+    <td align="right"><?php echo convertToCurrency($opening_balance, false); ?></td>
+    <td><?php echo htmlentities($category, ENT_QUOTES); ?></td>
+    <td><?php echo htmlentities($sub_category, ENT_QUOTES); ?></td>
+    <td><?php echo htmlentities($description, ENT_QUOTES); ?></td>
+    <td align="right" style="color:green;"><?php echo convertToCurrency($cash_in, false); ?></td>
+    <td align="right" style="color:red;"><?php echo convertToCurrency($cash_out, false); ?></td>
+  </tr>
+<?php
+        $i++;
+      }
+
+      // ✅ Closing balance calculation
+      $closing_balance = $opening_balance + $total_in - $total_out;
+?>
+  <!-- Totals -->
+  <tr style="font-weight:bold; background:#f1f1f1;">
+    <td colspan="5" align="right">Total :</td>
+    <td align="right" style="color:green;"><?php echo convertToCurrency($total_in, false); ?></td>
+    <td align="right" style="color:red;"><?php echo convertToCurrency($total_out, false); ?></td>
+  </tr>
+
+  <!-- Closing balance -->
+  <tr style="font-weight:bold; background:#ddd;">
+    <td colspan="5" align="right">Closing Balance :</td>
+    <td colspan="2" align="right"><?php echo convertToCurrency($closing_balance, false); ?></td>
+  </tr>
+
+
+  <?php } else { ?>
+    <tr><td colspan="7" align="center" height="50">No Records Found</td></tr>
+  <?php } ?>
+</table>
+
+<!-- Print / Close buttons -->
+<div style="text-align:center; margin-top:15px;">
+    <button onclick="window.print()" 
+            style="padding:6px 15px; background:#A33D98; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+        Print
+    </button>
+    <button onclick="window.close()" 
+            style="padding:6px 15px; background:#777; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+        Close
+    </button>
+</div>
+
+</div>
+
+<style>
+/* Main table */
+#print_content {
+    background: #e7d1ed;
+    padding: 10px;
+}
+.frm-tbl {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    margin: 0 auto;
+    background: #fff;
+}
+.name-head {
+    background: #A33D98;
+    color: #ffffff;
+    font-weight: bold;
+    text-align: center;
+    padding: 8px;
+    font-size: 14px;
+}
+.header-row th {
+    background: #eeeeee;
+    padding: 6px 8px;
+    border: 1px solid #555;
+    font-weight: bold;
+    text-align: center;
+}
+.frm-tbl td {
+    padding: 6px 8px;
+    border: 1px solid #555;
+}
+.bg { background-color: #f9f9f9; }
+.bg1 { background-color: #ffffff; }
+</style>

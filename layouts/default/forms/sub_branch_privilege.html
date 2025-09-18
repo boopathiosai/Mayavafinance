@@ -1,0 +1,166 @@
+<?php 
+ if(isset($_POST['filter_sub_branch'])){
+    echo "<pre>"; print_r($_POST); exit;
+    $search_option= explode(',',$_POST['searchOption']);                               
+    $sess_branch_id = $_SESSION["session_user_branch_id"];
+
+    //Get Sub Branch name from sub branch table
+    $query_sub_branch_data = "SELECT id,name FROM mf_sub_branch WHERE branch_id = $sess_branch_id";
+    $data_sub_name = $app->getrows($query_sub_branch_data);
+    //$sub_branch_data = get_dropdown_list_with_field('id', 'name', SUB_BRANCH); 
+    $dropdown_list_count = count($data_sub_name);
+    }
+?>     
+<?php
+    if($branch_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+    if($branch_data['edit_status'] == "0") {
+        $edit_inactive="checked";
+    }else{
+        $edit_active="checked";
+    }
+    // Customer edit privilege by DSSK 27_MAR_2018 //
+    if($branch_data['cus_edit_privilege'] == "0") {
+        $cus_edit_privilege_inactive="checked";
+    }else{
+        $cus_edit_privilege_active="checked";
+    }
+?>
+<div class="clear clearfix"></div>
+<div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>&nbsp;Masters</a> &raquo;<a href="sub_branches.php">Sub Branch Privilege Master</a></td >
+            <td >
+                <span class="btn-rht">
+                    <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return change_status_privilage('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+                    <a href="javascript:;" class="greybtn" onclick="return create_privilege_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" tabindex="10">RESET</a>
+                    <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');" tabindex="11">BACK</a>
+                </span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="contentarea">
+    <form name="sub_branch_form" method="post" style="margin: 0px;">
+        <div id="msg"></div>
+        <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="title">Sub Branch Privilege Master</td>
+            </tr>
+            <tr>
+                <td width="50%">
+                    <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+                        <tr class="row0">
+                            <?php
+                            if($_SESSION["session_usertype"]==1 || $_SESSION["session_usertype"] == 2)
+                            {
+                            ?>
+                            <td align="left" style="width: 15%;">Branch :</td>
+                            <td align="left">
+                                <?php
+                                //print_r($_SESSION);
+                                //Get Branch name from branch table
+                                $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);             
+                                ?>
+                                <select id="branch_id" name="branch_id" onchange="load_sub_Branch(this.value,'sub_branch_id','sub_branches')">
+                                    <option value="">-- Select Branch --</option>
+                                    <?php             
+                                    echo build_select_options($branch_data,$search_branch_id); 
+                                    ?>
+                                </select>
+                            </td>
+                            <td> &nbsp; </td>
+                        </tr>
+                        <tr>
+                            <td align="left" style="width: 15%;">Sub Branches :</td>
+                            <td align="left">
+                                <!--input type=hidden id="branch_id" name="branch_id" value="<?php echo $search_branch_id; ?>"-->                               
+                                    <ul id="sub_branch_id">                                        
+                                    </ul>
+                            </td>
+                            <td>
+                                <input type=hidden id="branch_id" name="branch_id" value="<?php echo $search_branch_id; ?>">
+                            </td>
+                            <?php
+                            }
+                            if($module_name == "summary_reports"){
+                            ?>
+                        <input type=hidden id="wise" name="wise" value="<?php echo $search_wise; ?>">
+                        <?php
+                        }
+                        ?>
+                        
+            </tr>
+            <tr>
+                <td colspan="3"><span id="mand_note">* Checked Sub Branches are in Active State</span> </td>
+            </tr>          
+        </table>
+        <?php if($uval[id] > 0){ ?>
+        <input name="type"  type="hidden"  value = "update">
+        <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+        <?php  }else{ ?>
+        <input name="type"  type="hidden"  value = "add">
+
+        <?php }?>
+        </td>
+        </tr>
+        </table>
+    </form>
+    <div class="clear clearfix"></div><!--contentarea ends here-->
+</div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        form_enter_focus(jQuery('#name_select'),8,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        enable_save_action();
+
+    });
+    function load_sub_Branch(val, div_id, module){
+        
+         $.ajax({
+           type: "GET",
+           url: module + ".php?",
+           data:{
+                type : "load_sub_branch",
+                mod : "Ajax",
+                val: val,
+                dataType: 'json'
+
+           },
+           success: function(response){
+              var data = JSON.parse(response);
+              
+//               console.log(data);
+            if(data != null){
+               $("#"+div_id).empty();
+               var len = data.length;               
+               for( var i = 0; i<len; i++){
+                    var id = data[i]['id'];
+                    var name = data[i]['name'];
+                    var checked = (data[i]['status'] == 1)?'checked':'';
+//                    $("#"+div_id).append("<option value='"+id+"' "+selected+">"+name+"</option>");
+                    $("#"+div_id).append("<li> <input style='height: 15px; width: 21px;' type='checkbox' name='pval[]' value='"+id+"' "+checked+">"+name+" <input  type='hidden' name='pvalall[]' value='"+id+"'></li>");
+
+                }               
+                }else{
+                   $("#"+div_id).empty();
+                   $("#"+div_id).append("No Sub-Branches"); 
+                }
+            },
+          complete: function(outputData){
+               hide_ajax_status();
+          },
+          beforeSend: function(outputData){
+               show_ajax_status("Loading....",0);
+          }
+
+         });
+    }
+</script>
+</html>

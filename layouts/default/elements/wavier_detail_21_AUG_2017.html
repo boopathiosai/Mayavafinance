@@ -1,0 +1,41 @@
+<?php
+if(is_admin($_SESSION['session_usergroupname'])){
+?>
+<div id="wavier_detail"  class="display_view">
+<div id="other-detail" class="box-hd-bg">
+    <h3>Wavier Details</h3>
+<table class="frm-tbl" border="0" cellpadding="0" cellspacing="0" width="98%">
+  <tr>
+    <td id="label_wavier_days" width="30%"><span class="add">Wavier (No of Days)</span></td>
+    <td>
+    <input id="default_wavier_days" name="default_wavier_days" maxlength="40" type="hidden" class="textfield-m number" value="<?php echo $pay_interest_details['default_wavier_days']; ?>" />
+    <input id="default_wavier_amount" name="default_wavier_amount" maxlength="40" type="hidden" class="textfield-m" value="<?php echo $pay_interest_details['default_wavier_amount']; ?>" />
+
+    <input id="total_days_of_year" name="total_days_of_year" maxlength="40" type="hidden" class="textfield-m number" value="<?php echo $pay_interest_details['total_days_of_year']; ?>" />
+    <input id="loan_amount" name="loan_amount" maxlength="40" type="hidden" class="textfield-m number" value="<?php echo $product_data['loan_amount']; ?>"  />
+
+    <input id="wavier_days" name="pval[wavier_days]" maxlength="40" type="text" class="textfield-m number" value="<?php echo $pay_interest_details['default_wavier_days']; ?>" onchange="reset_pay_interest(this.value,'<?php echo $uval['id']; ?>', '<?php echo $customer_data['pi_id']; ?>','<?php echo $type; ?>','<?php echo $module_name; ?>'); remove_red(wavier_days)" />
+
+
+    </td>
+  </tr>
+    <tr>
+    <td><span class="add">Wavier Amount </span></td>
+    <td>
+    <div id="disp_wavier_amount">Rs. 0.00 </div>
+    <input id="wavier_amount" name="pval[wavier_amount]" maxlength="40" type="hidden" class="textfield-m" value="<?php echo $pay_interest_details['default_wavier_amount']; ?>" />
+    </td>
+  </tr>
+    <tr>
+    <td><span class="add">Wavier Reason </span></td>
+    <td>
+    <input id="default_wavier_reason" name="default_wavier_reason" maxlength="40" type="hidden" class="textfield-m" value="<?php echo $pay_interest_details['default_wavier_reason']; ?>" />
+    <textarea id="wavier_reason" name="pval[wavier_reason]"><?php echo $pay_interest_details['default_wavier_reason']; ?></textarea>
+    </td>
+  </tr>
+</table>
+</div>
+</div> 
+<?php
+}
+?>

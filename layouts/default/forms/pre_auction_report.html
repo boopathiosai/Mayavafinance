@@ -1,0 +1,65 @@
+<div id="print_content">
+
+  <?php
+    $i=1;
+
+ ?>
+  <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+  <tr class="bg">
+    <td colspan="9" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title)." - Date:".date("d-m-Y h:i:sa") : strtoupper($page_title . " - ".$heading_suffix)." - Date:".date("d-m-Y h:i:sa"); ?></td>
+    </tr>
+  <tr class="bg1">
+      <td rowspan=2  width="10%"><strong>Branch Name</strong></td>
+	  <td rowspan=2  width="7%"><strong>Serial No</strong></td>
+	  <td rowspan=2  width="6%"><strong>Loan No</strong></td>
+      <td rowspan=2  width="10%"><strong>Loan Date</strong></td>
+      <td rowspan=2  width="14%"><strong>Loan Amount(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td rowspan=2  width="23%"><strong>Customer Details</strong></td>
+      <td rowspan=2  width="23%"><strong>Product Details</strong></td>
+      <td rowspan=2  width="23%"><strong>Quantity</strong></td>
+      <td colspan=2 width="15%"  align=center><strong>Net Weight</strong></td>
+  </tr>
+ <tr class="bg1">
+   <td align="right"> G</td>
+   <td align="right"> Mg</td>
+
+ </tr>
+<?php
+if(count($data)>0){
+
+    foreach($data as $row){
+        $weight_in = floatval($row['net_weight']);
+        $weight_in_gs =  intval($weight_in);
+        $weight_in_mgs =  intval(floatval($weight_in - intval($weight_in)) * 1000);
+  ?>
+  <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+	<td class="disp-light" align="left"><?php echo htmlentities(stripslashes($row['branch_name']), ENT_QUOTES); ?> </td>
+	<td align="center"><?php echo $serial_no; ?> </td>
+    <td class="disp-light" align="left"><?php echo htmlentities(stripslashes($row['loan_no']), ENT_QUOTES); ?> </td>
+	<td class="disp-light" align="left"><?php echo htmlentities(stripslashes($row['report_date']), ENT_QUOTES); ?> </td>
+	<!--<td align="center"><?php echo ($data[$i]['serial_no']) != '' ? htmlentities(stripslashes($data[$i]['serial_no']), ENT_QUOTES) : '-'; ?></td>-->
+    <td class="disp-light" align="left"><?php echo convertToCurrency(stripslashes($row['loan_amount']),false); ?> </td>
+<td class="disp-light" align="left"><?php echo $row['cust_name'].'-'.'('.$row['cust_id'].')'.','. stripslashes(nl2br($row['customer_details'])); ?> </td>
+    <!--td class="disp-light" align="left"><?php echo stripslashes(nl2br($row['customer_details'])); ?> </td-->
+    <td class="disp-light" align="left"><?php echo stripslashes(nl2br($row['product_details'])); ?> </td>
+    <td align="center"> <?php echo $row['quantity']; ?> </td>
+    <td align="right"> <?php echo $weight_in_gs; ?> </td>
+    <td align="right"> <?php echo $weight_in_mgs; ?> </td>
+
+  </tr>
+
+  <?php
+  $i++;
+  $serial_no = $serial_no+1;
+  }
+  }else{
+  ?>
+  <tr><td colspan=9 align="center">No Records Found</td></tr>
+  <?php
+  }
+  ?>
+  </table>
+
+</div>
+
+<iframe id="print_frame" name="print_frame" title="<?php echo ($heading_suffix=="") ? ($page_title) : ($page_title . " - ".$heading_suffix); ?>"  width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>

@@ -1,0 +1,269 @@
+<!--<div id="other-detail" class="box-hd-bg">
+<h3>New Loan Entry</h3>
+<table class="frm-tbl" border="0" cellpadding="0" cellspacing="0" width="98%">-->
+
+
+
+
+
+<?php
+ // Get Loan date - DSSK //        
+        $crr_loan_date = LoanDate::GetloanDate();
+ // Get Loan date - DSSK //    
+if($module_name != "redemption"){
+
+?>
+<tr><td colspan=2 align=center> &nbsp; </td></tr>
+<tr><td colspan=2 align=center> NEW LOAN DETAILS </td></tr>
+    <tr>
+      <td>New Loan Id</td>
+      <td><font color="#A33D98">
+            <?php
+             $loan_id = ProductPledge::getNewLoanCode($_SESSION['session_user_branch_id']);
+             echo $loan_id;
+         ?></font> <input name="pval[new_loan_id]"  type="hidden"  value = "<?php echo $loan_id;?>">
+       </td>
+  </tr>
+
+
+   <tr>
+    <td  id="new_scheme">New Scheme Name *</td>
+    <td>
+    <span id="sch_type">
+                <?php
+                //echo $product_data['pledge_date'];
+                $scheme_data = get_dropdown_list_with_field('id', 'name', SCHEME);
+                ?>
+                <select name="pval[new_scheme]" id="new_scheme_id" onchange="display_scheme_details(this.value)" onfocus="remove_red('new_scheme')">
+                <option value="">-- Select Scheme --</option>
+                   <?php
+                   echo build_select_options($scheme_data); //,$product_data['scheme_id']
+                   ?>
+                </select> &nbsp;
+                <input name="old_scheme_id" id="old_scheme_id"  type="hidden"  value = "<?php echo $product_data['scheme_id']; ?>">
+                &nbsp; <a href="javascript:" onclick="remove_red('new_scheme');setTotalAmount()" title="Click to reset loan details for the selected scheme"><img src="images/refresh.png" border=0></a>
+                <!--<a class="flexi_btn" href="javascript:" onclick="remove_red('new_scheme');setTotalAmount()">Reset</a>-->
+
+    </span>
+
+    </td>
+  </tr>
+
+
+<?php
+
+
+
+    if($module_name == "partial_amount_payment"){
+?>
+
+
+
+<tr>
+<td id="customer_amount"><span class="add">Customer Amount * </span></td>
+<td>
+<?php echo CURRENCY_SYMBOL;?>
+<input id="customer_amt" class="currency" name="customer_amount" maxlength="40" value="0.00" type="text" class="textfield-m" onchange="remove_red('customer_amount');setTotalAmount()" />
+
+</td>
+</tr>
+<?php
+  }
+
+
+    if($module_name == "pay_excess_amount"){
+?>
+
+
+
+<tr>
+<td id="customer_amount"><span class="add">Customer Requested Amount * </span></td>
+<td>
+<?php echo CURRENCY_SYMBOL;?>
+<input id="customer_amt" class="currency" name="customer_amount" maxlength="40" value="0.00" type="text" class="textfield-m" onchange="remove_red('customer_amount');setTotalAmount()" />
+
+</td>
+</tr>
+<?php
+  }
+?>
+<tr>
+<td><span class="add">Initial Loan Amount * </span></td>
+<td>
+<span id="disp_ini_loan_amt"><?php echo CURRENCY_SYMBOL." ".$product_data['loan_amount'];?> </span>
+<input id="ini_loan_amt" class="currency" name="ini_loan_amt" maxlength="40" value="0.00" type="hidden" class="textfield-m" />
+</td>
+</tr>
+
+    <tr>
+      <td id="service_charge">Service Charge </td>
+      <td>
+      <span id="disp_service_charge">
+
+       <?php echo ($pay_interest_details['service'] == "") ? "-": convertToCurrency(stripslashes($pay_interest_details['service'])); ?> [ <?php echo $pay_interest_details['service_rate']; ?> %]
+
+       </span>
+       <input name="pval[service_charge]" type="hidden" id="service_crg" class="textfield-m" onfocus="remove_red('service_charge');" value ="<?php echo number_format(stripslashes($pay_interest_details['service']), 2,'.',''); ?>">
+       <input name="service_rate" type="hidden" id="service_rate" class="textfield-m"  value ="<?php echo number_format(stripslashes($pay_interest_details['service_rate']), 2,'.',''); ?>">
+
+       </td>
+    </tr>
+
+
+    <tr>
+      <td id="actual_loan_amount" width="40%"><span class="add">Revised Loan Amount <span class="star">*</span></span></td>
+      <td>
+
+      <span id="disp_actual_loan_amount"><?php echo convertToCurrency($principle_remain_amount); ?></span>
+
+      <input name="actual_loan_amount" maxlength="40" type="hidden" class="currency textfield-m" id="actual_loan_amt" onfocus="remove_red('loan_amount');" value ="<?php if($product_data['loan_amount'] != ''){ echo number_format(stripslashes($product_data['loan_amount']), 2,'.','');} ?>">
+      <input name="to_receive_amount" maxlength="40" type="hidden" class="textfield-m" id="to_receive_amt" onfocus="remove_red('loan_amount');" value ="0.00">
+      <input name="to_return_amount" maxlength="40" type="hidden" class="textfield-m" id="to_return_amt" onfocus="remove_red('loan_amount');" value ="0.00">
+      </td>
+    </tr>
+
+
+    <tr>
+      <td id="label_loan_amount" width="40%"><span class="add">New Loan Amount (Rounded) <span class="star">*</span></span></td>
+      <td>
+
+      <!--<font size=+1 color="#A33D98"><span id="new_loan_amount"><?php echo convertToCurrency($principle_remain_amount); ?></span></font>-->
+
+      Rs.
+      <input name="pp_pval[loan_amount]" class="currency" maxlength="40" type="text" class="textfield-m" id="loan_amt" onfocus="remove_red('loan_amount');" value ="<?php if($product_data['loan_amount'] != ''){ echo number_format(stripslashes($product_data['loan_amount']), 2,'.','');} ?>" onchange="reset_trans_amount('manual')">
+      <span id="disp_new_loan_amount"></span>
+
+      </td>
+    </tr>
+    <!--<tr>
+      <td id="remain_to_return_amount" width="40%"><span class="add">Remaining Amount to return</span></td>
+      <td>
+
+      <span id="to_return_amount">Rs. 0.00</span>
+
+
+      </td>
+    </tr>
+    <tr>
+      <td id="additional_to_receive_amount" width="40%"><span class="add">Additional Charge to recieve</span></td>
+      <td>
+
+      <span id="to_receive_amount">Rs. 0.00</span>
+
+
+      </td>
+    </tr>-->
+<?php
+
+    if($module_name == "partial_amount_payment"){
+?>
+
+
+<tr>
+  <td id="label_partial_amount">Partial Amount * </td>
+  <td>
+   <span id="disp_partial_amount"><!--<?php echo ($product_details['partial_amount']!='' && $type=='edit') ? unitDisplay(stripslashes($product_details['partial_amount']),false) : unitDisplay(($product_data['loan_amount']/12),false); ?>--></span>
+   <input name="pval[partial_amount]" type="hidden" id="partial_amt" class="currency calc textfield-m" onfocus="remove_red('partial_amount');"   value ="<?php echo ($product_details['partial_amount']!='' && $type=='edit') ? unitDisplay(stripslashes($product_details['partial_amount']),false) : unitDisplay(($product_data['loan_amount']/12),false); ?>"  onchange="setTotalAmount()" >
+   <input name="actual_partial_amount" type="hidden" id="actual_partial_amount" class="currency textfield-m" onfocus="remove_red('partial_amount');"   value ="<?php echo ($product_details['partial_amount']!='' && $type=='edit') ? unitDisplay(stripslashes($product_details['partial_amount']),false) : unitDisplay(($product_data['loan_amount']/12),false); ?>">
+   </td>
+</tr>
+
+<?php
+       }
+if($module_name == "pay_excess_amount"){
+?>
+        <!--<tr><td colspan=2>
+        <input type="checkbox" name="reduce_from_excess" class="checkbox" id="reduce_from_excess" checked value="1" onclick="setTotalAmount();//reduce_from_excess_amount(this.checked)" />
+        Reduce Interest Payment from Excess Pay Amount
+        </td></tr>-->
+
+        <tr>
+        <td id="label_excess_amount">Excess Amount</td>
+        <td>
+        <span id="disp_excess_amount"><?php echo CURRENCY_SYMBOL;?> </span>
+        <input name="pval[excess_amount]" type="hidden" id="excess_amt" class="currency" onfocus="remove_red('excess_amount');"  value ="0.00" class="textfield-m"  onchange="setTotalAmount()" >
+        <input name="max_excess_amount" type="hidden" id="max_excess_amount" class="currency textfield-m"  value ="<?php echo unitDisplay($pay_interest_details['excess_pay_amount'],false); ?>">
+        </td>
+        </tr>
+
+<?php
+
+    }
+
+
+?>
+
+  <!--<tr>
+    <td id="label_loan_date"><span class="add">New Loan Date </span></td>
+    <td>
+        <span id="disp_new_loan_date"><?php echo date("d-M-Y"); ?>
+    </td>
+  </tr>-->
+
+<tr>
+<td id="label_paid_on"><span class="add">New Loan Date</span></td>
+<td>
+
+<input class="calendar textfield-m" type="text" id="paid_on" name="pval[paid_on]" readonly value="<?php echo ($product_data['paid_on']=='') ? date("d-m-Y") : $product_data['paid_on']; ?>"  onfocus="remove_red('paid_on');">
+&nbsp; <a href="javascript:" id="calender_trigger" onclick="date_picker('paid_on', 'calender_trigger', '%d-%m-%Y' )" title="Click to select date"><img src="images/calendar.png" border=0></a>
+&nbsp; <a href="javascript:" onclick="remove_red('paid_on');get_interest_details('<?php echo $pledge_id; ?>','<?php echo $pay_id; ?>','<?php echo $module_name; ?>')" title="Click to reset loan details for the selected new loan date"><img src="images/refresh.png" border=0></a>
+<!--<a class="flexi_btn" href="javascript:" onclick="remove_red('paid_on');get_interest_details('<?php echo $pledge_id; ?>','<?php echo $pay_id; ?>','<?php echo $module_name; ?>')">Reset</a>-->
+
+
+
+</td>
+</tr>
+
+<?php
+}else{
+?>
+
+<tr>
+<td id="label_paid_on"><span class="add">Return Paid Date</span></td>
+<td>
+    <span class="">  <?php echo ($product_data['paid_on']=='') ? $crr_loan_date : $product_data['paid_on']; ?> </span>
+    <input class="textfield-m"  type="hidden" id="paid_on" name="pval[paid_on]" readonly value="<?php echo ($product_data['paid_on']=='') ? $crr_loan_date : $product_data['paid_on']; ?>">
+
+<!-- <input class="calendar textfield-m" type="text" id="paid_on" name="pval[paid_on]" value="<?php echo ($product_data['paid_on']=='') ? $crr_loan_date : $product_data['paid_on']; ?>"  onfocus="remove_red('paid_on');">
+&nbsp; <a href="javascript:" id="calender_trigger" onclick="date_picker('paid_on', 'calender_trigger', '%d-%m-%Y' )" title="Click to select date"><img src="images/calendar.png" border=0></a>
+&nbsp;<a href="javascript:" onclick="remove_red('paid_on');get_interest_details('<?php echo $pledge_id; ?>','<?php echo $pay_id; ?>','<?php echo $module_name; ?>')" title="Click to reset loan details for the selected new loan date"><img src="images/refresh.png" border=0></a> -->
+
+
+<input type="hidden" id="pledge_id" value="<?php echo $pledge_id; ?>">
+<input type="hidden" id="pay_id" value="<?php echo $pay_id; ?>">
+<input type="hidden" id="module_name" value="<?php echo $module_name; ?>">
+
+<!-- <input class="calendar textfield-m" type="text" id="paid_on" name="pval[paid_on]" value="<?php echo ($product_data['paid_on']=='') ? date("d-m-Y") : $product_data['paid_on']; ?>"  onfocus="remove_red('paid_on');">
+&nbsp; <a href="javascript:" id="calender_trigger" onclick="date_picker('paid_on', 'calender_trigger', '%d-%m-%Y' )" title="Click to select date"><img src="images/calendar.png" border=0></a>
+&nbsp;<a href="javascript:" onclick="remove_red('paid_on');get_interest_details('<?php echo $pledge_id; ?>','<?php echo $pay_id; ?>','<?php echo $module_name; ?>')" title="Click to reset loan details for the selected new loan date"><img src="images/refresh.png" border=0></a> -->
+
+<!--<a class="flexi_btn" href="javascript:" onclick="remove_red('paid_on');get_interest_details('<?php echo $pledge_id; ?>','<?php echo $pay_id; ?>','<?php echo $module_name; ?>')">Reset</a>-->
+
+
+
+</td>
+</tr>
+
+<?php
+}
+?>
+
+<!--
+</table>
+ </div>-->
+<script>
+//$( document ).ready(function() {
+//     $('#disp_interest_amount').css('display','none');
+//});
+
+$(document).ready(function(){    
+var a = $('#paid_on').val();
+var b = $('#pledge_id').val();
+var c = $('#pay_id').val();
+var d = $('#module_name').val();
+if(a!=''){
+var e = get_interest_details(b,c,d);
+}
+}
+);
+</script>

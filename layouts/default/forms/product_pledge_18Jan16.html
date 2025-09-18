@@ -1,0 +1,456 @@
+   <?php
+
+    $balance = CashFlowTransaction::getBranchBalance($_SESSION['session_user_branch_id']);
+
+    if($product_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+
+    //echo "<PRE>";
+    //print_r($product_data);
+    //echo stripslashes($product_data['loan_date']);
+    $present_time = date("Y-m-d H:i:s");
+    $loan_date = stripslashes($product_data['loan_date']) !='' ? stripslashes($product_data['loan_date']) : date_format_fun($present_time) ;
+    stripslashes($product_data['loan_date']);
+    //$category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);
+    //$category_options = build_select_options($category_data);
+    include "fetch_pledge_product.php";
+
+    ?>
+<div class="clear clearfix"></div>
+
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td >&nbsp;Transactions &raquo;<a href="product_pledge.php"><?php echo $page_title?></a></td >
+        <td  width="50%"><span class="btn-rht">
+        <?php
+                if(floatval($balance) <= floatval(MINIMUM_LOAN_AMOUNT)){
+                ?>
+                 <a id="save_action_btn" href="javascript:;" class="greybtn-off" onclick="jalert('Insufficient branch balance amount')">SAVE</a>
+                <?php
+
+                }else if($product_data['status'] != 0 || $product_data['status'] == ""){
+                
+                ?>
+                <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+                
+                
+                
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a><?php } ?>  
+        <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+<div id="contentarea">
+    <div class="sub-hdr">
+   
+<!--<span class="customer-order"> Please complete the form below. Mandatory fields marked <span class="star">*</span></span>-->
+
+<form name="product_form" id="product_form" method="post" style="margin: 0px;">
+   <!--content area starts here-->
+            <div class="lftarea"><!--left area starts here-->
+
+<!--Customer Details -->
+
+    <?php include ADMIN_LAYOUT_PATH . "elements/customer_details.html";   ?>
+
+              </div>
+
+    </div>
+
+  <!--Pleged Product Details -->
+
+    <?php include ADMIN_LAYOUT_PATH . "elements/pledged_product_details.html";   ?>
+
+
+    <div id="other-detail" class="box-hd-bg">
+                     <h3>Other Details</h3>
+<table class="frm-tbl" border="0" cellpadding="0" cellspacing="0" width="98%">
+  <tr>
+    <td id="scheme_id" width="40%">Scheme Name <span class="star">*</span></td>
+    <td>
+        <?php
+               $scheme_data = get_dropdown_list_with_field('id', 'name', SCHEME);
+
+                if($product_data['status'] != "0") {
+              ?>
+        <select name="pval[scheme_id]" id="sch_id" onchange="remove_red('scheme_id'); scheme_details()">
+        <option value="">-- Select Scheme --</option>
+           <?php
+           echo build_select_options($scheme_data,$product_data['scheme_id']);
+           ?>
+        </select>
+        &nbsp; <a href="javascript:" onclick="remove_red('scheme_id');cal_total()" title="Click to reset loan details for the selected scheme"><img src="images/refresh.png" border=0></a>
+        <?php } 
+        else { 
+         $app->access_table = SCHEME;
+         $params = array();
+         $params['conditions']['id = '] = $product_data['scheme_id'];  
+         $data = $app->find(array('name'), $params);    
+        ?>
+        <input type="hidden" name="pval[scheme_id]" value="<?php echo $data[0]['name'] ?>">
+        <label name="scheme"><?php echo $data[0]['name'];  ?></label>
+        <?php }     ?>
+        <!--<a class="flexi_btn" href="javascript:" onclick="remove_red('scheme_id');cal_total()">Reset</a>-->
+    </td>
+  </tr>
+
+  <tr>
+    <td>Loan Id</td>
+	<td id="sub_loan_id"><?php
+               // TODO: Modify if needed
+               //  Assign loan_id
+               $loan_id ='';
+               if($product_data['loan_id'] == '')
+               {
+                   $loan_id = ProductPledge::getNewLoanCode($_SESSION['session_user_branch_id']);
+                   $pledge_date = date("d-m-Y");//,$present_time;
+                   echo $loan_id;
+               }
+               else
+               {
+                    $loan_id = $product_data['loan_id'];
+                    $pledge_date = date("d-m-Y",strtotime($product_data['pledge_date']));
+                    echo $loan_id;
+               }
+         ?>
+		 </td>
+         <input name="pval[loan_id]" id="sub1_loan_id" type="hidden"  value = "<?php echo $loan_id;?>">
+    
+  </tr>
+  <tr>
+    <td id="loan_date">Loan Date</td>
+    <td><?php //echo $loan_date; ?>
+    <?php if($product_data['status'] != "0") {  ?>
+
+     <input name="pval[loan_date]" id="loan_dt"  type="text" readonly class="calendar textfield-m" onfocus="remove_red('loan_date');" onchange="cal_total();" value = "<?php echo $pledge_date; ?>" >
+    &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('loan_dt', 'calender_trigger', '%d-%m-%Y' )" onclick="jQuery('#loan_dt').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+    <!--<a class="flexi_btn" href="javascript:" onclick="remove_red('loan_date');cal_total()">Reset</a>-->
+        <?php } 
+    else { ?>
+    
+    <input name="pval[loan_date]" id="loan_dt"  type="hidden" readonly class="calendar textfield-m" onfocus="remove_red('loan_date');" onchange="cal_total();" value = "<?php echo $pledge_date; ?>" >
+    &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('loan_dt', 'calender_trigger', '%d-%m-%Y' )" onclick="jQuery('#loan_dt').click();" title="Click to select date"></a>
+    <label name="date"><?php echo $pledge_date; ?></label>
+    <?php } ?>
+    </td>
+  </tr>
+  <tr>
+    <td id="loan_amount"><span class="add"> Loan Amount <span class="star">*</span></span></td>
+    <td>
+    <?php if($product_data['status'] != "0") {  ?>
+    <input name="pval[loan_amount]" maxlength="40" type="text" class="textfield-m currency" <?php echo ($type!="edit") ? "disabled" : ""; ?> id="loan_amt" onfocus="remove_red('loan_amount');" value ="<?php if($product_data['loan_amount'] != ''){ echo number_format(stripslashes($product_data['loan_amount']), 2,'.','');} ?>" onblur="cal_total();">
+            <?php } 
+    else { ?>
+        <input name="pval[loan_amount]" maxlength="40" type="hidden" class="textfield-m currency" <?php echo ($type!="edit") ? "disabled" : ""; ?> id="loan_amt" onfocus="remove_red('loan_amount');" value ="<?php if($product_data['loan_amount'] != ''){ echo number_format(stripslashes($product_data['loan_amount']), 2,'.','');} ?>" onblur="cal_total();">
+         <label name="date"><?php echo number_format(stripslashes($product_data['loan_amount']), 2,'.',''); ?></label>
+  <?php  } ?>
+    </td>
+  </tr>
+  <tr>
+    <td id="service_charge">Service Charge </td>
+    <td><span id="ser_charge"><?php echo ($product_data['service_charge'] == "") ? "-": number_format(stripslashes($product_data['service_charge']), 2,'.',''); ?></span>
+    <span id="disp_service_charge" class="disp_calc"></span>
+    <input name="pval[service_charge]" type="hidden" id="service_crg" class="textfield-m" value ="<?php echo $product_data['service_charge']; ?>">
+    <input name="service_rate" type="hidden" id="service_rate" class="textfield-m" value ="<?php echo $product_data['service_charge']; ?>">
+    </td>
+  </tr>
+
+   <tr>
+    <td>Scheme Interest Type</td>
+    <td width="170px">
+        <span id="sch_type"><?php echo ($product_data['interest_type'] =="")? "-":stripslashes($product_data['interest_type']); ?></span>
+        <input type="hidden" name="scheme_type" id="scheme_type" value="<?php echo stripslashes($product_data['interest_type']); ?>">
+    </td>
+  </tr>
+   <tr>
+    <td>Scheme Rate of Interest (Per Gram)</td>
+    <td width="170px"><span id="sch_roi">
+    <?php echo ($product_data['loan_rate'] =="")? "-":stripslashes($product_data['loan_rate']); ?></span>
+    <input type="hidden" name="loan_rate" id="loan_rate" value="<?php echo stripslashes($product_data['loan_rate']); ?>">
+    </td>
+  </tr>
+  <tr>
+    <td id="description">Scheme Description </td>
+    <td align="left"><span id="sch_desc"><?php echo (trim($product_data['description']) == "")? "-":stripslashes($product_data['description']); ?></span></td>
+  </tr>
+  <tr>
+    <td><span class="add">Total Amount given </span>
+    <input type="hidden" name="pval[total_amount_given]" id="total_amt" value="<?php echo stripslashes($product_data['total_amount_given']); ?>"></td>
+    <td><span id="tot_amt_given"><?php echo ($product_data['total_amount_given'] =="")? "-": number_format($product_data['total_amount_given'], 2,'.',''); ?></span></td>
+    </td>
+  </tr>
+    <tr><td colspan=2 id='scheme_detail'></td></tr>
+   <tr>
+    <td><span id="mand_note">* indicates mandatory fields </span></td>
+    <td>
+    <?php
+
+    if($_SESSION['session_usertype'] <= 3){
+    ?>
+        <a href="javascript:" onclick="drop_div('cashflow_detail');" class="button">Cash Flow</a>
+    <?php
+
+    }
+    ?>
+
+    </td>
+    </td>
+
+  </tr>
+  <!--
+  <tr>
+    <td><span class="add">Market Rate  </span></td>
+    <td><input  class="textfield-m" name="Input8" type="text" name="pval[market_rate]" value="<?php echo stripslashes($product_data['market_rate']); ?>"/></td>
+    </td>
+  </tr>
+  -->
+
+</table>
+
+
+<!-- Cash Flow Details -->
+
+<?php include ADMIN_LAYOUT_PATH . "elements/cashflow_detail.html"; ?>
+
+      <input name="pval[branch_id]" id="branch_id" type="hidden"  value = "<?php echo $product_data['pledged_branch'];?>">
+      <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+
+          <?php }?>
+
+          <table class="frm-tbl" border="0" cellpadding="0" cellspacing="0" width="98%"
+_class="box-hd-bg">
+      <tr>
+        <td><span class="btn-rht">
+
+        <?php
+                if(floatval($balance) <= floatval(MINIMUM_LOAN_AMOUNT)){
+
+                ?>
+
+                 <a id="save_action_btn1" href="javascript:;" class="greybtn-off" onclick="jalert('Insufficient branch balance amount')">SAVE</a>
+
+                <?php
+
+                }
+                else  if($product_data['status'] != "0") { 
+        ?>
+                <a id="save_action_btn1" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+       
+                <a href="javascript:;" class="button" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a>  
+        <?php } ?>
+
+
+        <a href="javascript:;" class="button" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+          </form>
+
+
+
+    </div>
+      </div><!--right area ends here-->
+  <div class="clear clearfix"></div>
+  <!--
+  <div class="round-lftbutton">
+      <a href="javascript:;">Customer Slip</a>
+
+      <a href="javascript:;">Customer Receipt</a>  </div>
+
+    <div class="clear clearfix"></div>
+    -->
+</div><!--contentarea ends here-->
+
+
+
+
+
+<div class="clear clearfix"></div>
+<!--
+</body>
+</html>
+-->
+<!--Product More Edit Dialog -->
+
+    <?php //include ADMIN_LAYOUT_PATH . "elements/product_more_edit_dialog.html";   ?>
+
+
+<script>
+
+function resetEnterNext(){
+    $("input,select").not( $(":button,:hidden,.productlist") ).keypress(function (evt) {
+    if (evt.keyCode == 13) {
+    iname = $(this).val();
+    if (iname !== 'Submit'){
+    var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:radio,input:checkbox,select');
+
+    var index = fields.index( this );
+    if ( index > -1 && ( index + 1 ) < fields.length) {
+    fields.eq( index + 1 ).focus();
+    }
+    else
+    {
+    //product_pledge_process('content_div','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');
+    save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+    }
+    return false;
+    }
+    }
+    });
+}
+
+var count = 0;
+jQuery(document).ready(function() {
+    
+    enable_save_action();
+    
+    callAjaxRequest("list_details.php", "page=customer_auto_list", "null", "POST", "script", false, false);
+
+    /*$("input,select").not( $(":button,:hidden") ).keypress(function (evt) {
+    if (evt.keyCode == 13) {
+    iname = $(this).val();
+    if (iname !== 'Submit'){
+    var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:radio,input:checkbox,select');
+
+    var index = fields.index( this );
+    if ( index > -1 && ( index + 1 ) < fields.length) {
+    fields.eq( index + 1 ).focus();
+    }
+    else
+    {
+    //product_pledge_process('content_div','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');
+    save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+    }
+    return false;
+    }
+    }
+    });*/
+    resetEnterNext();
+
+$("#src_cust_id").keypress(function (evt) {
+    if (evt.keyCode == 13) {
+        reset_cust(this.value);
+    }
+    });
+
+    set_date_picker();
+
+    setNumberKeyEvent();
+        //form_enter_focus(jQuery('input[name=pval[name]]'),<?php echo $ent_key_len;  ?>,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+    cal_total();
+
+    collapse_all_view();
+
+<?php
+if(floatval($balance) <= floatval(MINIMUM_LOAN_AMOUNT)){
+?>
+jalert('Insufficient branch balance amount');
+<?php } ?>
+
+
+<?php if($uval[id] > 0){ ?>
+//alert(jQuery("#loan_dt").val());
+list_details('scheme_detail','scheme_details','id='+jQuery("#sch_id").val()+'&loandate='+jQuery("#loan_dt").val()+'&loanamount='+jQuery("#loan_amt").val());
+<?php } ?>
+
+});
+
+function loan_service_charge_display(){
+
+    remove_red("service_charge");
+
+    type = jQuery("#ld_scheme_type").val();
+
+
+
+    if(typeof type != "undefined" )
+        type = type.toLowerCase();
+    else
+        type = "";
+
+
+
+    if(type!='' ){
+        if(!isNaN(parseFloat(jQuery("#loan_amt").val())))
+            loan_amt = parseFloat(jQuery("#loan_amt").val());
+        else
+            loan_amt = 0;
+
+        if(!isNaN(parseFloat(jQuery("#service_crg").val())))
+            ser_crg = parseFloat(jQuery("#service_crg").val());
+        else
+            ser_crg = 0;
+
+        if(!isNaN(parseFloat(jQuery("#service_rate").val())))
+            service_rate = parseFloat(jQuery("#service_rate").val());           
+        else
+            service_rate = 0;
+
+        if(type=="flat"){
+            disp_service = "<br> <table class='disp_calc' width=95% align=center>";
+            disp_service += "<tr><td> </td><td class='disp_calc'>( Loan Amount / 1000 ) :</td> <td align=right class='disp_calc'>"+(loan_amt/1000).toFixed(0)+"</td><td> </td><td> * </td></tr>";
+            disp_service += "<tr><td> </td><td class='disp_calc'>Service Charge per Rs.1000 :</td> <td align=right class='disp_calc'>"+service_rate+"  </td><td>  </td><td>  </td></tr>";
+            disp_service += "<tr><td> </td><td>Service Charge :</td> <td colspan=3 align=right>Rs. "+ser_crg.toFixed(2)+"</td></tr>";
+            disp_service += "</table>";
+        }else{
+            disp_service = "<br> <table class='disp_calc' width=95% align=center>";
+            disp_service += "<tr><td> </td><td class='disp_calc'>( Loan Amount / 100 ) :</td> <td align=right class='disp_calc'>"+(loan_amt/100).toFixed(2)+"</td><td> </td><td> * </td></tr>";
+            disp_service += "<tr><td> </td><td class='disp_calc'>Service rate :</td> <td align=right class='disp_calc'>"+service_rate+" % </td><td>  </td><td>  </td></tr>";
+            disp_service += "<tr><td> </td><td>Service Charge :</td> <td colspan=3 align=right>Rs. "+ser_crg.toFixed(2)+"</td></tr>";
+            disp_service += "</table>";
+        }
+    }else{
+            disp_service = "<br> * Please select scheme for the loan";
+    }
+
+    jQuery("#disp_service_charge").html(disp_service);
+}
+
+
+function cashout_display(){
+
+    if(!isNaN(parseFloat(jQuery("#loan_amt").val())))
+        loan_amt = parseFloat(jQuery("#loan_amt").val());
+    else
+        loan_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#service_crg").val())))
+        ser_chr = parseFloat(jQuery("#service_crg").val());
+    else
+        ser_chr = 0;
+
+
+    cash_out = loan_amt-ser_chr;
+
+
+    jQuery("#cashout_amt").val(cash_out.toFixed(2));
+
+    disp_cashout = "<table class='disp_calc' width=95% align=center>";
+    disp_cashout += "<tr><td> </td><td class='disp_calc'>Pledged Loan Amount :</td> <td align=right class='disp_calc'>"+loan_amt.toFixed(2)+"</td><td> </td><td> - </td></tr>";
+    disp_cashout += "<tr><td> </td><td class='disp_calc'>Service Charge :</td> <td align=right class='disp_calc'>"+ser_chr.toFixed(2)+"</td><td> </td><td>  </td></tr>";
+    disp_cashout += "<tr><td> </td><td>Total Cashout :</td> <td colspan=3 align=right>Rs. "+cash_out.toFixed(2)+"</td></tr>";
+    disp_cashout += "</table>";
+
+    jQuery("#disp_cash_out_details").html(disp_cashout);
+
+}
+
+function cashin_display(){
+
+    cash_in = 0;
+
+    jQuery("#cashin_amt").val(cash_in.toFixed(2));
+
+    disp_cashin = "Nil";
+
+    jQuery("#disp_cash_in_details").html(disp_cashin);
+
+}
+</script>

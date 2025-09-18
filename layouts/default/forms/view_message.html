@@ -1,0 +1,47 @@
+
+<div class="clear clearfix"></div>
+
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td><a href="javascript:;">View Message</a></td >
+        <td><span class="btn-rht">      
+        <a href="javascript:;" class="greybtn" onclick="reload_page();">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+
+  <div id="contentarea">
+   <form name="branch_form" method="post" style="margin: 0px;">
+    <div id="msg"></div>
+   <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+     <tr>
+        <td class="title">Message</td>
+      </tr>
+      <tr>
+      
+        <td width="50%">
+        
+        <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">   
+                  
+          <tr>
+            <td align="left" width="20%">Subject</td>
+            <td align="left" width="80%"><label><?php echo stripslashes($testdata[0]['subject']); ?></label></td>
+          </tr>
+          <tr>
+            <td align="left" width="20%">Message </td>
+            <td align="left" width="80%"><label><?php echo stripslashes(nl2br($testdata[0]['message'])); ?></label></td>
+          </tr>
+    
+        </table>
+
+          
+      </td>
+      </tr>
+  
+    </table> 
+    </form> 
+    <div class="clear clearfix"></div><!--contentarea ends here-->
+  </div>
+</body>
+</html>

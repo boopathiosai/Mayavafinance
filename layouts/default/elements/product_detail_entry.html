@@ -1,0 +1,82 @@
+<div class="box-hd-bg" id="pledge-details">
+    <h3>Pledge Details</h3>
+    <table cellspacing="0" cellpadding="0" border="0" align="center" width="98%">
+
+        <tbody><tr>
+            <td colspan="5">       </td>
+        </tr>
+
+        </tbody></table><table bgcolor="#e5e5e5" align="center" width="98%" style="border: 0px solid rgb(230, 230, 230);" id="product_content_table" class="frm-tbl">
+        <tbody><tr class="bg" width="100%">                      
+        <td align="center" width="10%" id="category_id" style="color: black;"><strong>Category</strong></td>
+        <td align="center" width="20%" id="product_name" style="color: black;"><strong>Product Name123</strong></td> 
+        <td align="center" width="10%" id="gross_weight"><strong>Gross Wt </strong></td>              
+        <td align="center" width="10%" id="net_weight"><strong>Net Wt</strong></td>
+        <td align="center" width="15%"><strong>Market Rate</strong></td>
+        <td align="center" width="6%"><a onclick="append_row()" href="javascript:;"><img border="0" src="images/pledge-add.png"></a></td>
+        </tr>       
+        <?php
+        $row = 1;
+        foreach($products as $product){
+            ?>
+        <tr width="100%">               
+        <td align="center" width="10%">
+        <span id="cat1">
+        <?php echo $product['category_name']; ?>
+        <input type="text" name="pro_pval[<?php echo $row; ?>][category_id]" id="cat_id_<?php echo $row; ?>" 
+            value="<?php echo $product['category_id']; ?>" />
+        </span>
+        </td>   
+        <td align="center" width="20%">
+            <span class="prod_txt_bld" id="pro_txt_<?php echo $row; ?>">
+                <input type="text"  onfocus="remove_red('product_name');" 
+                       value="<?php echo $product['product_name']; ?>" class="textfield-l productlist" _onchange="product_validate(this.id,<?php echo $row; ?>)" 
+                       onkeypress="product_auto(this.id,<?php echo $row; ?>);" autocomplete="off" maxlength="30" 
+                       enabled="" id="pname_<?php echo $row; ?>" name="pro_pval[<?php echo $row; ?>][product_name]">
+                <input type="hidden" value="<?php echo $product['product_id']; ?>" size="20" id="name_0" class="prod_id_hdn" name="pro_pval[<?php echo $row; ?>][id]">
+            </span>
+        </td>
+        <td align="center" width="20%"><input type="text" onfocus="remove_red('gross_weight');" onchange="gross_total();" onkeypress="return decimalformat(event,this,8,2);" value="" size="10" id="gross_weight_0" name="gross_weight[]" class="textfield-s"></td>
+        <td align="center" width="10%"><input type="text" onfocus="remove_red('netweight_0');" onchange="net_total();" onkeypress="return decimalformat(event,this,8,2);" value="" size="10" id="netweight_0" name="net_weight[]" class="textfield-s"></td>
+        <td align="center" width="10%"><input type="text" onkeypress="return decimalformat(event,this,10,2);" size="10" id="market_rate_&quot;+count+&quot;" name="market_rate[]" class="textfield-s"></td>
+        <td align="center" width="10%"></td>
+        </tr>            
+            
+            <?
+        $row++;
+        }
+        ?>
+        <tr width="100%">               
+        <td align="center" width="10%">
+        <span id="cat1">
+        <select id="cat_id_<?php echo $row; ?>" onchange="remove_red('category_id'); new_pro_txtbox_for_autocomplete(<?php echo $row; ?>); " name="pro_pval[<?php echo $row; ?>][category_id]">
+        <option value="">-- Select Category --</option>
+        
+        </span>
+        </td>   
+        <td align="center" width="20%">
+        <span class="prod_txt_bld" id="pro_txt_0"><input type="text" onfocus="remove_red('product_name');" value="" class="textfield-l productlist" _onchange="product_validate(this.id,0)" onkeypress="product_auto(this.id,0);" autocomplete="off" maxlength="30" enabled="" id="pname_0" name="product_name[]" /><input type="hidden" value="" size="20" id="name_0" class="prod_id_hdn" name="product_id[]"></span>
+        </td>
+        <td align="center" width="20%"><input type="text" onfocus="remove_red('gross_weight');" onchange="gross_total();" onkeypress="return decimalformat(event,this,8,2);" value="" size="10" id="gross_weight_0" name="gross_weight[]" class="textfield-s"></td>
+        <td align="center" width="10%"><input type="text" onfocus="remove_red('netweight_0');" onchange="net_total();" onkeypress="return decimalformat(event,this,8,2);" value="" size="10" id="netweight_0" name="net_weight[]" class="textfield-s"></td>
+        <td align="center" width="10%"><input type="text" onkeypress="return decimalformat(event,this,10,2);" size="10" id="market_rate_&quot;+count+&quot;" name="market_rate[]" class="textfield-s"></td>
+        <td align="center" width="10%"></td>
+        </tr>
+        </tbody></table>        
+
+        <table cellspacing="0" cellpadding="0" border="0" width="100%" class="frm-tbl">
+        <tbody><tr>
+        <td></td>
+        <td width="13%">Gross Wt</td>
+        <td width="17%"><input type="text" onkeypress="return decimalformat(event,this,8,2);" readonly="" id="gross_wt" name="pval[total_gross_weight]" value="" class="textfield-s"></td>
+        <td width="10%">Nett Wt</td>
+        <td width="17%"><input type="text" onkeypress="return decimalformat(event,this,8,2);" readonly="" id="net_wt" name="pval[total_net_weight]" value="" class="textfield-s"></td>
+        <td width="15%">Item Count</td>
+        <td width="18%"><input type="text" onkeypress="return decimalformat(event,this,8,2);" readonly="" value="1" id="item_count" name="item_count" class="textfield-s"></td>
+        <td width="10%">&nbsp;</td>
+        </tr>
+
+    </tbody></table>
+
+
+</div>

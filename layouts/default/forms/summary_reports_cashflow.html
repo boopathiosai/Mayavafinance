@@ -1,0 +1,105 @@
+<div id="print_content">
+<?php  
+    $i=1;
+
+         ?>          
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="6" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix); ?></td>
+            </tr>
+            
+
+            
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+      <td width="10%"><strong>Date</strong></td>
+      <td width="20%" align="left"><strong>Branch</strong></td>  
+	  <td width="15%"  align="right"><strong>Cash In (<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="20%"  align="right"><strong>Cash Out (<?php echo CURRENCY_SYMBOL;?>)</strong></td>  
+      <td width="20%" align="right"><strong>Opening (<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="15%"  align="right"><strong>Closing (<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      
+              
+          </tr>
+            
+          <?php
+          $j=1;
+          $i=$i+1;
+          $initialRate = 0;
+          if(count($data)>0){
+          foreach($data as $rows)
+          {
+
+
+            
+            $ci_query = "SELECT SUM(sCF.amount) 
+                    FROM ".CASH_FLOW_TRANSACTIONS." AS sCF 
+                    WHERE 
+                        sCF.branch_id = ".$rows['branch_id']."
+                        AND DATE_FORMAT(sCF.date_transaction,'%Y-%m-%d') = DATE_FORMAT('".$rows['report_date']."','%Y-%m-%d')
+                        AND sCF.transaction_type = 'cashin'
+                    GROUP BY DATE_FORMAT(sCF.date_transaction,'%Y-%m-%d')
+                    LIMIT 0,1";
+            $co_query = "SELECT SUM(sCF.amount) 
+                    FROM ".CASH_FLOW_TRANSACTIONS." AS sCF 
+                    WHERE 
+                        sCF.branch_id = ".$rows['branch_id']."
+                        AND DATE_FORMAT(sCF.date_transaction,'%Y-%m-%d') = DATE_FORMAT('".$rows['report_date']."','%Y-%m-%d')
+                        AND sCF.transaction_type = 'cashout'
+                    GROUP BY DATE_FORMAT(sCF.date_transaction,'%Y-%m-%d')
+                    LIMIT 0,1";
+            $ob_query = "SELECT sCF.opening_balance 
+                FROM mf_cash_flow_transactions AS sCF 
+                WHERE sCF.branch_id = ".$rows['branch_id']." 
+                AND DATE_FORMAT(sCF.date_transaction,'%Y-%m-%d') = DATE_FORMAT('".$rows['report_date']."','%Y-%m-%d')
+                ORDER BY sCF.date_transaction ASC, sCF.id ASC
+                LIMIT 0,1";
+            $cb_query = "SELECT sCF.closing_balance 
+                FROM mf_cash_flow_transactions AS sCF 
+                WHERE sCF.branch_id = ".$rows['branch_id']."
+                AND  DATE_FORMAT(sCF.date_transaction,'%Y-%m-%d') = DATE_FORMAT('".$rows['report_date']."','%Y-%m-%d')
+                ORDER BY sCF.date_transaction DESC, sCF.id DESC
+                LIMIT 0,1";
+            $ob_row = $app->getrow($ob_query);
+            $cb_row = $app->getrow($cb_query);
+            $ci_row = $app->getrow($ci_query);
+            $co_row = $app->getrow($co_query);
+            
+            $rows['opening_balance'] = $ob_row[0];
+            $rows['closing_balance'] = $cb_row[0];
+            $rows['cash_in'] = $ci_row[0];
+            $rows['cash_out'] = $co_row[0];
+
+            
+           ?>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+       <td  class="disp-light"  align="left"><?php echo htmlentities(stripslashes($rows['trans_date']), ENT_QUOTES); ?> </td>
+       <td  class="disp-light"  align="left"><?php echo htmlentities(stripslashes($rows['branch_name']), ENT_QUOTES); ?></td>
+       <td  class="disp-light"  align="right"> <?php echo convertToCurrency($rows['cash_in'],false); ?> </td>
+       <td  class="disp-light"  align="right"> <?php echo convertToCurrency($rows['cash_out'],false); ?> </td>
+       <td  class="disp-light"  align="right"><?php echo convertToCurrency($rows['opening_balance'],false); ?></td>
+       <td class="disp-light"  align="right"><?php echo convertToCurrency($rows['closing_balance'],false); ?></td>
+          </tr>
+        <?php
+           $i++; 
+           $j++;
+          }
+          }else{
+          ?>
+          <tr><td colspan=6 align="center">No Records Found</td></tr>
+          <?php
+          }
+          ?>
+          
+       </table>
+
+
+</div>
+<iframe id="print_frame" name="print_frame" title="<?php echo ($heading_suffix=="") ? ($page_title) : ($page_title . " - ".$heading_suffix); ?>" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>
+
+
+
+
+
+
+
+

@@ -1,0 +1,223 @@
+<?php  
+    session_start();
+if($customer_data['status'] == "0") { 
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+   if($customer_data['id']!='')
+   {
+        $_SESSION['customer_id'] = $customer_data['id'];
+   }
+   else
+   {
+        $_SESSION['customer_id'] = "temp";
+   }
+  
+    ?>
+
+<div class="clear clearfix"></div>
+
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Transactions&raquo;<a href="<?php echo $module_name;?>.php">Bank Transaction Branch Level</a></td >
+        <td width="50%"><span class="btn-rht">
+        <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a> <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no;?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+     <div id="contentarea">
+     <form name="customer_form" method="post" style="margin: 0px;">
+      <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="title">Bank Transaction Branch Level</td>
+      </tr>
+      <tr>
+        <td width="100%"><table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+
+         
+          <tr>
+           <?php
+           if($_SESSION['session_usertype']=='1')
+            {
+            ?>
+            <td id="branch_id" width="39%">Bank Name*</td>
+            <?php
+            }
+            else
+            {
+            ?>
+            <td width="39%">Bank Name</td>
+            <?php
+            }
+            ?>
+            <td width="61%" align="left">
+        
+            <?php $data=Banktransactionbranchlevel::Get_branch_name();
+                  //$user_data = get_dropdown_list_with_field('id', 'name', BRANCH);
+            ?>
+
+            <?php
+        if($_SESSION['session_usertype']=='1')
+        {
+        ?>
+            <?php
+           //Get Branch name from branch table
+           $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);              
+          ?>
+        <select name="pval[branch_id]" onchange="remove_red('branch_id');" id="branch_id1">
+        <option value="">-- Select Branch --</option>
+           <?php              
+            echo build_select_options($branch_data,$customer_data['branch_id']); 
+           ?>
+        </select>
+        <?php
+        }
+        else
+        {
+                echo "<input type='hidden' name='pval[branch_id]'  value='$_SESSION[session_user_branch_id]'/>";
+                echo $_SESSION['session_user_branch_name'];
+        }
+        ?>
+            </td>
+          </tr>
+          <tr>
+            <td id="emp_name" width="39%">Employee Name* </td>
+            <td width="61%" align="left">
+            <input name="pval[emp_name]" id="emp_name1" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('emp_name');" value = "<?php echo stripslashes($customer_data['emp_name']);?>" />
+            </td>
+          </tr> 
+          <tr>
+            <td id="mode_of_deposit">Mode of Deposit*</td>
+            <td align="left">
+            
+            <!--<input type="radio" name="pval[mode_of_deposit]" id="mode_check" value="check"> Check
+            <input type="radio" name="pval[mode_of_deposit]" id="mode_cash" value="cash"> Cash
+            <input type="radio" name="pval[mode_of_deposit]" id="mode_both" value="both"> Both -->
+            
+            
+            <select name="pval[mode_of_deposit]" id="mode_of_deposit1" onfocus="remove_red('mode_of_deposit');" onchange="cheque_details_show(this);">
+                <option value="">Select</option>
+                <option value="cash" <?php if($customer_data['mode_of_deposit']=='Cash'){?>selected<?php }?>>Cash</option>
+                <option value="cheque"<?php if($customer_data['mode_of_deposit']!='Cash' && $customer_data['mode_of_deposit']!=''){ ?>selected<?php }?>>Cheque</option>
+                <option value="both"<?php if($customer_data['mode_of_deposit']!='Cash' && $customer_data['mode_of_deposit']!=''){ ?>selected<?php }?>>Both</option>
+            </select>
+            <input type=hidden name="old_chq_det" id="old_chq_det" value="<?php echo $customer_data['cheque_no']; ?>">
+            </td>
+          </tr>
+           <tr class="label_cheque_no">
+            <td id="mode_of_deposit">Cheque details*</td>
+            <td align="left">
+            <textarea name="pval[cheque_no]" id="cheque_details1" onfocus="remove_red('cheque_details');"><?php echo stripslashes($customer_data['cheque_no']);?></textarea>
+            </td>
+          </tr>
+
+          <tr>
+            <td id="amount_credited">Amount Credited*</td>
+            <td align="left">
+            <input name="pval[amount_credited]" class="currency" id="amount_credited1" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('amount_credited');" value = "<?php echo stripslashes($customer_data['amount_credited']); ?>" _onkeypress="return decimalformat(event,this,10,2);"/>
+            </td>
+          </tr>
+          <tr>
+            <td id="amount_debited">Amount Debited*</td>
+            <td align="left">
+            <input name="pval[amount_debited]" class="currency" id="amount_debited1" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('amount_debited');" value = "<?php echo stripslashes($customer_data['amount_debited']); ?>" _onkeypress="return decimalformat(event,this,10,2);"/>
+            </td>
+          </tr>
+          <tr>
+            <td id="transaction_date">Transaction Date*</td>
+            <td align="left">
+            <input name="pval[transaction_date]" id="transaction_date1" maxlength="40" type="text" class="calendar textfield-m"  value = "<?php echo $customer_data['transaction_date']!=''?date("d-m-Y",strtotime($customer_data['transaction_date'])):''; ?>"/>
+            &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('transaction_date1', 'calender_trigger', '%d-%m-%Y' )" onclick="jQuery('#calender_trigger').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+            </td>
+          </tr>
+          <tr>
+            <td id="purpose">Purpose / Reason </td>
+            <td align="left">
+                <textarea name="pval[purpose]" onfocus="remove_red('purpose');"><?php echo stripslashes($customer_data['purpose']); ?></textarea>
+            </td>
+          </tr>
+    </table>            
+      <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+          
+          <?php }?>
+          </form>
+<div class="clear clearfix"></div>
+
+</body>
+
+<script src="js/swfobject.js" language="javascript"></script>
+<script src="photo_capture/flash_callback.js" language="javascript"></script>
+
+<script type="text/javascript">
+
+var flag = <?php echo $_SESSION['session_usertype']; ?>;
+
+$(document).ready(function(){  
+	
+    if($("#transf_mode1").val() == 'cash'){
+        $(".cheque_details_div").hide();
+    }
+    $("input,select").not( $(":button,:hidden") ).keypress(function (evt) {
+        if (evt.keyCode == 13) {
+            iname = $(this).val();
+            if (iname !== 'Submit'){    
+                var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:radio,input:checkbox,textarea,select');                   
+
+                var index = fields.index( this );
+                if ( index > -1 && ( index + 1 ) < fields.length) {
+                    fields.eq( index + 1 ).focus();
+                }
+                else
+                {                   
+                  customer_process('content_div','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');
+                }
+                return false;
+            }
+        }
+    });
+
+    enable_save_action();
+    $("#postal_code_input").numeric();
+	$("#contact_no_input").numeric({allow:"+-"});
+
+    set_date_picker();
+});
+
+function cheque_details_show(opt)
+{
+    $(".cheque_details_div").hide();
+    if(opt.value != 'cash'){
+      if($("#cheque_details1").val() == ""){
+        $("#cheque_details1").val($("#old_chq_det").val()); 
+      }
+      $(".cheque_details_div").show();
+    }else{
+      $("#old_chq_det").val($("#cheque_details1").val());
+      $("#cheque_details1").val("");      
+    }
+}
+
+jQuery(document).ready(function() {
+
+    setNumberKeyEvent();
+	if(flag != 1 ) { 
+			$('#emp_name1').focus();
+			document.customer_form.emp_name1.focus();
+		}else{
+			$('#branch_id1').focus();	 
+			document.customer_form.branch_id1.focus();
+    }
+    $("input").focus(function(event){ remove_red(this.id); });
+    
+    collapse_all_view();
+    setTotalAmount();
+});
+</script>
+</html>

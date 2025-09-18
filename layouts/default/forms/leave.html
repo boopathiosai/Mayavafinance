@@ -1,0 +1,117 @@
+<?php
+ // echo "<pre>"; print_r($leave_data);
+if($leave_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+    
+    ?>
+<div class="clear clearfix"></div>
+<div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>Masters</a> &raquo;<a href="leaves.php">Leave Master</a></td >
+        <td ><span class="btn-rht">
+        <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a> <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div> 
+<div id="contentarea">
+<form name="leave_form" method="post" style="margin: 0px;">
+<table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="title">Leave Master</td>
+      </tr>
+      <tr>
+        <td width="50%">
+        <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">          
+        <tr>
+        <td id="branch_id"><span class="add"> Branch Name <span class="star">*</span></span></td>
+        <td>
+        
+                <?php 
+                if(!is_superadmin($_SESSION['session_usergroupname']))
+                { 
+                    echo "<input type='hidden' name='pval[branch_id]'  value='$_SESSION[session_user_branch_id]'/>";
+                    echo $_SESSION['session_user_branch_name'];
+                } 
+                else 
+                {
+                    //Get Branch name from branch table
+                       $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);       
+                ?>
+                 <select name="pval[branch_id]" onchange="remove_red('branch_id');">
+                <option value="">-- Select Branch --</option>
+                   <?php              
+                    echo build_select_options($branch_data,$leave_data['branch_id']); 
+                   ?>
+                </select>
+                <?php
+                }?>
+        
+        </td>
+        </tr> 
+        <?php 
+        $leave_date = "";
+        if($leave_data['leave_date'] != ""){
+        $leave_date = date('d-m-Y',strtotime($leave_data['leave_date']));
+        }
+        ?>
+        <tr>
+           <!--<td align="left" width="18%" id="src_sdate">Leave Date :</td>-->
+           <td id="src_sdate leave_date"><span class="add"> Leave Date <span class="star">*</span></span></td>
+                <td align="left" >
+                    <input name="pval[leave_date]" type="text" id="leave_date" onclick="date_picker_leave('leave_date', 'leave_date', '%d-%m-%Y', '<?php echo date('Ymd'); ?>')"  class="calendar text-field" value="<?php echo  $leave_date; ?>" />
+                    &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('leave_date', 'calender_trigger', '%d-%m-%Y')" onclick="jQuery('#leave_date').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+                </td>
+        </tr>      
+        <tr>
+            <td id="description"><span class="add"> Description <span class="star">*</span></span></td>
+            <td>
+                <input type="textarea" name="pval[description]" id="description" value="<?php echo $leave_data['description'] ?>">
+            </td>
+        </tr>         
+           <tr>
+            <td>Status </td>
+            <td><label>
+              <input name="pval[status]" type="radio" class="radio" value="1" <?php echo $active; ?> />
+              Active</label>
+                <label>
+                <input name="pval[status]" type="radio" class="radio" value="0" <?php echo $inactive; ?> />
+              Inactive </label></td>
+          </tr>
+           <tr>
+             <td colspan="2"><span id="mand_note">* indicates mandatory fields</span> </td>
+           </tr>   
+        </table>
+      </td>
+      </tr>
+    </table>
+            
+      <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+          
+          <?php }?>
+    </form>
+<div class="clear clearfix"></div>
+
+</div>
+
+</body>
+<script type="text/javascript">
+//    $(document).ready(function(){         
+//        //$('#username').focus(); 
+//		document.user_form.username.focus();
+//	   	form_enter_focus(jQuery('input[name="pval[name]"]'),7,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+//        enable_save_action();
+//        $("#postal_code_input").numeric();
+//        $("#contact_no_input").numeric({allow:"+- "});
+//
+//    });
+</script>
+</html>

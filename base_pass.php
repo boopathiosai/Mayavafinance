@@ -1,0 +1,1 @@
+<?php echo base64_encode('pathway_test'); ?>

@@ -1,0 +1,159 @@
+<div id="content_div">
+ <?php
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td>&nbsp;Prints &raquo;<a href="<?php echo $module_name;?>.php"><?php echo $page_title?></a></td >
+        <td  width="10%">
+        <?php
+        $diaply_style ="";
+        ?>  
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">
+        Close</a></div>
+        </td>
+      </tr>
+      </table>
+ </div>
+    <div id="contentarea">  
+    <br>
+    
+
+    <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+            <td colspan="2">
+            <?php include ADMIN_LAYOUT_PATH . 'elements/customer_search.html'; ?>
+            </td>
+        </tr>
+    </table>
+      <div>
+       <br>
+       
+     <?php   
+     
+     if($search_args!="")   
+     {
+     
+     ?>
+    <form>
+
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">  
+
+     
+     <tr>
+        <td class="title" colspan="100%">Auction Notice Details</td>
+     </tr>    
+     <tr class="headings">
+      <td align="center" width="4%">PID</td>
+      <td width="6%" align="center"><strong>Loan ID</strong></td>
+      <?php
+      if($_SESSION['session_usergroupname'] == 'Super Admin'){
+      ?>
+      <td width="8%" align="left"><strong>Branch</strong></td>
+      <?php } ?>
+      <td align="left"><strong>Customer</strong></td>
+      <!--<td width="10%" align="left"><strong>Scheme</strong></td>-->
+      <td width="10%" align="right"><strong>Loan Amount(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="10%" align="right"><strong>Loan Date</strong></td>  
+      <td width="5%" align="right"><strong>Item</strong></td>
+      <td width="5%" align="right"><strong>Net</strong></td>  
+      <td width="10%" align="right"><strong>Auc.Due</strong></td>
+      <td width="6%" align="right"><strong>ROI</strong></td>
+      <td width="9%" align="right"><strong>Interest(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="10%" align="right"><strong>Last Paid</strong></td>
+      <td width="8%" colspan=2 align="center"><strong>Action</strong></td>
+     </tr>
+<?php 
+      if(count($data) > 0) {
+          for($i=0;$i<count($data);$i++){ 
+              $change_status = ($data[$i]['status'] == 1) ? 0 : 1;
+              $interest_details = PayInterest::getInterestDetails($data[$i]['id']);
+              $last_pay_on = $interest_details['last_pay_date'];
+              $last_paid_amount = $interest_details['last_paid_amount'];
+              $time_status = $interest_details['time_status'];
+              $current_interest = "(".$interest_details['interest_rate']."%) - ".convertToCurrency($interest_details['interest']);
+        ?>
+         
+    
+     <tr class="row0" id="<?php echo $data[$i]['id']; ?>" style="height:45px;">
+      <td align="center"><?php echo $data[$i]['id']; ?></td>
+      <td align="center"><?php echo htmlentities(stripslashes($data[$i]['loan_id']), ENT_QUOTES); ?> </td>
+      <?php      
+        if($_SESSION['session_usergroupname'] == 'Super Admin'){      ?>
+      <td align="left"><?php echo htmlentities(stripslashes($data[$i]['branch_name']), ENT_QUOTES); ?></td>
+      <?php } ?>
+      <td align="left"><?php echo $data[$i]['customer_name']; ?> </td>
+      <!--<td align="left"><?php echo $data[$i]['scheme_name']; ?> </td>-->
+      <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['loan_amount']), false); ?></td>
+      <td align="right"><?php echo htmlentities(stripslashes($data[$i]['loan_date']), ENT_QUOTES); ?></td>
+      <td align="right"><?php echo htmlentities(stripslashes($data[$i]['item']), ENT_QUOTES); ?> </td>
+      <td align="right"><?php echo unitDisplay(htmlentities(stripslashes($data[$i]['net']), ENT_QUOTES),false); ?> </td>
+      <td align="right"><?php echo ($data[$i]['auction_due_date']=='') ? "-" : htmlentities(stripslashes($data[$i]['auction_due_date']), ENT_QUOTES); ?></td>
+      <td align="right"><?php echo htmlentities(stripslashes($interest_details['interest_rate']), ENT_QUOTES); ?> %</td>
+      <td align="right"><?php echo convertToCurrency(stripslashes($interest_details['interest']),false); ?></td>
+      <td align="right"><?php echo (trim($last_pay_on)=="") ? "-" : htmlentities(stripslashes($last_pay_on), ENT_QUOTES);  ?></td>
+      <?php
+        
+            if(can_view($_SESSION['session_usertype'], $module_name) || $_SESSION['session_usertype']==1){
+            ?>
+
+            <td width="10%" valign="middle" align=right>
+                <a href="javascript:;" class=button onclick="prints_previews('auction_notice','print_dialog','&id=<?php echo $data[$i]['id']; ?>&loan_id=<?php echo $data[$i]['loan_id']; ?>&customer_id=<?php echo $data[$i]['customer_id'];?>&branch_id=<?php echo $data[$i]['branch_id'];?>','','Auction Final Notice Letter - Print Preview',900,450,'auction_notice');" title="Print Preview">View</a>
+            </td>
+
+            <?php
+            }else{
+            ?>
+
+            <td width="3%" valign="middle" align=right>
+                <a href="javascript:;" class="button-off" onclick="jalert(this.title)" title="<?php echo NO_ACTION_PRIVILEGE; ?>">View</a>
+            </td>
+
+            <?php
+            }
+
+        ?>
+        
+      </tr>  
+       
+    <?php
+     
+     }
+     
+     
+    } else {
+    ?>
+        <tr class="bg-row">
+        <td colspan="100%" align="center" height="50">No records found</td>
+        </tr>
+    <?php
+    }
+    ?>
+         <tr class="headings">
+         <td colspan=100%>
+         <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+         </td>
+         </tr>
+      </table>
+    </form>
+    
+    <?php
+    }
+    ?>
+    
+     <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>
+
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>

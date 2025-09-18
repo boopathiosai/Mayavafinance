@@ -1,0 +1,68 @@
+<?php  
+    $i=1;
+    if(count($branch_pledge_report)>0) {
+         ?>          
+          <table class="frm-tbl"  width="100%" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="100%" class="name-head"><?php echo strtoupper($page_title); ?></td>
+          </tr>
+     
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+                      <td width="10%">Date</td>
+                      <td width="14%">Loan Id Details</td>  
+                      <td width="13%">Branch Name</td>    
+                      <td width="20%">Pledged product total Quantity</td>
+                      <td width="22%">Pledged product Total Weight</td>
+                      <td width="20%">Total Pledged Amount Summary</td>
+                      <td></td>
+           </tr>
+            
+          <?php
+          $j=1;
+          $i=$i+1;
+          foreach($branch_pledge_report as $rows)
+          {
+             ?>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+              <td align="left" class="disp-light" ><?php echo htmlentities(stripslashes($rows['loan_date']), ENT_QUOTES); ?></td>     
+              <td align="left" class="disp-light" ><?php echo htmlentities($rows['loan_id'],ENT_QUOTES); ?></td>
+              <td align="left" class="disp-light" ><?php if($rows['branch_name']=='') echo "-";
+                                     else echo htmlentities(stripslashes($rows['branch_name']), ENT_QUOTES);?>
+              </td> 
+              <td align="left" class="disp-light" ><?php
+                                                    if($rows['total_item']=='') echo "-";
+                                                        else        
+                                                        echo htmlentities(stripslashes($rows['total_item']), ENT_QUOTES);?></td> 
+              <td align="left" class="disp-light" ><?php 
+                                                    if($rows['total_quantity_weight']=='') echo "-";
+                                                     else 
+                                                        echo htmlentities(stripslashes($rows['total_quantity_weight']." ".gms), ENT_QUOTES);?>
+              </td> 
+              <td align="left" class="disp-light" ><?php echo convertToCurrency(stripslashes($rows ['total_amount']));?></td> 
+             <td align="center">
+             </td>
+         </tr> 
+         <?php
+            $i++; 
+            $j++;
+          }
+?>
+       </table>
+       <?php
+    }
+       ?>
+             
+            
+           
+
+   
+
+
+
+
+
+
+
+
+
+

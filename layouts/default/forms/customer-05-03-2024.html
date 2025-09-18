@@ -1,0 +1,547 @@
+<?php
+session_start();
+
+if($customer_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+
+if($customer_data['land_holding'] == "0") {
+        $no="checked";
+    }
+else{
+        $yes="checked";
+    }
+
+
+
+   if($customer_data['id']!='')
+   {
+        $_SESSION['customer_id'] = $customer_data['id'];
+   }
+   else
+   {
+        $_SESSION['customer_id'] = "temp";
+   }
+   if(!empty($customer_data)){
+   //$branch_data = Branch::CustomerPhonePrivilege($_SESSION['session_user_branch_id']);
+   //$phoneEditPrivilege = ($branch_data?'':($_SESSION['session_user_branch_id']=='1'?'': 'readonly'));
+   $superAdmin = $_SESSION['session_useremail'];
+   $branch_data = Branch::CustomerPhonePrivilege($_SESSION['session_user_branch_id']);
+   $phoneEditPrivilege = ($branch_data?'':(($_SESSION['session_user_branch_id']=='1' && $superAdmin == 'superadmin@mayavafinance.com') ?'': 'readonly'));
+  }
+  
+
+    ?>
+<script src="js/common.js" type="text/javascript"></script>
+<script src="js/tamil.js" type="text/javascript"></script>
+<div id="overlay" align="center">
+    <div align="center" id="image_capture">
+        <div><a href="javascript:;" onclick="hideOverlay();" style="padding-left:650px;" title="close"><img src="images/close.png"/></a>
+        </div>
+        <div id="flashArea" style="height:100%;">
+            <p align="center">This content requires the Adobe Flash Player.<br /><a href="https://www.adobe.com/go/getflashplayer">
+            <img src="https://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" /><br/>
+            <a href="https://www.macromedia.com/go/getflash"/>Get Flash</a>
+            </p>
+        </div>
+    </div>
+</div>
+<div class="clear clearfix"></div>
+<div id="HelpDiv" style="width:825px;margin:auto;"></div>
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Masters &raquo;<a href="customers.php">Customer Master</a></td >
+        <td ><span class="btn-rht">
+        <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>&from_type=<?php echo $from_type; ?>&from_module=<?php echo $from_module; ?>&pledge_id=<?php echo $pledge_id; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a>
+        <a href="javascript:;" class="greybtn" onclick ="return back('content_div', '<?php  if($from_module != ""){ echo $module_name = $from_module; }else{ echo $module_name;} ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+     <div id="contentarea">
+     <form name="customer_form" method="post" style="margin: 0px;">
+
+   <table style="width: 1003px;"><tbody><tr valign="top"><td><input type="checkbox" id="checkshow" onclick="showMap(this)" name="showmap">Show Keymap<br></tbody></table>
+      <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0" style="background-color: white">
+      <tr>
+        <td class="title" colspan=2>Customer Master</td>
+      </tr>
+      <tr>
+      <td width="50%" valign="top">
+
+        <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+
+        <?php if($customer_data['customer_id'] != ""){ ?>
+          <tr>
+            <td id="name" width="39%">Customer Code </td>
+            <td width="61%" align="left"><label><?php echo stripslashes($customer_data['customer_id']); ?></label></td>
+          </tr>
+          <?php
+            }
+          ?>
+          <tr>
+            <td id="name" width="39%">Customer Name* </td>
+            <td width="61%" align="left"><!--input name="pval[name]" id="cus_name" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($customer_data['name']); ?>"/-->
+
+      <input name="pval[name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($customer_data['name']); ?>" class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)">
+
+      </td>
+          </tr>
+            <tr>
+            <td id="branch_id"><span class="add">Branch Name</span></td>
+            <td>
+                <?php
+                if($_SESSION['session_usertype']!=1)
+                {
+                    echo "<input type='hidden' name='pval[branch_id]'  value='$_SESSION[session_user_branch_id]'/>";
+                    echo $_SESSION['session_user_branch_name'];
+                }
+                else
+                {
+                    //Get Branch name from branch table
+                       $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);
+                ?>
+                 <select name="pval[branch_id]" onchange="remove_red('branch_id');">
+                <option value="">-- Select Branch --</option>
+                   <?php
+                    echo build_select_options($branch_data,$customer_data['branch_id']);
+                   ?>
+                </select>
+                <?php
+                }?>
+
+            </td>
+            </tr>
+          <tr>
+            <td id="relation_name" >Relation name* </td>
+            <td align="left"><input name="pval[relation_name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('relation_name');" value = "<?php echo stripslashes($customer_data['relation_name']); ?>" class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)"/></td>
+          </tr>
+           <tr>
+            <td id="relationship_category">Relationship Category* </td>
+            <td align="left">
+            <select name="pval[relationship_category]" id="relationship_type1" onfocus="remove_red('relationship_category')"  onchange="">
+            <option value="">-- Select Relationship category --</option>
+            <?php
+            foreach($Relation_category as $key=>$val){
+             if($customer_data['relationship_category']==$key) $selected = "selected"; else $selected="";
+            ?>
+
+            <option value="<?php echo $key; ?>" <?php echo $selected; ?>><?php echo $val; ?></option>
+
+            <?php
+
+            }
+
+            ?>
+            </select>
+            </td>
+          </tr>
+          <tr>
+            <td id="relationship_type">Relationship Type* </td>
+            <td align="left">
+            <select name="pval[relationship_type]" id="relationship_type1" onfocus="remove_red('relationship_type')"  onchange="">
+            <option value="">-- Select Relationship --</option>
+            <?php
+            foreach($Relation_Type as $key=>$val){
+             if($customer_data['relationship_type']==$key) $selected = "selected"; else $selected="";
+            ?>
+
+            <option value="<?php echo $key; ?>" <?php echo $selected; ?>><?php echo $val; ?></option>
+
+            <?php
+
+            }
+
+            ?>
+            </select>
+            </td>
+          </tr>
+          <tr>
+            <td id="street">Street * </td>
+            <td align="left"><!--<input name="pval[street]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('street');" value = "<?php echo stripslashes($customer_data['street']); ?>"/>-->
+            <!--textarea name="pval[street]" onfocus="remove_red('street');"><?php echo stripslashes($customer_data['street']); ?></textarea-->
+      <!-- <textarea class="converters" name="pval[street]" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)" onfocus="remove_red('street');"><?php echo stripslashes($customer_data['street']); ?></textarea> -->
+      <input name="pval[street]" type="text"  value = "<?php echo stripslashes($customer_data['street']); ?>" class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)">
+            </td>
+          </tr>
+          <tr>
+            <td id="location">Location* </td>
+            <td align="left"><!--<input name="pval[location]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('location');" value = "<?php echo stripslashes($customer_data['location']); ?>"/-->
+      <input name="pval[location]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($customer_data['location']); ?>" class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)">
+      </td>
+          </tr>
+          <tr>
+            <td id="district">District * </td>
+            <td align="left"><!--input name="pval[district]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('district');" value = "<?php echo stripslashes($customer_data['district']); ?>"/-->
+      <input name="pval[district]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($customer_data['district']); ?>" class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)">
+      </td>
+          </tr>
+          <tr>
+            <td id="state">State </td>
+            <td align="left"><!--input name="pval[state]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('state');" value = "<?php echo stripslashes($customer_data['state']); ?>"/-->
+      <input name="pval[state]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($customer_data['state']); ?>" class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)">
+      </td>
+          </tr>
+          <tr>
+            <td id="postal_code">Postal code* </td>
+            <td align="left"><input id="postal_code_input" name="pval[postal_code]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('postal_code');" value = "<?php echo stripslashes($customer_data['postal_code']); ?>"/></td>
+          </tr>
+          <tr>
+            <td id="contact_no">Mobile no* </td>
+            <td align="left"><input id="contact_no_input" name="pval[contact_no]" maxlength="10" type="text" class="textfield-m" onfocus="remove_red('contact_no');" value = "<?php echo stripslashes($customer_data['contact_no']); ?>" _onkeypress="return phonenumberonly(event)" <?php echo $phoneEditPrivilege; ?> /></td>
+          </tr>
+          <tr>
+            <td id="email">Email Id</td>
+            <td align="left"><input  name="pval[email]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('email');" value = "<?php echo stripslashes($customer_data['email']); ?>"/></td>
+          </tr>
+        <!--<tr>
+            <td id="religion">Religion</td>
+            <td align="left"><input  name="pval[religion]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('religion');" value = "<?php echo stripslashes($customer_data['religion']); ?>"/></td>
+          </tr>
+        <tr>
+            <td id="religion_category">Category</td>
+            <td align="left"><input  name="pval[religion_category]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('religion_category');" value = "<?php echo stripslashes($customer_data['religion_category']); ?>"/></td>
+        </tr>
+
+        <tr>
+            <td>Land holding</td>
+            <td><label>
+              <input name="pval[land_holding]" type="radio" class="radio" value="1" <?php echo $yes;?>/>
+              Yes</label>
+                <label>
+                <input name="pval[land_holding]" type="radio" class="radio" value="0" <?php echo $no;?>/>
+              No</label>
+            </td>
+            </td>
+        </tr>-->
+          <tr>
+            <td id="id_proof">ID Proof </td>
+            <td align="left">
+            <select name="id_proof" id="id_proof1" onfocus="remove_red('id_proof')" onchange="show_idproof_other(this.value)">
+            <option value="">-- Select ID Proof --</option>
+            <?php
+            $is_selected = false;
+            $display = "none";
+            foreach($Customer_IDProof as $key=>$val){
+
+                if($customer_data['id_proof']==$key){
+                    $selected = "selected";
+                    $is_selected = true;
+
+                }else{
+                    $selected="";
+
+                }
+
+                if(!$is_selected && $customer_data['id_proof']!='' && $key=="Other"){
+                    $selected = "selected";
+                    $display = "block";
+                }
+
+            ?>
+
+            <option value="<?php echo $key; ?>" <?php echo $selected; ?>><?php echo $val; ?></option>
+
+            <?php
+
+            }
+
+            ?>
+            </select><br>
+            <div class="field_details" id="id_proof_other"  name="id_proof_other" style="display:<?php echo $display; ?>">
+                Other : <?php if($type == 'edit') { ?><input name="pval[id_proof]" id="other_id_proof" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('id_proof');" value = "<?php echo stripslashes($customer_data['id_proof']); ?>"/>
+        <?php }else { ?>
+        <span id="input_change"><input name="pval[id_proof]" id="other_id_proof" maxlength="40" type="hidden" class="textfield-m" /></span>
+        <?php } ?>
+            </div>
+            </td>
+          </tr>
+          <tr>
+            <td id="id_proof_code">ID Proof - Code </td>
+            <td align="left"><input name="pval[id_proof_code]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('id_proof_code');" value = "<?php echo stripslashes($customer_data['id_proof_code']); ?>"/></td>
+          </tr>
+
+
+          <tr>
+            <td id="dob">Date of Birth </td>
+            <td align="left">
+            <input name="pval[dob]" id="dob1" maxlength="40" type="text" class="calendar textfield-m"   value = "<?php echo ($customer_data['dob']=='' || $customer_data['dob'] == '0000-00-00') ? "" : date("d-m-Y",strtotime($customer_data['dob'])); ?>" onfocus="remove_red('dob');">
+            &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('dob1', 'calender_trigger', '%d-%m-%Y' )" onclick="jQuery('#dob1').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+            </td>
+          </tr>
+
+          <tr>
+            <td id="monthly_income">Monthly Income </td>
+            <td align="left">
+
+            <?php
+            foreach($Monhtly_Income as $key=>$val){
+             if($customer_data['monthly_income']==$key) $selected = "checked"; else $selected="";
+            ?>
+
+            <input type="radio" <?php echo $selected; ?> class="radio" name="pval[monthly_income]" id="monthly_income1" value="<?php echo $key; ?>" onfocus="remove_red('monthly_income')" onclick="remove_red('monthly_income')"> <?php echo $val; ?> <br>
+
+            <?php
+
+            }
+            ?>
+
+
+
+            </td>
+          </tr>
+
+          <tr>
+            <td id="reference_name">Reference person name </td>
+            <td align="left"><input name="pval[reference_name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('reference_name');" value = "<?php echo stripslashes($customer_data['reference_name']); ?>"/></td>
+          </tr>
+          <tr>
+            <td id="reference_address">Reference person details </td>
+            <td align="left"><textarea name="pval[reference_address]" onfocus="remove_red('reference_address');"><?php echo stripslashes($customer_data['reference_address']); ?></textarea></td>
+          </tr>
+          <!--tr>
+            <td valign="top" id="photo">Customer photo * </td>
+            <td align="left"><input name="pval[photo]"  id="photo_url" maxlength="40" type="hidden" class="textfield-m" onfocus="remove_red('photo');" value = "<?php echo stripslashes($customer_data['photo']); ?>"/><br/>
+            <img name="photo_img" id="photo_img" src="<?php echo $customer_data['photo'] != ''  ? $customer_data['photo'] : CUSTOMER_IMAGE_PATH.'no_photo.jpg';?>"></img><br/>
+            <a href="javascript:;" class="greybtn"  onclick="create_picture_capture()">Capture</a>
+            </td>
+          </tr-->
+          <tr>
+            <td id="other_details"><span class="add"> Other Details </span></td>
+            <td><textarea name="pval[other_details]" onfocus="remove_red('other_details');"><?php echo stripslashes($customer_data['other_details']); ?></textarea></td>
+          </tr>
+          <tr>
+            <td>Status </td>
+            <td><label>
+              <input name="pval[status]" type="radio" class="radio" value="1" <?php echo $active; ?> />
+              Active</label>
+                <label>
+                <input name="pval[status]" type="radio" class="radio" value="0" <?php echo $inactive; ?> />
+              Inactive </label>
+            </td>
+           </tr>
+           <tr>
+             <td colspan="2"><span id="mand_note">*indicates mandatory fields</span> </td>
+           </tr>
+    </table>
+
+        </td>
+        <td width="50%" valign="top">
+         <table border=0 align="left" class="frm-tbl" width=220>
+            <tr>
+                <td width="25%" valign="top" align="left" id="photo">Customer photo* </td>
+            </tr>
+            <tr>
+                <td align="center" valign="top">
+                <input name="pval[photo]"  id="photo_url" maxlength="40" type="hidden" class="textfield-m" onchange="remove_red('photo');" value = "<?php echo stripslashes($customer_data['photo']); ?>"/>
+                <img name="photo_img" id="photo_img" src="<?php echo stripslashes($customer_data['photo']) != ''  ? stripslashes($customer_data['photo']).'?'.time() : CUSTOMER_IMAGE_PATH.'no_photo.jpg';?>"  onerror="this.src='customer/images/no_photo.jpg'"  ></img>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" valign="top">
+                <a href="javascript:;" class="flexi_btn"  onclick="create_picture_capture()" style="marging-left: -5px;">Capture Photo</a>
+                </td>
+            </tr>
+            <tr>
+                <td width="25%" valign="top" align="left" id="sign">Customer Signature *</td>
+            </tr>
+            <tr>
+                <td align="center" valign="top">
+                <input name="pval[sign]"  id="sign_url" maxlength="40" type="hidden" class="textfield-m" onchange="//remove_red('sign');" value = "<?php echo stripslashes($customer_data['sign']); ?>"/>
+                <img name="sign_img" id="sign_img" src="<?php echo stripslashes($customer_data['sign']) != ''  ? stripslashes($customer_data['sign']).'?'.time() : CUSTOMER_IMAGE_PATH.'no_sign.jpg';?>"  onerror="this.src='customer/images/no_sign.jpg'" ></img>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" valign="top">
+                <a href="javascript:;" class="flexi_btn"  onclick="create_signature_capture()" style="">Capture Sign</a>
+                </td>
+            </tr>
+
+            </table>
+
+      <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+
+          <?php }?>
+          </form>
+<div class="clear clearfix"></div>
+
+</body>
+
+<script src="js/swfobject.js" language="javascript"></script>
+<script src="photo_capture/flash_callback.js" language="javascript"></script>
+
+<script type="text/javascript">
+/*function phonenumberonly(evt) {
+
+    evt = (evt) ? evt : window.event
+
+    var charCode = (evt.which) ? evt.which : evt.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        if(charCode == 40 || charCode==41 || charCode==45)
+            return true;
+        else
+             return false;
+
+    }
+
+      return true;
+}*/
+
+
+var customer_id = document.customer_form.id.value;
+var d, randomnumber;
+var capture_type = '';
+
+ $(document).ready(function(){
+        //         $('#cus_name').focus();
+    //document.customer_form.cus_name.focus();
+        form_enter_focus(jQuery('#cus_name'),16,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        enable_save_action();
+
+        $("#postal_code_input").numeric();
+        //$("#contact_no_input").numeric({allow:"+-"}); Commented by DSSK 22_MAY_2018
+        $("#contact_no_input").numeric();
+
+        set_date_picker();
+});
+
+
+
+function create_picture_capture()
+{
+    capture_type = "photo";
+    // temp name for the picture auto generated..
+    randomnumber = Math.floor(Math.random()*90000) + 10000;
+    var mainswf = new SWFObject("photo_capture/take_picture.swf", "main", "700", "400", "9", "#ffffff");
+    mainswf.addParam("scale", "noscale");
+    mainswf.addParam("wmode", "window");
+    mainswf.addParam("allowFullScreen", "true");
+    mainswf.addVariable("id",randomnumber); // pass temp name for the picture to flash
+    mainswf.write("flashArea");
+    showOverlay();
+}
+
+function create_signature_capture()
+{
+    capture_type = 'sign';
+    // temp name for the picture auto generated..
+    randomnumber = Math.floor(Math.random()*90000) + 10000;
+    var signswf = new SWFObject("photo_capture/take_picture.swf", "main", "700", "400", "9", "#ffffff");
+    signswf.addParam("scale", "noscale");
+    signswf.addParam("wmode", "window");
+    signswf.addParam("allowFullScreen", "true");
+    signswf.addVariable("id",randomnumber); // pass temp name for the picture to flash
+    signswf.write("flashArea");
+    showOverlay();
+}
+
+function showOverlay()
+{
+    //alert(capture_type);
+
+    var o = document.getElementById('overlay');
+    o.style.visibility = 'visible';
+}
+
+function hideOverlay(str)
+{
+    //alert("photo_capture/recapture.php?type="+capture_type+"&temp="+str);
+        if(str=='') str  = 'tempimage';
+        jQuery.ajax({
+           type: "GET",
+           url: "photo_capture/recapture.php?type="+capture_type+"&temp="+str,
+           dataType : "json",
+           success: function(obj)
+           {
+                //alert(obj.type+"  "+obj.file);
+                $("#"+capture_type+"_img").attr("src",obj.file+"?"+d.getTime());
+                $("#"+capture_type+"_url").attr("value",obj.file);
+           },
+           error: function(obj){
+            //alert("Ajax Failed: ERRROR");
+           }
+        });
+
+    var o = document.getElementById('overlay');
+    o.style.visibility = 'hidden';
+    closed(str);
+}
+
+function closed(str)
+{
+
+    d=new Date();
+    rstr = randomnumber;
+
+    //alert(str+"here");
+
+    if(customer_id != undefined)
+    {       //alert("cid");
+        if(capture_type=="photo")
+            fname = customer_id+".jpg";
+        else
+            fname = customer_id+"_sign.jpg";
+        $("#"+capture_type+"_url").attr("value","customer/images/"+customer_id+"/"+fname);
+    }
+
+    if(str != undefined)
+    {
+        //alert(str);
+
+    }
+}
+
+$("#"+capture_type+"_img").load(function()
+{
+    //alert($(this).attr("src"));
+    $("#"+capture_type+"_url").attr("value","");
+    //console.log($(this).attr("src"));
+    // console.log($("#"+capture_type+"_url").val());
+   // if(($(this).attr("src") != "http://wwa.mayavafinance.com/customer/images/no_"+capture_type+".jpg") ||  ($(this).attr("src") != "customer/images/no_"+capture_type+".jpg" ))
+
+
+    if(capture_type=="photo") chk = ($(this).attr("src").search(/no_photo.jpg/i) )
+    else chk = ($(this).attr("src").search(/no_sign.jpg/i) )
+    //alert("check = "+chk)
+    if(chk == -1)
+    {
+    //  alert( $("#"+capture_type+"_url").attr("value"));
+    var str_src = $(this).attr("src");
+    var split_name=str_src.split("?");
+    //alert(split_name[0]);
+      $("#"+capture_type+"_url").attr("value",split_name[0]);
+      //if(capture_type=="photo") remove_red("photo");
+    }
+    //alert($("#"+capture_type+"_url").attr("value"));
+ });
+
+ $("#"+capture_type+"_img").error(function () {
+  d=new Date();
+  $(this).attr("src", "customer/images/no_"+capture_type+".jpg?"+d.getTime());
+});
+
+function show_idproof_other(val){
+//alert(val)
+if(val=="Other"){
+    jQuery("#other_id_proof").val("");
+    jQuery("#id_proof_other").css("display","block");
+  jQuery('#input_change').html('<input name="pval[id_proof]" id="other_id_proof" maxlength="40" type="text" class="textfield-m" onfocus="remove_red(\'id_proof\');"/>');
+}
+else{
+    jQuery("#other_id_proof").val(val);
+    jQuery("#id_proof_other").css("display","none");
+}
+
+
+}
+
+
+</script>
+

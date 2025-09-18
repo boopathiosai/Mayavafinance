@@ -1,0 +1,170 @@
+<?php  
+// Get Loan date - DSSK //        
+        $crr_loan_date = LoanDate::GetloanDate();
+ // Get Loan date - DSSK // 
+    session_start();
+if($customer_data['status'] == "0") { 
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+   if($customer_data['id']!='')
+   {
+        $_SESSION['customer_id'] = $customer_data['id'];
+   }
+   else
+   {
+        $_SESSION['customer_id'] = "temp";
+   }
+ 
+    ?>
+
+<div class="clear clearfix"></div>
+
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Transactions</a> &raquo;<a href="<?php echo $module_name;?>.php">Cash Flow Transactions</a></td>
+        <td  width="50%"><span class="btn-rht">
+         <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a> <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+     <div id="contentarea">
+     <form name="cash_flow_form" id="cash_flow_form" method="post" style="margin: 0px;">
+      <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="title">Cash Flow Transactions</td>
+      </tr>
+      <tr>
+        <td width="100%"><table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          
+          <tr>
+          <?php
+          $current_branch_id = ((isset($cash_data['branch_id'])) ? $cash_data['branch_id'] : $_SESSION['session_user_branch_id']);
+            if($_SESSION['session_usertype']=="1")
+              {
+              
+              $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);
+              ?>
+              <td id='branch_id' width='39%'>Branch Name * </td>
+              <td width="61%" align="left">
+              <select name="pval[branch_id]" id="branch_id1"  onchange="remove_red('branch_id');" >
+                <option value="">-- Select Branch --</option>
+                <?php              
+                 echo build_select_options($branch_data,$current_branch_id); 
+                ?>
+              </select> 
+              
+              <?php  
+              }
+             else{?>
+                <td id='branch_id' width='39%'>Branch Name </td>
+                <td> 
+                    <input type='hidden' name='pval[branch_id]' id='branch_id1' value='<?php echo $current_branch_id ?>'> 
+                    <?php echo $_SESSION['session_user_branch_name']; ?>
+                </td>
+                <?php
+                }
+            ?>
+          </tr>     
+          <tr>
+            <td id="transaction_type">Transaction Type * </td>
+
+            <td align="left">
+            <select name="pval[transaction_type]" id="transaction_type1" onfocus="remove_red('transaction_type');" onchange="cashflow_fetch_puposes(this.value)">
+                <option value=""> Select </option>
+                <option value="cashin" <?php if($cash_data['transaction_type']=='cashin'){ ?>selected="1"<?php }?> >Cash In</option>
+                <option value="cashout" <?php if($cash_data['transaction_type']=='cashout'){ ?>selected="1"<?php }?>>Cash Out</option>
+            </select>
+            </td>
+          </tr>
+          <tr>
+            <td id="cash_purpose" >Cash In / Out Purpose*<div id="cash_transaction_type" style="color:red; font-size:9px;">[Select Transaction Type]</div> </td>
+            <td align="left">
+            <input name="pval[cash_purpose]" id="cash_purpose1" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('cash_purpose');" value = "<?php echo stripslashes($cash_data['cash_purpose']); ?>"/>
+            </td>
+          </tr>
+          <tr>
+            <td id="date_transaction" >Date of Transaction* </td>
+            <td align="left">
+                <?php if(is_superadmin($_SESSION['session_usergroupname'])){ ?>
+                <input name="pval[date_transaction]" id="date_transaction1" onfocus="remove_red('date_transaction');" maxlength="40" type="text" readonly class="calendar textfield-m" value = "<?php echo ($cash_data['date_transaction']!='') ? stripslashes($cash_data['date_transaction']) : date("d-m-Y"); ?>"/>
+            &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('date_transaction1', 'calender_trigger', '%d-%m-%Y' )" 
+			onclick="jQuery('#date_transaction1').click();"
+			title="Click to select date"><img src="images/calendar.png" border=0></a>
+                <?php } else { ?>
+                <?php echo ($cash_data['date_transaction']!='') ? stripslashes($cash_data['date_transaction']) : $crr_loan_date; ?>
+                 <input name="pval[date_transaction]" id="date_transaction1"  maxlength="40" type="hidden" readonly class="textfield-m" value = "<?php echo ($cash_data['date_transaction']!='') ? stripslashes($cash_data['date_transaction']) : $crr_loan_date; ?>" />
+            <!-- <input name="pval[date_transaction]" id="date_transaction1" onfocus="remove_red('date_transaction');" maxlength="40" type="text" readonly class="calendar textfield-m" value = "<?php echo ($cash_data['date_transaction']!='') ? stripslashes($cash_data['date_transaction']) : date("d-m-Y"); ?>"/>
+            &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('date_transaction1', 'calender_trigger', '%d-%m-%Y' )" 
+			onclick="jQuery('#date_transaction1').click();"
+			title="Click to select date"><img src="images/calendar.png" border=0></a> -->
+            <?php } ?>
+            </td>
+          </tr>
+          <tr>
+            <td id="amount">Amount* </td>
+            <td align="left"><input name="pval[amount]" id="amount1" maxlength="40" type="text" class="currency textfield-m" onfocus="remove_red('amount');" value = "<?php echo stripslashes($cash_data['amount']); ?>" /></td>
+          </tr>
+          <tr><td id="reference_address"></td><td align="left"></td></tr>
+          <tr><td id="reference_address"></td><td align="left"></td></tr>
+          <tr><td id="reference_address"></td><td align="left"></td></tr>
+    </table>
+      <!--input name="pval[branch_id]" id="branch_id" type="hidden"  value = "<?php echo stripslashes($_SESSION['session_user_branch_id']); ?>"-->
+      <?php if($uval[id] > 0){ ?>
+          <input name="type1"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type1"  type="hidden"  value = "add">
+          
+          <?php }?>
+          </form>
+<div class="clear clearfix"></div>
+
+</body>
+
+
+
+<script type="text/javascript">
+var flag = <?php echo $_SESSION['session_usertype']; ?>;
+ $(document).ready(function(){  
+ $("#cash_purpose1").attr("disabled", true);
+		if(flag == 1) {
+			$('#branch_id1').focus();
+		}else{
+			$('#transaction_type1').focus();
+		}
+		
+        form_enter_focus(jQuery('#branch_id1'),5,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+
+        $("input,select,textarea").not( $(":button,:hidden") ).keypress(function (evt) {
+            if (evt.keyCode == 13) {
+                iname = $(this).val();
+                if (iname !== 'Submit'){    
+                    var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:radio,input:checkbox,textarea,select');                   
+                    
+                    var index = fields.index( this );
+                    if ( index > -1 && ( index + 1 ) < fields.length) {
+                        fields.eq( index + 1 ).focus();
+                    }
+                    else
+                    {                   
+                      customer_process('content_div','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');
+                    }
+                    return false;
+                }
+            }
+        });
+        
+        enable_save_action();
+        
+        setNumberKeyEvent();
+        set_date_picker();
+        $("#postal_code_input").numeric();
+		$("#contact_no_input").numeric({allow:"+-"});
+    });
+ 
+</script>
+</html>

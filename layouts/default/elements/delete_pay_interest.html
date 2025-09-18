@@ -1,0 +1,92 @@
+<?php
+
+$pay_interest_details = PayInterest::getInterestDetails($customer_data['pledge_id']);
+?>
+<div id="contentarea">
+        <form id="pay_interest_del_form" name="pay_interest_del_form" method="post" style="margin: 0px;">
+        <input type="hidden" id="pt_id" name="pval[id]" value="<?php echo htmlentities(stripslashes($customer_data['pi_id']), ENT_QUOTES); ?>">
+        <table class="frm-cntr" width="800" border="0" align="center" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="title">Are you sure to delete the following Interest Payment. Please Confirm ? </td>
+                  </tr>
+                  <tr>
+                    <td>
+                    <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+                        <tr>
+                        <td width="35%"><span class="add">Loan Id</span></td>
+                        <td>
+                        <input type="hidden" name="pval[loan_id]" id="loan_id" value="<?php echo htmlentities(stripslashes($customer_data['pledge_id']), ENT_QUOTES); ?>">
+                        <?php echo htmlentities(stripslashes($customer_data['loan_id']), ENT_QUOTES); ?></td>
+                       </tr>
+                       <tr>
+                         <td><span class="add">Cautomer Name</span></td>
+                         <td>
+                         <input type="hidden" name="pval[branch_id]" id="branch_id" value="<?php echo htmlentities(stripslashes($customer_data['pay_branch']), ENT_QUOTES); ?>">
+                         <?php echo htmlentities(stripslashes($customer_data['customer_name']), ENT_QUOTES); ?></td>
+                       </tr>
+                        <tr>
+                        <td><span class="add">Loan Amount</span></td>
+                        <td> <?php echo (trim($customer_data['loan_amount']) == "")? "-":number_format(stripslashes($customer_data['loan_amount']), 2,'.',''); ?></td> 
+                      </tr>
+                      
+                      
+                      
+                      <tr>
+                        <td><span class="add">Last Paid Interest Amount</span></td>
+                        <td><?php echo convertToCurrency($pay_interest_details['last_paid_interest_amount']); ?> </td>
+                      </tr>  
+                     <?php 
+                     $principle_to_add = 0;
+                     if($pay_interest_details['interest_type']=='flat'){
+                        $principle_to_add = $pay_interest_details['principle_payment'];
+                     ?>
+                      <tr>
+                        <td><span class="add"><span id="amount">Last Paid Principle Amount</span></span></td>
+                        <td align="left"><?php echo unitDisplay($pay_interest_details['principle_payment'],false); ?></td>
+                      </tr>      
+                     
+                     <?php
+                     }
+                     ?>
+  
+     
+                      <tr>
+                        <td><span class="add">Last Paid Additional Charge</span></td>
+                        <td>
+                        <?php echo convertToCurrency($customer_data['additional_charge']); ?></td>
+                      </tr>
+                      <tr>
+                        <td><span class="add"><span id="amount">Total Amount Paid</span></span></td>
+                        <td align="left">
+                        <?php
+                                                
+                           $tot_amount = ($customer_data['additional_charge']!='') ?
+                                        ($pay_interest_details['last_paid_interest_amount']+$principle_to_add)+$customer_data['additional_charge'] :
+                                        0.0;
+                            ?>
+                        <input type="hidden" id="total_amt" name="total_amt" value="<?php echo unitDisplay($tot_amount,false); ?>">
+                        <font color=red>
+                        <div id="total_display"><?php echo convertToCurrency($tot_amount); ?></div></font></td>
+                      </tr>      
+                      <tr>
+                        <td><span class="add">Amount Paid On</td>
+                        <td><?php echo $customer_data['paid_on']; ?></td>
+                      </tr>      
+          
+    </table>    
+</form>
+</div>
+
+<script>
+
+formAct = "delete"; 
+formSearch = "<?php echo $search_args; ?>";
+formParam = "type="+formAct;
+formId = "pay_interest_del_form";
+formPage = "pay_interest";
+
+confirmYesFunction = "form_action_save()";
+confirmNoFunction = "welcome='No'";
+</script>
+
+

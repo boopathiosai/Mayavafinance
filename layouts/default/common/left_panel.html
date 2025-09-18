@@ -1,0 +1,58 @@
+<div id="left-panel">    
+    <ul class="menu collapsible">
+        <li class="top-bg">LINKS</li>
+        <li <?php echo $dashboardmenu_selected; ?>><a href="dashboard.php">Dashboard</a></li>  
+        <li <?php echo $masterdisplay;?> <?php echo $mastermenu_selected;?>><a href="javascript:;">Masters</a>
+            <ul class="acitem">
+                <li><a href="suppliers.php" <?php echo $suppliermenu_selected; ?>>Suppliers</a></li>
+                <li><a href="taxes.php" <?php echo $taxmenu_selected; ?>>Taxes</a></li>
+                <li><a href="regions.php" <?php echo $regionmenu_selected; ?>>Regions</a></li>
+                <li><a href="campaigns.php" <?php echo $campaignmenu_selected; ?>>Campaigns</a></li>
+                <li><a href="activity.php" <?php echo $activitymenu_selected; ?>>Activity</a></li>
+                <li><a href="warehouses.php" <?php echo $warehousemenu_selected; ?>>Warehouses</a></li>
+                <li><a href="brands.php" <?php echo $brandmenu_selected; ?>>Brands</a></li>
+            </ul>
+        </li>
+        <li <?php echo $userdisplay;?> <?php echo $usermenu_selected; ?>><a href="user.php">Users</a>           </li>
+        <li <?php echo $productdisplay;?> <?php echo $productmenu_selected; ?>><a href="javascript:;" >Products</a>
+            <ul class="acitem">
+                <li><a href="product_category.php" <?php echo $productcategorymenu_selected; ?>>Product Categories</a></li>
+                <li><a href="product_inventory.php" <?php echo $productinventorymenu_selected; ?>>Product Inventory</a></li>    
+            </ul>
+        </li>           
+        <li <?php echo $customerdisplay;?> <?php echo $customermenu_selected; ?>><a href="customers.php">Customers</a></li>
+        <li <?php echo $supplierorderdisplay;?> <?php echo $purchasemenu_selected; ?>><a href="javascript:;">Supply & Purchase Orders</a>        
+            <ul class="acitem">
+                <li><a href="supplier_order.php" <?php echo $supplierordermenu_selected; ?>>Supplier Orders</a></li>
+                <li><a href="supplier_order_invoice.php" <?php echo $supplierinvoicemenu_selected; ?>>Supplier Invoice Orders</a></li>
+            </ul>
+        </li>            
+        <li <?php echo $salesorderdisplay;?> <?php echo $salesmenu_selected; ?>><a href="javascript:;" >Delivery Sales Orders</a>
+            <ul class="acitem">
+                <li><a href="customer_order.php" <?php echo $customerordermenu_selected; ?>>Delivery Orders</a></li>
+                <li><a href="customer_order_invoice.php" <?php echo $customerinvoicemenu_selected; ?>>Invoices</a></li>     
+            </ul>
+        </li>                   
+        <li <?php echo $paymentsdisplay;?> <?php echo $paymentsmenu_selected; ?>><a href="payments.php">Payments</a></li>            
+        <li <?php echo $crmdisplay;?> <?php echo $crmmenu_selected; ?>><a href="javascript:;">CRM</a>
+            <ul class="acitem">
+                <li><a href="opportunities.php?opportunity=my" <?php echo $opportunitymenu_selected; ?>>Opportunities</a></li>
+                <li><a href="activities.php?activities=my" <?php echo $activitiesmenu_selected; ?>>Activities</a></li>
+                <li><a href="leads.php?leads=my" <?php echo $leadsmenu_selected; ?>>Leads</a></li>
+                <li><a href="task_to_employees.php?task=to" <?php echo $tasksmenu_selected; ?>>Task to Employees</a></li>
+                <li><a href="customer_complaints.php?comp=to" <?php echo $complaintsmenu_selected; ?>>Customer Complaints</a></li>
+                <li><a href="mailbrochures.php?brochures=my" <?php echo $mailbrochuremenu_selected; ?>>Mail Brochures</a></li>
+            </ul>
+        </li>
+        <li <?php echo $reportsdisplay;?> <?php echo $reportsmenu_selected; ?>><a href="javascript:;">Reports</a>
+            <ul class="acitem">
+                <li><a href="sales_report.php" <?php echo $salesreportmenu_selected; ?>>Sales Report</a></li>
+                <li><a href="trend_report.php" <?php echo $trendreportmenu_selected; ?>>Trends Report</a></li>
+                <li><a href="leads_forecast.php" <?php echo $leadsreportmenu_selected; ?>>Leads Forecast</a></li>
+            </ul>
+        </li>
+    </ul>   
+    <div id="bottom-bg"></div>      
+</div>
+
+    

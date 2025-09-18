@@ -1,0 +1,258 @@
+<div id="print_content">
+
+<?php  
+//echo '<pre>';
+//print_r($customer_data);
+//exit;
+    $product_data = $customer_data;
+    $categories = $customer_data;
+    $customer_data = $customer_data[0];
+	
+	$weight_net = floatval($customer_data['total_net_weight']);
+	$weight_net_gs =  intval($weight_net);
+	$weight_net_mgs =  intval(floatval($weight_net - intval($weight_net)) * 1000);
+	//$customer_data['total_net_weight'] = $weight_net_gs . " Gm ".$weight_net_mgs." Ms";
+	$customer_data['total_net_weight'] = $weight_net_gs . " கி ".$weight_net_mgs." Ms";
+
+	$weight_gross = floatval($customer_data['total_gross_weight']);
+	$weight_gross_gs =  intval($weight_gross);
+	$weight_gross_mgs =  intval(floatval($weight_gross - intval($weight_gross)) * 1000);
+	//$customer_data['total_gross_weight'] = $weight_gross_gs . " Gm ".$weight_gross_mgs." Ms";
+	$tamil_font = "மி கி";
+
+$customer_data['total_gross_weight'] = $weight_gross_gs . " கி ".$weight_gross_mgs.$tamil_font;
+    
+
+$fetch_cust_id = $customer_data['customer_id'];
+
+	  $query = "SELECT DISTINCT P.id, P.sub_branch_id, P.loan_id, P.customer_id, PD.pledge_id, PD.product_id,PS.name, C.name, B.name as sub_branch_name, B.sub_branch_code, B.license_no, B.address, B.location, B.contact_no, B.license_no
+                FROM mf_pledge as P
+                LEFT JOIN mf_pledge_details as PD ON P.id = PD.pledge_id
+                LEFT JOIN mf_customers as C ON C.id = P.customer_id
+		        LEFT JOIN mf_products as PS ON PS.id = PD.product_id
+                LEFT JOIN mf_sub_branch as B ON P.sub_branch_id = B.id
+		        WHERE 1 = 1 AND P.customer_id = '$fetch_cust_id'";
+                
+                $data_sub_addr = $app->getrows($query);
+
+				$lamountw = intval($customer_data['loan_amount']);
+?>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>சரவணா பைனான்ஸியர்ஸ்</title>
+<link href="css/style_print.css" rel="stylesheet" type="text/css" />
+<link href="css/fonts_print.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table width="711" border="0" align="center" cellpadding="0" cellspacing="0" _style="font-size:12px !important; font-family:Arial, Helvetica, sans-serif !important;">
+  <tr>
+    <td width="711" colspan="5" align="center" style="font-size:10px">உ</td>
+  </tr>
+  <tr>
+    <td colspan="5" align="center" style="font-size:10px">சிவமயம்</td>
+  </tr>
+  <tr>
+  <td>&nbsp;
+  </td>
+  </tr>
+  <tr>
+    <td colspan="5" align="center">
+    <h1><?php echo $data_sub_addr[0]['sub_branch_name']; ?></h1>
+    <p><?php echo $data_sub_addr[0]['license_no']; ?><br>
+    <strong>( தங்கம், வெள்ளி நகை அடகு கடை )</strong><br>  
+   <?php echo nl2br($data_sub_addr[0]['address']); ?>
+    <?php //echo $data_sub_addr[0]['location']; ?> <br/>
+  போன்: <?php echo $data_sub_addr[0]['contact_no']; ?> </p>
+ </td>
+  </tr>
+ <tr>
+    <td height="40" colspan="5" align="center" valign="top"><strong>அடகு சீட்டு</strong></td>
+  </tr>
+   
+  <tr>
+    <td height="30" colspan="5"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:12px !important; font-family:Arial, Helvetica, sans-serif !important;">
+      <tr>
+        <td width="14%">அடகு எண் :</td>
+        <td width="16%"><?php echo (trim($customer_data['loan_id']) == "")? "-":stripslashes($customer_data['loan_id']); ?></td>
+        <td width="14%" align="right">ஸ்கீம் :</td>
+        <td width="25%"><?php echo $customer_data['scheme_name']; ?></td>
+        <td width="10%" align="right">தேதி :</td>
+        <td width="20%"><?php echo date("d/m/Y"); ?></td>
+      </tr>
+    </table></td>
+  </tr>
+   <tr>
+    <td height="30" colspan="5"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:12px !important; font-family:Arial, Helvetica, sans-serif !important;">
+      <tr>
+        <td width="30%">அடகு வைத்தவாின் பெயா் :</td>
+        <td width="28%"><?php echo (trim($customer_data['customer_name']) == "")? "-":stripslashes($customer_data['customer_name']); ?></td>
+        <td width="43%" align="right">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="30" colspan="5"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:12px !important; font-family:Arial, Helvetica, sans-serif !important;">
+      <tr>
+        <td width="19%">உறவினர் பெயர் :</td>
+        <td width="25%"><?php echo (trim($customer_data['relation_name']) == "")? "-":stripslashes($customer_data['relation_name']); ?> - <?php echo (trim($customer_data['relationship_type']) == "")? "-":stripslashes($customer_data['relationship_type']); ?></td>
+        <td width="56%" align="right">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+ 
+  <tr>
+    <td height="75" colspan="5"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:12px !important; font-family:Arial, Helvetica, sans-serif !important;">
+      <tr>
+        <td width="12%">விலாசம் :</td>
+        <td width="22%"><?php echo (trim($customer_data['customer_street']) =="" )? "-" : stripslashes($customer_data['customer_street']); ?></td>
+        <td width="66%" align="right">&nbsp;</td>
+      </tr>
+            <tr>
+        <td>&nbsp;</td>
+        <td width="22%"><?php echo (trim($customer_data['customer_location']) =="" )? "-" : stripslashes($customer_data['customer_location']); ?></td>
+        <td width="72%" align="right">&nbsp;</td>
+      </tr>
+            <tr>
+        <td>&nbsp;</td>
+        <td width="22%"><?php echo (trim($customer_data['district']) =="" )? "-" : stripslashes($customer_data['district']); ?>
+					</td>
+        <td width="72%" align="right">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td>&nbsp;</td>
+        <td width="22%"><?php echo (trim($customer_data['customer_postal_code']) == "")? "-":stripslashes($customer_data['customer_postal_code']); ?>
+					</td>
+        <td width="72%" align="right">&nbsp;</td>
+      </tr>
+      
+    </table></td>
+  </tr>  
+  <tr>
+    <td height="30" colspan="5"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:12px !important; font-family:Arial, Helvetica, sans-serif !important;">
+      <tr>
+        <td width="8%">அசல் :</td>
+        <td width="87%"><?php echo (trim($customer_data['loan_amount']) == "")? "-":stripslashes($customer_data['loan_amount']); ?> (<?php echo translateToWords($lamountw); ?> Only)</td>
+        <td width="5%" align="right">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="30" colspan="5"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:12px !important; font-family:Arial, Helvetica, sans-serif !important;">
+      <tr>
+        <td width="9%">போன் :</td>
+        <td width="18%"><?php echo (trim($customer_data['contact_no']) == "")? "-":stripslashes($customer_data['contact_no']); ?></td>
+        <td width="73%" align="right">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td colspan="5">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="5">
+    <div id="tab1">
+	<?php
+            $i=1;
+            if(count($categories)>0){
+         ?>   
+    <table width="100%" border="0" cellpadding="0" cellspacing="1" style="font-size:12px !important; font-family:Arial, Helvetica, sans-serif !important;">
+      <tr style="font-weight:700; color:#FFF;">
+        <td width="46%" height="30" bgcolor="#333333">அடகு சொத்தின் விபரம்</td>
+        <td width="14%" bgcolor="#333333">உருபடி</td>
+        <td width="18%" bgcolor="#333333">எடை கிராம்</td>
+        <td width="22%" bgcolor="#333333">சொத்தின் மதிப்பு</td>
+      </tr>
+	  <?php
+			
+			$tot_count = 0;
+            foreach($categories as $category){
+
+				$tot_count =  $customer_data['product_items'] + $tot_count;
+            
+          ?>  
+      <tr>
+        <td><?php echo (trim($category["product_name"])=='') ? "-" : $category["product_name"]; ?></td>
+        <td><?php echo  (trim($customer_data['product_items'])=='') ? "-" : $customer_data['product_items'] ; ?></td>
+        <td><?php if($i ==1) { echo (trim($customer_data['total_gross_weight'])=='') ? "-" : $customer_data['total_gross_weight'] ; } ?></td>
+        <td><?php if($i ==1) {echo  (trim($category["market_rate"])=='') ? "-" : $category["market_rate"] ; } ?></td>
+      </tr>
+	  <?php
+	  }
+	  ?>
+      
+      <tr>
+        <td colspan="4">&nbsp;</td>
+        </tr>
+      <tr>
+        <td style="text-align:right !important;"><strong>மொத்தம்&nbsp;&nbsp;</strong></td>
+        <td><?php echo $tot_count; ?></td>
+        <td><?php echo $customer_data['total_gross_weight']; ?></td>
+        <td><?php echo $customer_data['market_rate']; ?></td>
+      </tr>
+      </table>
+    </div>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="5">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="5"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:12px !important; font-family:Arial, Helvetica, sans-serif !important;">
+      <tr>
+        <td align="center">1.</td>
+        <td>நான் மேலே குறிப்பிட்டுள்ள தங்க நகைகளை ஈடாக தருகிறேன்</td>
+      </tr>
+      <tr>
+        <td align="center">2.</td>
+        <td>இந்த நகைகள் என்னுடையவை</td>
+      </tr>
+      <tr>
+        <td align="center" valign="top">3.</td>
+        <td>நான் கடன் தொகை மற்றும் வட்டி சேர்த்து மறுபக்கத்தில் குறிப்பிட்டுள்ள கால அவகாசத்திற்குள் திருப்பி அடைக்க சம்மதிக்கிறேன்</td>
+      </tr>
+      <tr>
+        <td align="center">4.</td>
+        <td>இந்த படிவத்தில் கூறப்பட்டுள்ள யாவும் உண்மையென நான் உறுதி கூறுகிறேன்</td>
+      </tr>
+      <tr>
+        <td width="4%" align="center">5.</td>
+        <td width="96%">பின் பக்கத்தில் கொடுத்திருக்கும் நிபந்தனைகளையும், விதிமுறைகளையும் ஏற்றுக் கொள்கிறேன்</td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="50" colspan="5">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="5"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:12px !important; font-family:Arial, Helvetica, sans-serif !important;">
+      <tr>
+        <td width="56%">அடகு வைத்தவாின் கையொப்பம் (அல்லது)<br>
+          இடது கைப்பெருவிரல் ரேகை</td>
+        <td width="4%" align="right">For&nbsp;&nbsp;</td>
+        <td width="40%"><?php 
+			echo $data_sub_addr[0]['sub_branch_name'];
+			//echo $customer_data['organization_name'] ?></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="40" colspan="5">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="5"><p style="font-size:12px;"><strong>குறிப்பு :</strong> நகையைத்திருப்ப வரும்போது இந்த நோட்டீசையும், அடகு ரசீதையும் கண்டிப்பாக கொண்டு வரவும்.</p></td>
+  </tr>
+  <tr>
+    <td colspan="5">&nbsp;</td>
+  </tr>
+</table>
+<?php
+}
+?>
+</body>
+</html>
+</div>

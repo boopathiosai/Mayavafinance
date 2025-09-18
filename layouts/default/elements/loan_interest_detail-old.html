@@ -1,0 +1,202 @@
+<div id="other-detail" class="box-hd-bg">
+<h3>Loan Interest Details</h3>
+<table class="frm-tbl" border="0" cellpadding="0" cellspacing="0" width="98%">
+  <tr><td width="30%">
+  <a href="javascript:" class="button" onclick="drop_div('pay-interest-details')">Pay Interest Details</a>
+  </td><td>
+<a href="javascript:" class="button" onclick="drop_div('slab-interest-details')">Slab Wise Interest Details</a>
+  </td></tr>
+  <tr><td colspan=2>
+
+<!-- Paid Interest details -->
+
+<?php include ADMIN_LAYOUT_PATH . "elements/pay_interest_details.html"; ?>
+
+
+  </td></tr>
+<tr>
+<td><span class="add">Due Date</span></td>
+<td><!-- <input type="hidden" name="pp_pval[old_redemption_loan_date]" value="<?php echo $pay_interest_details['due_date'];?>"> -->
+  <?php
+//echo "<pre>";print_r($pay_interest_details);
+// if($pay_interest_details['redeem_status']==1){
+//   echo $pay_interest_details['previous_loan_date'];
+// }
+// elseif($pay_interest_details['redeem_status']==0){
+  echo $pay_interest_details['due_date'];
+// }
+ ?> </td>
+ <!-- <td><input type="hidden" name="pp_pval[old_redemption_loan_date]" value="<?php echo $pay_interest_details['due_date'];?>"><td> -->
+</tr>
+<?php
+if($pay_interest_details['time_status']=='Period End'){
+?>
+<tr id="disp_time_status">
+<td><span class="add"><b>Time Status</b></span></td>
+<td><font color=#A33D98><b><?php echo $pay_interest_details['time_status']; ?></b></font></td>
+</tr>
+<?php
+}
+
+if($pay_interest_details['penalty_status'] == 'Over Due' ){
+?>
+<!-
+********************************************************************
+        Commented the overdue intial month calculation
+        on 06-Nov-2011  To activate the initial month Calculation remove the below commented code
+        If you remove this comment you have to remove the comment in following
+                payinterest.class.php method getInterestDetails, forms/payinterest.html,
+                elements/loan_interest_details.html and
+                remove JS script comment form the function_common_module.js pay_wavier_interest();
+**********************************************************************
+-->
+
+
+
+<!--<tr>
+<td>NIA (<span id="normal_interest_days_disp"><?php echo $pay_interest_details['normal_interest_days']; ?></span> Days) </td>
+<td><strong>
+    <span id="normal_interest_amount_disp"><?php echo convertToCurrency($pay_interest_details['normal_interest_amount']); ?></span>
+    ( <span id="normal_interest_rate_disp">
+    <?php echo $pay_interest_details['normal_interest_rate']; ?> %
+      </span>
+    )
+</strong></td>
+</tr>
+<tr>
+<td>PIA (<span id="penalty_interest_days_disp"><?php echo $pay_interest_details['penalty_interest_days']; ?></span> Days) </td>
+<td><strong>
+    <span id="penalty_interest_amount_disp"><?php echo convertToCurrency($pay_interest_details['penalty_interest_amount']); ?></span>
+    (<span id="penalty_interest_rate_disp">
+    <?php echo $pay_interest_details['penalty_interest_rate']; ?> %
+    </span>
+    )
+</strong></td>
+</tr>
+
+<tr><td colspan=100%>
+<span id="mand_note"><b>NIA</b> - Normal Interest Amount</span><br>
+<span id="mand_note"><b>PIA</b> - Penalty Interest Amount</span>
+
+</td></tr>-->
+
+
+<?php
+}
+?>
+<tr>
+<td id="interest_rate"><span class="add">Rate of Interest</td>
+<td><span id="disp_interest_rate">
+<?php echo $pay_interest_details['interest_rate']; ?> %
+</span>
+<input id="rate_of_interest" name="pval[interest_rate]" maxlength="40" type="hidden" class="textfield-m" value="<?php echo $pay_interest_details['interest_rate']; ?>" />
+</td>
+</tr>
+<tr>
+<td id="interest_days">Interest for the Days of </td>
+<td><span id="disp_interest_days">
+<?php echo $pay_interest_details['no_of_days']; ?>
+</span> Days
+<input id="no_of_days" name="pval[interest_days]" maxlength="40" type="hidden" class="textfield-m" value="<?php echo $pay_interest_details['no_of_days']; ?>" />
+</td>
+</tr>
+
+<tr>
+<td id="interest_amount"><span class="add">Interest Amount</td>
+<td><span id="disp_interest_amount">
+<?php
+    $interest =  $pay_interest_details['interest'];
+    echo convertToCurrency(round($interest));
+?>
+</span>
+<input class="calc" id="interest_amt" name="pval[interest_amount]" maxlength="40" type="hidden" class="textfield-m" value="<?php echo unitDisplay($interest,false); ?>" />
+</td>
+</tr>
+<?php
+    if($module_name != "auction_management"){
+
+?>
+
+<tr>
+<td><span class="add">Additional Charge</span></td>
+<td>
+<?php echo CURRENCY_SYMBOL;?>
+<input id="add_amt" class="calc currency" name="pval[additional_charge]" maxlength="40" value="<?php echo ($product_data['additional_charge']!='' && $type=='edit') ? number_format(stripslashes($product_data['additional_charge']), 2,'.','') : '0.00'; ?>" type="text" class="textfield-m" onchange="setTotalAmount()" />
+
+</td>
+</tr>
+<?php
+}
+    if($module_name == "renewal"){
+
+?>
+  <tr><td align=left colspan=2>
+  <input type="checkbox" class="checkbox" checked name="add_to_renew" id="add_to_renew" value="1" onclick="setTotalAmount();//add_to_renewal(this.checked)"/>
+
+   Add Interest Payment with Renewal Loan Amount
+  </td></tr>
+<?php
+        }
+
+?>
+
+<?php
+    if($module_name == "auction_management"){
+?>
+
+<tr>
+<td><font size=2><span id="label_total_amount">Amount to pay</span></font></td>
+<td align="left"><font size=2 color=#A33D98>
+<?php //$tot_amount = ($interest+$principle_to_add)+$product_data['additional_charge'];   ?>
+<input type="hidden" id="total_amt" name="pval[amount_to_pay]" value="<?php echo unitDisplay($tot_amount,false); ?>">
+<div id="disp_total_amount"><?php echo convertToCurrency($tot_amount); ?></div></font></td>
+</tr>
+
+<?php
+}else{
+?>
+
+
+<!-- New Loan Entry -->
+
+<?php include ADMIN_LAYOUT_PATH . "elements/new_loan_entry.html"; ?>
+
+<tr>
+<td><font size=+1><span id="label_total_amount">Customer to pay</span></font></td>
+<td align="left"><font size=4 color=#A33D98>
+<?php //$tot_amount = ($interest+$principle_to_add)+$product_data['additional_charge'];   ?>
+<input type="hidden" id="total_amt" name="pval[total_paid_amount]" value="<?php echo unitDisplay($tot_amount,false); ?>">
+<span id="disp_total_amount"><?php echo convertToCurrency($tot_amount); ?></span></font></td>
+</tr>
+
+<?php
+}
+?>
+
+
+</tr>
+  <tr><td colspan=2 id="scheme_detail">
+  <input type="hidden" name="ld_scheme_id" id="ld_scheme_id" value="<?php echo $product_data['scheme_id']; ?>">
+  <input type="hidden" name="ld_scheme_type" id="ld_scheme_type" value="<?php echo $product_data['interest_type']; ?>">
+  <input type="hidden" name="ld_loan_rate" id="ld_loan_rate" value="<?php echo  $product_data['loan_rate']; ?>">
+  <input type="hidden" name="ld_service_rate" id="ld_service_rate" value="<?php echo $product_data['service_charge']; ?>">
+  </td></tr>
+   <tr>
+    <td>
+        <span id="mand_note">* indicates mandatory fields </span>
+    </td>
+    <td>
+    <?php
+
+    if($_SESSION['session_usertype'] <= 3 && $module_name != "auction_management"){
+    ?>
+        <a href="javascript:" onclick="drop_div('cashflow_detail');" class="button">Cash Flow</a>
+        <a href="javascript:" onclick="drop_div('wavier_detail');" class="button">Wavier</a>
+    <?php
+
+    }
+    ?>
+    </td>
+    </tr>
+
+</table></div>

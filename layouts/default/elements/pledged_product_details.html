@@ -1,0 +1,541 @@
+<?php
+
+
+//p_arr($product_data);
+
+if($module_name == "renewal" || $module_name == "redemption" ){
+
+?>
+
+<div id="rhtarea" > <!--rightarea strats here-->
+                               <div id="pledge-details" class="box-hd-bg">
+                     <h3>Pledge Details</h3>
+                     <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+ 
+  <tr>
+    <td colspan="5" ></td>
+    </tr>
+
+    <table class="frm-tbl" id="product_content_table" bgcolor="#e5e5e5" bgcolor="white" style="border: 0px solid rgb(230, 230, 230); " align="center" width="98%">
+             <tr width='100%' class='bg'>                        
+             <td width="10%" align='center' id="category_id"><strong>Category</strong></td>
+             <td align='center' id="product_name"><strong>Product Name</strong></td> 
+             <!--<td width="10%" align='center' id="gross_weight"><strong>Gross Wt </strong></td>             
+             <td width="10%" align='center' id="net_weight"><strong>Net Wt</strong></td>
+             <td width="15%" align='center'><strong>Market Rate</strong></td>-->
+             <td align='center' id="product_items"><strong>Items</strong></td> 
+             
+            </tr>       
+            <?php if($content == '')
+            {
+              //$category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);
+              //$category_options = build_select_options($category_data, $product_data['category_id']);     
+                    //$category_options .= " <optgroup label='With Stone'>";
+                    $category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);
+                    //$category_options .= build_select_options($category_data,$product_data['category_id']); 
+                    //$category_options .= " <optgroup label='Without Stone'>";
+                    //$category_data = get_dropdown_with_optgroup_for_pledge('id', 'category','0', CATEGORIES);
+                    $category_options .= build_select_options($category_data,$product_data['category_id']);
+					
+					// Murali Changes - 05-04-2020
+					$pre_name_data = get_dropdown_list_with_field('id', 'pre_name', PRENAME);
+					$pre_name_options .= build_select_options($pre_name_data,$product_data['pre_name_id']);
+					
+					$products_data = get_dropdown_list_with_field_category('id', 'name','1', PRODUCTS);
+					$product_options .= build_select_options($products_data,$product_data['product_id']);
+            
+            ?>
+                
+            
+            <?php }else{
+              echo $content; 
+             }?>
+        </table>        
+  <tr>
+    <td colspan="5" class="net"><table class="frm-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td></td>
+        <td width="12%">Gross Wt</td>
+        <td width="12%">
+            <?php echo $product_data['total_gross_weight']!=''? number_format(stripslashes($product_data['total_gross_weight']), 2,'.','') : ''; ?>
+            <input class="textfield-s currency" 
+                value="<?php echo $product_data['total_gross_weight']!=''? number_format(stripslashes($product_data['total_gross_weight']), 2,'.','') : ''; ?>"  
+                name="pp_pval[total_gross_weight]" id="gross_wt"  type="hidden"/>
+        </td>
+        <td width="10%">Net Wt</td>
+        <td width="12%">
+            <?php echo $product_data['total_net_weight'] !='' ? number_format(stripslashes($product_data['total_net_weight']), 2,'.','') : ''; ?>
+            <input  class="textfield-s currency" 
+                value="<?php echo $product_data['total_net_weight'] !='' ? number_format(stripslashes($product_data['total_net_weight']), 2,'.','') : ''; ?>" 
+                name="pp_pval[total_net_weight]" id="net_wt" type="hidden"/></td>
+        <td width="13%">Item Count</td>
+        <td width="12%">
+            <?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):"1"; ?>
+            <!--<input  class="textfield-s" 
+                name="pp_pval[item_count]" id="item_count" 
+                value="<?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):"1"; ?>" 
+                readonly type="hidden" />-->
+        <input  class="currency textfield-s" name="pp_pval[item_count]" id="item_cnt" value="<?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):0; ?>" readonly type="hidden" onfocus="remove_red('item_count')" />
+        <input  class="currency textfield-s" name="product_count" id="product_count" value="<?php echo ($pledgeProductCount==0) ? 1 : $pledgeProductCount; ?>" readonly type="hidden" />                
+
+        </td>
+        <td width="15%">Market Rate</td>
+        <td width='16%' align='center'>
+        <?php echo (stripslashes($product_data['market_rate'])) ? convertToCurrency($product_data['market_rate'],false):"0.00"; ?>
+        <input class="textfield-s" name='pp_pval[market_rate]' id='market_rate' size='10' type='hidden'   value="<?php echo number_format($product_data['market_rate'], 2,'.',''); ?>">
+        </td>
+      </tr>
+
+    </table></td>
+    </tr>
+</table>
+
+               </div>   
+<?php
+
+}
+else if($module_name == "redemption-old"){
+
+?>
+
+<div id="rhtarea" > <!--rightarea strats here-->
+                               <div id="pledge-details" class="box-hd-bg">
+                     <h3>Pledge Details</h3>
+                     <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+ 
+  <tr>
+    <td colspan="5" >       </td>
+    </tr>
+
+    <table class="frm-tbl" id="product_content_table" bgcolor="#e5e5e5" bgcolor="white" style="border: 0px solid rgb(230, 230, 230); " align="center" width="98%">
+             <tr width='100%' class='bg'>                        
+             <td width="10%" align='center' id="category_id"><strong>Category</strong></td>
+             <td width="20%" align='center' id="product_name"><strong>Product Name</strong></td> 
+             <!--<td width="10%" align='center' id="gross_weight"><strong>Gross Wt </strong></td>             
+             <td width="10%" align='center' id="net_weight"><strong>Net Wt</strong></td>-->
+             
+             
+            </tr>       
+            <?php if($content == '')
+            {
+              //$category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);
+              //$category_options = build_select_options($category_data, $product_data['category_id']);     
+                    //$category_options .= " <optgroup label='With Stone'>";
+                    $category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);
+                    //$category_options .= build_select_options($category_data,$product_data['category_id']); 
+                    //$category_options .= " <optgroup label='Without Stone'>";
+                    //$category_data = get_dropdown_with_optgroup_for_pledge('id', 'category','0', CATEGORIES);
+                    $category_options .= build_select_options($category_data,$product_data['category_id']);
+					
+					// Murali Changes - 05-04-2020
+					$pre_name_data = get_dropdown_list_with_field('id', 'pre_name', PRENAME);
+					$pre_name_options .= build_select_options($pre_name_data,$product_data['pre_name_id']);
+					
+					$products_data = get_dropdown_list_with_field_category('id', 'name','1', PRODUCTS);
+					$product_options .= build_select_options($products_data,$product_data['product_id']);
+            
+            ?>
+                
+            
+            <?php }else{
+              echo $content; 
+             }?>
+        </table>        
+  <tr>
+    <td colspan="5" class="net"><table class="frm-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td></td>
+        <td width="12%">Gross Wt</td>
+        <td width="15%">
+            <?php echo $product_data['total_gross_weight']!=''? number_format(stripslashes($product_data['total_gross_weight']), 2,'.','') : ''; ?>
+            <input class="textfield-s" 
+                value="<?php echo $product_data['total_gross_weight']!=''? number_format(stripslashes($product_data['total_gross_weight']), 2,'.','') : ''; ?>"  
+                name="pp_pval[total_gross_weight]" id="gross_wt"  type="hidden" 
+                readonly  />
+        </td>
+        <td width="10%">Net Wt</td>
+        <td width="15%">
+            <?php echo $product_data['total_net_weight'] !='' ? number_format(stripslashes($product_data['total_net_weight']), 2,'.','') : ''; ?>
+            <input  class="textfield-s" 
+                value="<?php echo $product_data['total_net_weight'] !='' ? number_format(stripslashes($product_data['total_net_weight']), 2,'.','') : ''; ?>" 
+                name="pval[redeam_weight]" id="net_wt" type="hidden" 
+                readonly /></td>
+        <td width="13%">Item Count</td>
+        <td width="5%">
+            <?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):"1"; ?>
+            <!--<input  class="textfield-s" 
+                name="pval[redeam_item]" id="item_count" 
+                value="<?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):"1"; ?>" 
+                readonly type="hidden" />-->
+        <input  class="currency textfield-s" name="pval[redeam_item]" id="item_cnt" value="<?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):0; ?>" readonly type="hidden" onfocus="remove_red('item_count')" />
+        <input  class="currency textfield-s" name="product_count" id="product_count" value="<?php echo ($pledgeProductCount==0) ? 1 : $pledgeProductCount; ?>" readonly type="hidden" />
+
+                
+                </td>
+        <td width="15%">Market Rate</td>
+        <td width='12%' align='center'>
+        <?php echo (stripslashes($product_data['market_rate'])) ? convertToCurrency($product_data['market_rate'],false):"0.00"; ?>
+        <input class="textfield-s" name='pp_pval[market_rate]' id='market_rate' size='10' type='hidden'   value="<?php echo number_format($product_details[$i]['market_rate'], 2,'.',''); ?>">
+        </td>
+
+      </tr>
+
+    </table></td>
+    </tr>
+</table>
+</div>  
+
+
+<?php
+}
+else if($module_name == "auction_management"){
+?>
+
+                               <div id="pledge-details" class="box-hd-bg">
+                     <h3>Auction Product Details</h3>
+                     <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+ 
+  <tr>
+    <td colspan="5" >       </td>
+    </tr>
+
+    <table class="frm-tbl" id="product_content_table" bgcolor="#e5e5e5" bgcolor="white" style="border: 0px solid rgb(230, 230, 230); " align="center" width="98%">
+             <tr width='100%' class='bg'>                        
+             <td width="5%" align='center' id="category_id"><strong>PID</strong></td>
+             <td width="10%" align='center' id="category_id"><strong>Category</strong></td>
+             <td width="20%" align='center' id="product_name"><strong>Product Name</strong></td> 
+             <td width="10%" align='center' id="auction_charge"><strong>Charge</strong></td> 
+             <!--<td width="10%" align='center' id="gross_weight"><strong>Gross Wt </strong></td>             
+             <td width="10%" align='center' id="net_weight"><strong>Net Wt</strong></td>-->
+             <td align='center' id="product_items"><strong>Items</strong></td> 
+             <td width="10%" align='center' id="auction_amount"><strong>Amount</strong></td>
+             
+            </tr>       
+            <?php if($content == '')
+            {
+              //$category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);
+              //$category_options = build_select_options($category_data, $product_data['category_id']);     
+                    //$category_options .= " <optgroup label='With Stone'>";
+                    $category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);
+                    //$category_options .= build_select_options($category_data,$product_data['category_id']); 
+                    //$category_options .= " <optgroup label='Without Stone'>";
+                    //$category_data = get_dropdown_with_optgroup_for_pledge('id', 'category','0', CATEGORIES);
+                    $category_options .= build_select_options($category_data,$product_data['category_id']);
+					
+					// Murali Changes - 05-04-2020
+					$pre_name_data = get_dropdown_list_with_field('id', 'pre_name', PRENAME);
+					$pre_name_options .= build_select_options($pre_name_data,$product_data['pre_name_id']);
+					
+					$products_data = get_dropdown_list_with_field_category('id', 'name','1', PRODUCTS);
+					$product_options .= build_select_options($products_data,$product_data['product_id']);
+            
+            ?>
+                
+            
+            <?php }else{
+              echo $content; 
+             }?>
+        </table>        
+  <tr>
+    <td colspan="5" class="net"><table class="frm-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td></td>
+        <td width="13%">Gross Wt</td>
+        <td width="10%">
+            <?php echo $product_data['total_gross_weight']!=''? number_format(stripslashes($product_data['total_gross_weight']), 2,'.','') : ''; ?>
+            <input class="currency textfield-s" 
+                            value="<?php echo $product_data['total_gross_weight']!=''? number_format(stripslashes($product_data['total_gross_weight']), 2,'.','') : ''; ?>"  
+                            name="pval[auction_gross_weight]" id="gross_wt"  type="hidden" 
+                readonly />
+            <!--<input class="currency textfield-s" 
+                value="<?php echo $product_data['auction_gross_weight']!=''? number_format(stripslashes($product_data['auction_gross_weight']), 2,'.','') : ''; ?>"  
+                name="pval[auction_gross_weight]" id="gross_wt"  type="text" 
+                readonly />-->
+        </td>
+        <td width="10%">Net Wt</td>
+        <td width="10%">
+            <?php echo $product_data['total_net_weight'] !='' ? number_format(stripslashes($product_data['total_net_weight']), 2,'.','') : ''; ?>
+            
+            <input  class="currency textfield-s" 
+                value="<?php echo $product_data['total_net_weight'] !='' ? number_format(stripslashes($product_data['total_net_weight']), 2,'.','') : ''; ?>" 
+                name="pval[auction_net_weight]" id="net_wt" type="hidden" 
+                readonly />
+            
+            <!--<input  class="currency textfield-s" 
+                value="<?php echo $product_data['auction_net_weight'] !='' ? number_format(stripslashes($product_data['auction_net_weight']), 2,'.','') : ''; ?>" 
+                name="pval[auction_net_weight]" id="net_wt" type="text" 
+                readonly />-->
+                
+        </td>
+        <td width="15%">Item Count</td>
+        <td width="10%">
+            <?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):"0"; ?>
+            
+            <input  class="currency textfield-s" 
+                name="pval[auction_items]" id="item_count" 
+                value="<?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):"0"; ?>" 
+                readonly type="hidden" />
+            
+            <!--<input  class="currency textfield-s" 
+                name="pval[auction_items]" id="item_count" 
+                value="<?php echo (stripslashes($product_data['auction_items'])) ? stripslashes($product_data['auction_items']):"0"; ?>" 
+                readonly type="text" />-->
+                
+        <input  class="currency textfield-s" name="pval[auction_items]" id="item_cnt" value="<?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):0; ?>" readonly type="hidden" onfocus="remove_red('item_count')" />
+        <input  class="currency textfield-s" name="product_count" id="product_count" value="<?php echo ($pledgeProductCount==0) ? 1 : $pledgeProductCount; ?>" readonly type="hidden" />
+
+                
+                </td>
+        <td width="15%">Market Rate</td>
+        <td width='15%' align='center'>
+        <?php echo (stripslashes($product_data['market_rate'])) ? convertToCurrency($product_data['market_rate']):"0"; ?>
+        <input class="currency textfield-s" readonly name='pp_pval[market_rate]' id='market_rate' size='10' type='hidden'  value="<?php echo number_format($product_data['market_rate'], 2,'.',''); ?>">
+        </td>
+      </tr>
+
+    </table></td>
+    </tr>
+</table>
+
+            
+               </div>   
+<?php
+}
+else{  //$module_name == "partial_amount_payment" || $module_name == "pay_excess_amount"
+
+?>
+ <link rel="stylesheet" href="css/chosen.css">   
+<script src="js/common.js" type="text/javascript"></script>
+<script src="js/tamil.js" type="text/javascript"></script>
+<div id="HelpDiv" style="width:825px;margin:auto;"></div> 
+<div id="rhtarea" > <!--rightarea strats here-->
+
+<script type="text/javascript">
+      $(".chosen").chosen();
+      $(".chosen-container").bind('keypress',function(e) {
+      convertThisSearch(e)
+      });
+
+   
+</script>
+
+
+<div id="pledge-details" class="box-hd-bg">
+<h3>Pledge Details</h3>
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+
+<tr>
+<td colspan="5" >      
+<table class="frm-tbl" id="product_content_table" bgcolor="#e5e5e5" bgcolor="white" style="border: 0px solid rgb(230, 230, 230); " align="center" width="98%">
+             <tr width='80%' class='bg'>                        
+             <td width="8%" align='center' id="category_id"><strong>Category</strong></td>
+			 
+             <td width="8%" align='center' id="product_name"><strong>Product Name</strong></td> 
+             <td width="8%" align='center' id="pre_name"><strong>Pre Name</strong></td> 
+             <td width="8%" align='center'><strong>With</strong></td>
+            <!--  <td width="8%" align='center'><strong>Without</strong></td> -->
+             <!--<td width="10%" align='center' id="gross_weight"><strong>Gross Wt </strong></td>             
+             <td width="10%" align='center' id="net_weight"><strong>Net Wt</strong></td>-->
+             <td align='center' id="product_items"><strong>Items</strong></td> 
+             <?php if(($product_data['status'] != 0) || ($product_data['status'] == "")) { ?>
+             <td width="6%" align="center"><a href="javascript:;" onclick="append_row('<?php echo $module_name; ?>')" ><img src="images/pledge-add.png" border="0" /></a></td>
+             <?php } ?>
+            </tr>       
+            <?php
+			
+			//echo $content; exit;
+			if($content == '')
+            {
+			
+			
+			//echo "<pre>";
+			//print_r($product_data);exit;
+			
+              //$category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);
+              //$category_options = build_select_options($category_data, $product_data['category_id']);     
+                    //$category_options .= " <optgroup label='With Stone'>";
+                    $category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);
+                    //$category_options .= build_select_options($category_data,$product_data['category_id']); 
+                    //$category_options .= " <optgroup label='Without Stone'>";
+                    //$category_data = get_dropdown_with_optgroup_for_pledge('id', 'category','0', CATEGORIES);
+                    $category_options .= build_select_options($category_data,$product_data['category_id']);
+					
+					// Murali Changes - 05-04-2020
+					$pre_name_data = get_dropdown_list_with_field('id', 'pre_name', PRENAME);
+					$pre_name_options .= build_select_options($pre_name_data,$product_data['pre_name_id']);
+					
+					$products_data = get_dropdown_list_with_field_category('id', 'name','1', PRODUCTS);
+					//$products_data = get_dropdown_list_with_field('id', 'name', PRODUCTS);
+					
+					//echo "<pre>";
+					//print_r($products_data); exit;
+					$product_options .= build_select_options($products_data,$product_data['product_id']);
+
+          $product_with_data = get_dropdown_list_with_field('id', 'pre_name', PRODUCT_WITH);
+          
+          $product_with_name_options .= build_select_options($product_with_data,$product_with_data['pre_name_id']);
+            
+            ?>
+                
+            <tr width='100%'>               
+            <td width="8%" align='center'>
+            <span id='cat1'>
+            <select name="category_id[]" onchange="get_product_list_by_category(this.id); " id='cat_id_0' style="width:100px;" >
+            <option value="">-- Select Category --</option>
+               <?php   
+                echo  $category_options;
+               ?>
+            </select>  
+            <div> 
+      
+    </div>
+            </span>
+            </td>  
+				
+            <td width="20%" align='center'>
+            <span id='pro_txt_0' class='prod_txt_bld'>
+        <!--   <input name="product_name[]" type="text" id="pname_0" disabled maxlength="30" autocomplete="off" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)" onkeyup="product_auto(this.id);" _onblur="find_product_id(this.id);" class="textfield-l productlist ac_input" value="" onfocus="remove_red('product_name');"/>
+			
+
+            <input name="product_id[]" id="name_0" size="20" type="hidden" onfocus="remove_red('name_0');" value = "" >  -->
+			
+			<select name="product_id[]" class=" chosen textfield-l productlist ac_input" onchange="new_pro_txtbox_for_autocomplete(this.id); "  id="pname_0" style="width:100px;" onfocus="remove_red('product_name');">
+            <option value="">-- Select Product --</option>
+               <?php   
+               //echo  $product_options;
+               ?>
+            </select>
+			</span>
+            </td>
+            <td width="8%" align='center'>
+      
+              <span id='pre_name1'>
+                    <select class="chosen"  name="pre_name_id[]" id='pre_name_id_0' style="width:100px;" >
+                     <option value="">-- Select PreName --</option>
+                       <?php   
+                        echo  $pre_name_options;
+                       ?>
+                    </select>  
+              </span>
+            </td>   
+            <!--<td width="5%" align='center' id="product_more_0">
+            <a href="javascript:" 
+                title="Add More Details:[With:, Without:]" 
+                onclick="show_product_edit_panel('0')"  id='product_more_link_0'></a>
+            
+            </td>-->
+            <td width='5%' align='center'>
+            <!-- <input class="textfield-s" name="product_with[]" id="product_with_0" type="text" value =""  onchange='set_new_product(0,this.value,1)' class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)"> -->
+
+              <select name="product_with[]" id="product_with_0"  class=" chosen converters" onchange="set_new_product(0,this.value,1); "   style="width:100px;"  charset="utf-8">
+            <option value="">-- Select Product with--</option>
+               <?php
+               echo $product_with_name_options; ?>
+            </select>
+            </td>
+            <!-- <td width='5%' align='center'>
+            <input class="textfield-s" name="product_without[]" id="product_without_0" type="text" value =""  onchange='set_new_product(0,this.value,0)' class="converters" charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)">
+            </td> -->
+            <!--<td width="10%" align='center'><input class="textfield-s currency" name="gross_weight[]" id="gross_weight_0" size="10" type="text" value = ""  onchange="gross_total();" onfocus="product_remove_red()"></td>
+            <td width="10%" align='center'><input class="textfield-s currency" name="net_weight[]" id="netweight_0" size="10" type="text" onfocus="remove_red('net_weight');" value = ""  onchange="net_total();" onfocus="product_remove_red()"></td>-->
+            <td width="10%" align='center'><input class="textfield-s number productlist" name="product_items[]" id="product_items_0" size="10" type="text" onfocus="remove_red('product_items');" value = ""  onchange="item_total();" onfocus="product_remove_red()"></td>
+            <td width='6%' align='center'></td>
+            </tr>
+            <script> pledgeProductCount = '1' </script>
+            <?php }else{
+              echo $content; 
+             ?>
+            <script> pledgeProductCount = '<?php echo $pledgeProductCount ?>';  </script>
+             <?php 
+             }?>
+        </table> 
+ </td>
+</tr>
+
+  <tr>
+    <td colspan="5" class="net"><table class="frm-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td></td>
+        <td width="12%" id="total_gross_weight">Gross Wt</td>
+        <td>
+        <?php if(($product_data['status'] != 0) || ($product_data['status'] == "")) { ?>
+        <td width="12%"><input class="textfield-s currency" value="<?php echo $product_data['total_gross_weight']!=''? number_format(stripslashes($product_data['total_gross_weight']), 2,'.','') : ''; ?>"  name="pp_pval[total_gross_weight]" id="gross_wt"  type="text" onfocus="remove_red('total_gross_weight')" /></td>
+        <?php } 
+        else { ?>
+        <td width="12%"><input class="textfield-s currency" value="<?php echo $product_data['total_gross_weight']!=''? number_format(stripslashes($product_data['total_gross_weight']), 2,'.','') : ''; ?>"  name="pp_pval[total_gross_weight]" id="gross_wt"  type="hidden" onfocus="remove_red('total_gross_weight')" />
+        <label name="gross_wt"><?php echo number_format(stripslashes($product_data['total_gross_weight']), 2,'.',''); ?></label>
+        </td>
+        <?php } ?>
+        <td width="10%" id="total_net_weight">Net Wt</td>
+        <?php if(($product_data['status'] != 0) || ($product_data['status'] == "")) { ?>
+        <td width="12%"><input  class="textfield-s currency" value="<?php echo $product_data['total_net_weight'] !='' ? number_format(stripslashes($product_data['total_net_weight']), 2,'.','') : ''; ?>" name="pp_pval[total_net_weight]" id="net_wt" type="text"  onfocus="remove_red('total_net_weight')" /></td>
+        <?php } 
+        else { ?>
+        <td width="12%"><input  class="textfield-s currency" value="<?php echo $product_data['total_net_weight'] !='' ? number_format(stripslashes($product_data['total_net_weight']), 2,'.','') : ''; ?>" name="pp_pval[total_net_weight]" id="net_wt" type="hidden"  onfocus="remove_red('total_net_weight')" />
+        <label name="net_wt"><?php echo number_format(stripslashes($product_data['total_net_weight']), 2,'.',''); ?></label></td>
+        <?php } ?>
+        <td width="15%" id="item_count" >Item Count</td>
+        <?php if(($product_data['status'] != 0) || ($product_data['status'] == "")) { ?>
+        <td width="12%">
+        <input  class="currency textfield-s" name="pp_pval[item_count]" id="item_cnt" value="<?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):0; ?>" readonly type="text" onfocus="remove_red('item_count')" />
+        <input  class="currency textfield-s" name="product_count" id="product_count" value="<?php echo ($pledgeProductCount==0) ? 1 : $pledgeProductCount; ?>" readonly type="hidden" />
+        </td>
+        <?php }
+        else { ?>
+         <td width="12%">
+        <input  class="currency textfield-s" name="pp_pval[item_count]" id="item_cnt" value="<?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):0; ?>" readonly type="hidden" onfocus="remove_red('item_count')" />
+        <input  class="currency textfield-s" name="product_count" id="product_count" value="<?php echo ($pledgeProductCount==0) ? 1 : $pledgeProductCount; ?>" readonly type="hidden" />
+        <label name="item_count"><?php echo (stripslashes($product_data['item_count'])) ? stripslashes($product_data['item_count']):0; ?></label>
+        </td>
+        <?php } ?>
+        <td width="15%">Market Rate</td>
+        <?php if(($product_data['status'] != 0) || ($product_data['status'] == "")) { ?>
+        <td width='12%' align='center'><input class="currency textfield-s" name='pp_pval[market_rate]' id='market_rate' size='10' type='text'   value="<?php echo number_format($product_data['market_rate'], 2,'.',''); ?>">
+        <?php }
+        else { ?>
+           <td width='12%' align='center'><input class="currency textfield-s" name='pp_pval[market_rate]' id='market_rate' size='10' type='hidden'   value="<?php echo number_format($product_data['market_rate'], 2,'.',''); ?>">
+           <label name="market_rate"><?php echo number_format($product_data['market_rate'], 2,'.',''); ?></label>
+        <?php } ?>
+        <?php 
+        if($module_name == "partial_amount_payment" || $module_name == "pay_excess_amount" ) {
+        ?>
+
+           <!-- <input type="hidden" id="item_in" name="pval[item_in]" value="0">
+            <input type="hidden" id="item_out" name="pval[item_out]" value="0">
+            <input type="hidden" id="weight_in" name="pval[weight_in]" value="0">
+            <input type="hidden" id="weight_out" name="pval[weight_out]" value="0">
+            <input type="hidden" id="initial_weight" name="initial_weight" value="<?php echo $product_data['total_net_weight'] !='' ? number_format(stripslashes($product_data['total_net_weight']), 2,'.','') : ''; ?>">-->
+
+        <?php
+        } 
+        ?>
+        </td>
+      </tr>
+
+    </table></td>
+    </tr>
+</table>
+</div> 
+
+<?php
+}
+
+//Principle Details
+
+if($module_name=="redemption"){
+?>
+
+<input type="hidden" onchange="setTotalAmount()" onfocus="remove_red('principle_amount')" value="<?php echo unitDisplay($principle_remain_amount,false); ?>" name="pval[principle_amount]" id="principle_amt" class="calc">
+<input type="hidden" id="principle_remain" name="principle_remain" value="<?php echo unitDisplay($principle_remain_amount,false); ?>">
+<?php
+}else{
+?>
+<input type="hidden" id="principle_remain" name="principle_remain" value="<?php echo unitDisplay($principle_remain_amount,false); ?>">
+<?php
+}
+?>
+<script language="javascript">
+jQuery(document).ready(function(){    
+	$('#cat_id_0').focus();
+});
+</script>

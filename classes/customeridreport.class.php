@@ -1,0 +1,243 @@
+<?php
+ //**************************************************************************
+  //**************************************************************************
+  // Project          :  MAYAVA FINANCE
+  // Module           :  Pledge class
+  // Domain           :  http://wwa.mayavafinance.com
+  // Programmer       :  Subash S
+  // Inprogress       :  \\offlinev5\Mayavafinance
+  // Backup           :  \\dataserver\EIT\Projects\In Progress\
+  // Last Modified    :  15-Jun-2011
+  //**************************************************************************
+  // Description      :  This is the Product Pledging class  for Mayavafinance.
+ //**************************************************************************
+
+
+class CustomerIdReport {
+
+	     /*
+         * Define the required fields and return text
+         */
+        public $check_required = array('name', 'branch_id','relationship_type',  'relation_name', 'street', 'location','district', 'state','postal_code', 'dob', 'monthly_income', 'contact_no', 'id_proof', 'id_proof_code'); //'photo','sign'
+        public $check_duplication = array('customer_id','email','contact_no','id_proof_code');
+        public $check_valid_email = array('email');
+        
+        public $check_required_labels = array('Customer Name', 'Customer Branch','Customer Relationship', 'Customer Relation Name', 'Customer Street', 'Customer Location','Customer District', 'Customer State','Customer Postal Ccode', 'Date of birth', 'Monthly Income', 'Customer Phone Number', 'Customer ID Proof', 'Customer ID Proof Unique Code');//'Customer Photo','Customer Sign'
+        public $check_duplication_labels = array('Customer Code','Customer Email','Contact Number','Customer ID Proof Code');
+        public $check_valid_email_labels = array('Customer Email');
+        
+        public static $check_valid_email_text = 'Invalid Email';
+        public static $check_required_text = 'Required Fields Missing!';
+        public static $check_duplication_text = 'Field Already exists!';
+
+        public static function ListviewCount() {
+            /*
+             * Get the function parameters , if exist . And make the search condition
+             */
+            //Modified by karthik
+            $args = func_get_args();
+
+            $app = $GLOBALS['app'];
+            $s_key = $args[0];
+            $s_cus_id = $args[1];
+            $search_key_location=$args[2];
+			$search_fhw=$args[3];
+            $s_branch = $args[4];
+			$loan_id = $args[5];
+
+			if ($loan_id != '') {
+			$query_loan = "SELECT * FROM ".PLEDGE." WHERE loan_id='".$loan_id."'";
+			 $loan_data = $app->getrows($query_loan);
+			 $customer_id = $loan_data[0]['customer_id'];
+			}
+
+            $search_condition .= ($s_key != "")? " AND  C.name  like '".$s_key."%'":"";
+            $search_condition .= ($s_cus_id != "")? " AND  C.customer_id   like '".$s_cus_id."%'":"";
+            $search_condition .= ($search_fhw != "")? " AND  C.relation_name   like '".$search_fhw."%'":"";
+            $search_condition .= ($search_key_location != "")? " AND  C.location   like '".$search_key_location."%'":"";
+            $search_condition .= ($s_branch != "")? "AND ( C.branch_id  = '".$s_branch."' )  ":"";
+			$search_condition .= ($loan_id != "")? "AND ( C.id  = '".$customer_id."' )  ":"";
+
+            if(!is_superadmin($_SESSION['session_usergroupname'])){
+                $search_condition .= ($_SESSION['session_user_branch_id'] != "")?" AND branch_id  = '".$_SESSION['session_user_branch_id']."'":"";
+            }
+            /*
+             * Return the Customers list
+             */
+                     $query = "SELECT C.id  
+                      FROM ".CUSTOMERS." AS C
+                      LEFT JOIN ".BRANCH." as B ON C.branch_id = B.id
+                      WHERE 1 ".$search_condition."
+                      ORDER BY id DESC ";
+                      $data = $app->getrows($query);
+                      return $count = count($data);
+
+     }
+    public static function Listview() {
+        /*
+         * Get the function parameters , if exist . And make the search condition
+         */
+    
+
+        $args = func_get_args();
+        $app = $GLOBALS['app'];
+        $paging = $GLOBALS['paging'];  
+        $s_key = $args[0];
+        $s_cus_id = $args[1];
+        $search_key_location=$args[2];
+        $search_fhw=$args[3];
+        $s_branch = $args[4];
+		$loan_id = $args[5];
+		
+		if ($loan_id != '') {
+			$query_loan = "SELECT * FROM ".PLEDGE." WHERE loan_id='".$loan_id."'";
+			 $loan_data = $app->getrows($query_loan);
+			 $customer_id = $loan_data[0]['customer_id'];
+		}
+
+        $search_condition .= ($s_key != "")? " AND  C.name  like '".$s_key."%'":"";
+        $search_condition .= ($s_cus_id != "")? " AND  C.customer_id   like '".$s_cus_id."%'":"";
+        $search_condition .= ($search_fhw != "")? " AND  C.relation_name   like '".$search_fhw."%'":"";
+        $search_condition .= ($search_key_location != "")? " AND  C.location   like '".$search_key_location."%'":"";
+        $search_condition .= ($s_branch != "")? "AND ( C.branch_id  = '".$s_branch."' )  ":"";
+		$search_condition .= ($loan_id != "")? "AND ( C.id  = '".$customer_id."' )  ":"";
+
+            if(!is_superadmin($_SESSION['session_usergroupname'])){
+                $search_condition .= ($_SESSION['session_user_branch_id'] != "")?" AND branch_id  = '".$_SESSION['session_user_branch_id']."'":"";
+            }
+         /*
+          * Return the Customers list count
+          */
+        $count = self::ListviewCount($s_key, $s_cus_id,$search_key_location,$search_fhw,$s_branch,$loan_id);
+
+        if ($count > 0) {
+         /*
+          * Return the Customers list
+          */
+            Paging::set_max( $count );
+            Paging::calc();// calculation for paging
+                $query = "SELECT C.id,C.customer_id,C.name,C.branch_id, B.name as branch,C.status, C.other_details, 
+                CONCAT(C.relationship_type,' Name - ',C.relation_name) as relation,C.location, C.reference_name,C.contact_no,C. photo,
+                IF(C.status = 0, 'disable', 'enable') AS status_text
+                FROM ".CUSTOMERS." AS C
+                LEFT JOIN ".BRANCH." as B ON C.branch_id = B.id
+                WHERE 1
+                ".$search_condition." ORDER BY id DESC ". Paging::get_sql_limit();
+				//echo $query;
+                return $app->getrows($query);
+        }
+    }
+
+    public static function CustomerAutoList() {
+        /*
+         * Get the function parameters , if exist . And make the search condition
+         */
+        
+        $search_condition = "";
+        if(!is_superadmin($_SESSION['session_usergroupname'])){
+            //$search_condition = ($_SESSION['session_user_branch_id'] != "")?" AND branch_id = '".$_SESSION['session_user_branch_id']."'":"";
+        }
+         
+        $app = $GLOBALS['app'];
+        $query = "SELECT id, name, status
+                      FROM ".CUSTOMERS."
+                      WHERE status = 1  ".$search_condition." ORDER BY name";
+        return $app->getrows($query);
+    }
+
+
+    public static function Detail($userid) {
+            /*
+             * Return the Customers details
+             */
+            $app = $GLOBALS['app'];
+            // $count = $app->find_count(array('conditions' => array('id = ' => $userid)));
+            $query = "SELECT *  FROM ".CUSTOMERS." WHERE id ='".$userid."' OR customer_id LIKE '".$userid."'";
+            $count = count($app->getrows($query));
+            if ($count > 0) {
+                 $query = "SELECT C.*,B.name as branch_name,B.branch_code as branch_code
+                            FROM ".CUSTOMERS." AS C
+							INNER JOIN ".BRANCH." AS B ON B.id=C.branch_id
+                            WHERE C.id ='".$userid."' OR C.customer_id LIKE '".$userid."'";
+                return $app->getrows($query);
+            }
+    }
+
+    public static function getDetail($userid) {
+            /*
+             * Return the Customers details
+             */
+            $app = $GLOBALS['app'];
+            // $count = $app->find_count(array('conditions' => array('id = ' => $userid)));
+            $query = "SELECT *  FROM ".CUSTOMERS." WHERE id ='".$userid."' OR customer_id LIKE '".$userid."'";
+            $count = count($app->getrows($query));
+            if ($count > 0) {
+                $query = "SELECT id, branch_id, name, customer_id, street, location, district, state, postal_code, contact_no,email, reference_name, reference_address, photo, sign
+                            FROM ".CUSTOMERS."
+                            WHERE id ='".$userid."' OR customer_id LIKE '".$userid."'";
+                $data =  $app->getexport($query);
+                return $data[0];
+            }else
+                return false;
+    }
+
+    public static function Delete($custid) {
+            /*
+             * Return the Customers details
+             */
+
+
+            $app = $GLOBALS['app'];
+
+            $isvalid = self::deleteValidation($custid);
+
+            if($isvalid){
+                
+                
+                $app->access_table = CUSTOMERS;
+                $customer = $app->delete(array("id"=>$custid));
+
+                // Delete Customer Photo and Signatures
+                deleteFolder(CUSTOMER_IMAGE_PATH.$custid);
+                
+                return array("success"=>true,"error"=>"");
+            
+            }else{
+            
+                return array("success"=>false,"error"=>CUSTOMER_STATUS_NOT_CLOSED_IN_PLEDGED_ITEMS);
+            }
+            
+    }
+
+
+    public static function deleteValidation($custid) 
+    {
+                $app = $GLOBALS['app'];
+                $query = "SELECT P.customer_id  
+                          FROM   ".PLEDGE." AS  P
+                          LEFT JOIN ".CUSTOMERS."  AS C ON  P.customer_id=C.id 
+                          where C.id='".$custid."'";
+                          $sta=$app->getrows($query);
+                    
+                if(is_array($sta))
+                        return false;
+                else
+                        return true;
+    }
+    
+    public static function getCustomerName($cus_id) 
+    {
+        /*
+         * Return the Department details
+         */
+        
+        
+        $cus_id = preg_replace("/mfc/i",'',$cus_id); 
+         
+        $app = $GLOBALS['app'];
+        $app->access_table = CUSTOMERS;
+        $res = $app->find(array("name"),array("conditions"=>array("id = "=>$cus_id)));
+        //p_arr($res);
+        return $res[0][0];
+    }
+}

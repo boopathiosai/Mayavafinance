@@ -1,0 +1,64 @@
+<div id="print_content">
+<?php  
+    $i=1;
+    if(count($cash_in_report)>0) {
+         ?>          
+          <table class="frm-tbl"  width="100%" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="100%" class="name-head"><?php echo strtoupper($page_title); ?></td>
+          </tr>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+              <td width="25%">Date</td>
+              <td width="25%">Branch Name</td>    
+              <td width="25%">Cash In</td>
+              <td></td>
+              <td></td>
+           </tr>
+            
+          <?php
+          $j=1;
+          $i=$i+1;
+          foreach($cash_in_report as $rows)
+          {
+             ?>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+              <td align="left" class="disp-light"><?php echo htmlentities(stripslashes($rows['transaction_date']), ENT_QUOTES); ?>
+              </td>     
+              <td align="left" class="disp-light"><?php if($rows['name']=='') echo "-";
+                                                            else 
+                                                            echo htmlentities(stripslashes($rows['name']));?>
+              </td> 
+              <td align="left" class="disp-light"><?php
+                                                    if($rows['cash_in']=='') echo "-";
+                                                        else        
+                                                        echo convertToCurrency($rows['cash_in']);?>
+              </td> 
+            
+             <td align="center">
+             </td>
+             <td></td>
+         </tr> 
+         <?php
+            $i++; 
+            $j++;
+          }
+?>
+       </table>
+       <?php
+    }
+          ?>
+</div>           
+            
+           
+
+   
+
+
+
+
+
+
+
+
+
+

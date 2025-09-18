@@ -1,0 +1,224 @@
+  <div id="content_div">
+ <?php
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ }
+?>
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="90%">&nbsp;Transactions &raquo;<a href="product_pledge.php"><?php echo $page_title?></a></td >
+        <td align="left" width="10%" >
+        <?php
+        if($search_args != "")
+        {
+        $diaply_style ="";
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+        <?php
+        }
+        else{
+        $diaply_style = 'style="display:none;"';
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+        <?php
+        }
+        ?>
+        </td >
+      </tr>
+      </table>
+  </div>
+
+ <div id="contentarea">
+  <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+        <td colspan="2">
+        <?php include ADMIN_LAYOUT_PATH . 'elements/customer_search.html'; ?>
+        </td>
+        </tr>
+       </table>
+<div>
+       <br>
+
+    <form>
+
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+      <tr>
+        <td class="title" colspan="5">Product&nbsp;Pledge&nbsp;History</td>
+        <td class="title" colspan="7">
+        <span class="btn-rht">
+        <?php
+        if(can_add($_SESSION['session_usertype'], $module_name))
+        {
+        ?>
+        <a href="javascript:;" onclick = "return create_function('content_div', '<?php echo $module_name; ?>','<?php echo $search_args; ?>');" class="greybtn">ADD NEW</a>
+        <?php
+        }
+        if(can_delete($_SESSION['session_usertype'], $module_name))
+        {
+        ?>
+        <a href="javascript:;" onclick = "delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','');" class="greybtn">DELETE</a>
+        <?php
+        }
+        ?>
+        </span>
+        </td>
+      </tr>
+      <tr class="headings">
+      <td align="center" width="4%">
+      <?php
+      if(date("Y-m-d",strtotime($data[$i]['loan_date'])) == date("Y-m-d")  || $_SESSION['session_usergroupname'] == 'Super Admin'){
+      ?>
+      <input type="checkbox" name="selall" id="selall" onclick="chk_all(),highlight_all();"/></td>
+      <?php
+      }
+      ?>
+      <td width="150"><strong>Loan Id</strong></td>
+      <!--td width="15%" align="left"><strong>Branch Name</strong></td-->
+      <td width="250"><strong>Customer Name</strong></td>
+      <td width="135" align="right"><strong>Customer Address</strong></td>
+      <!--td width="120" align="right"><strong>Item Count </strong></td-->
+      <td width="220" align="right"><strong>Gross Weight</strong></td>
+      <td width="220" align="right"><strong>Loan Amount(<?php echo CURRENCY_SYMBOL; ?>)</strong></td>
+      <td align="center" width="12%">Status</td>
+      <td colspan="3" width="100" align="center"><strong>Action</strong></td>
+
+    </tr>
+    <?php
+    if(count($data) > 0) {
+      //echo "<pre>";print_r($data);exit;
+        for($i=0;$i<count($data);$i++){
+
+            $status_text = ($data[$i]['status'] ==1)?'enable' : 'disable';
+            $change_status = ($data[$i]['status'] == 1) ? 0 : 1;
+            $title =  ($data[$i]['status'] == 1) ? "Click here to disable" :  "Click here to enable";
+    ?>
+      <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+       <td align="center"><input type="checkbox" name="list[]" id="list[]" onclick="chkselcount('list[]'),highlight(this);" value='<?php echo $data[$i]['id']; ?>'/></td> <td align="left"><?php echo htmlentities(stripslashes($data[$i]['loan_id']), ENT_QUOTES); ?></td>
+      <!--td align="left"><?php echo $data[$i]['branch_name']; ?></td-->
+      <td align="left"><?php echo $data[$i]['customer_name']; ?></td>
+      <td align="right" ><?php echo $data[$i]['street'].",".$data[$i]['location']."-".$data[$i]['postal_code']; ?></td>
+      <!--td align="right" ><?php echo htmlentities(stripslashes($data[$i]['item_count']), ENT_QUOTES); ?></td-->
+      <td align="right"><?php echo  unitDisplay(htmlentities(stripslashes($data[$i]['total_gross_weight']), ENT_QUOTES),true,'Gms','after'); ?></td>
+      <td align="right"><?php echo convertToCurrency(stripslashes(ceil($data[$i]['loan_amount'])),false); ?></td>
+<?php
+if(can_change_status($_SESSION['session_usergroupname'] == 'Super Admin' ) && $data[$i]['status'] >= 0){      ?>
+      <td align="center">
+       <div id="status_div<?php echo $data[$i]['id']; ?>">
+        <a href="javascript:;" onclick="change_status('status_div<?php echo $data[$i]['id']; ?>', '<?php echo $module_name; ?>', <?php echo $data[$i]['id']; ?>, <?php echo $change_status; ?>);">
+        <img src="images/<?php echo $status_text; ?>.gif"  title="<?php echo $title; ?>"/></a>
+        </div>
+      </td>
+<?php
+}else{
+?>
+      <td align="center">
+       <a href="javascript:;" onclick="jalert(this.title)" title="<?php if($data[$i]['status'] >= 0) echo NO_STATUS_PRIVILEGE; elseif($data[$i]['status'] == -1) echo PRODUCT_REDEEMED_NO_PRIVILEGE; elseif($data[$i]['status'] == -2) echo PRODUCT_REDEEMED_NO_PRIVILEGE; else echo NO_STATUS_PRIVILEGE;    ?>">
+        <img src="images/<?php echo $status_text; ?>.gif" border=0  title="<?php echo $title; ?>"/></a>
+       </a>
+      </td>
+
+<?php
+}
+?>
+        <!--<td align=center><?php echo $data[$i]['status_text']; ?></td>-->
+
+     <?php
+
+      $title = ($status_text == 'disable') ? 'View' : 'Edit';
+
+      if(((can_edit($_SESSION['session_usertype'], $module_name) && date("Y-m-d",strtotime($data[$i]['loan_date'])) == date("Y-m-d")) || $_SESSION['session_usergroupname'] == 'Super Admin') && $data[$i]['status'] > 0 )
+      {
+      ?><td width="3%" valign="middle"><a href="javascript:;" onclick="edit_function('content_div','<?php echo $module_name; ?>','<?php echo $data[$i][id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" title="<?php echo $title; ?>"><img src="images/edit.jpg" /></a></td>
+      <?php
+      }else if($_SESSION['session_usergroupname'] != '' && $status_text == 'disable'  && $data[$i]['status'] > 0){
+      ?>
+      <td width="3%" valign="middle"><a href="javascript:;" onclick="edit_function('content_div','<?php echo $module_name; ?>','<?php echo $data[$i][id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" title="<?php echo $title; ?>"><img src="images/edit.jpg" /></a></td>
+      <?php
+      }else{
+      $alert = (date("Y-m-d",strtotime($data[$i]['loan_date'])) == date("Y-m-d")) ? NO_OLD_RECORD_EDIT_PRIVILEGE : NO_EDIT_PRIVILEGE;
+      ?><td width="3%" valign="middle"><a href="javascript:" onclick="jalert(this.title);" title="<?php echo $alert; ?>"><img src="images/edit_gray.jpg" /></a></td>
+      <?php
+      }
+      if((can_delete($_SESSION['session_usertype'], $module_name)  && date("Y-m-d",strtotime($data[$i]['loan_date'])) == date("Y-m-d")) || $_SESSION['session_usergroupname'] == 'Super Admin')
+      {
+      ?>
+      <td width="3%" valign="middle"><a href="javascript:;" onclick="delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $data[$i][id]; ?>');" title="Delete"><img src="images/delete.jpg" border="0" /></a></td>
+      <?php
+      }else{
+      $alert = (date("Y-m-d",strtotime($data[$i]['loan_date'])) == date("Y-m-d")) ? NO_OLD_RECORD_DELETE_PRIVILEGE : NO_DELETE_PRIVILEGE;
+      ?><td width="3%" valign="middle"><a href="javascript:" onclick="jalert(this.title);" title="<?php echo $alert; ?>"><img src="images/delete_gray.jpg" /></a></td>
+      <?php
+      }
+      ?>
+
+        <td width="3%" valign="middle"><a href="javascript:;"
+      onclick="prints_previews('customer_receipt','print_dialog','&id=<?php echo $data[$i]['id']; ?>','','Customer Receipt - Print Preview',800,500,'pledge_report_print');"
+
+      title="<?php echo $title; ?>"><img src="images/Print.png" /></a></td>
+
+
+      </tr>
+
+        <?php
+            }
+
+        } else {
+        ?>
+        <tr class="bg-row">
+        <td colspan="12" align="center" height="50">No records found</td>
+        </tr>
+        <?php
+        }
+        ?>
+     <tr class="headings">
+     <td colspan=12>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+    </table>
+
+    </form>
+    <div class="clear clearfix"></div><!--contentarea ends here-->
+
+    </div>
+  </div>
+
+
+</div>
+
+
+<script>
+function delete_product(){
+    confirmYesFunction = "delete_row('content_div', '<?php echo $module_name; ?>', '<?php echo $data[$i]['id'] ?>', '<?php echo $page_no; ?>','<?php echo $search_args; ?>')";
+    confirmNoFunction = "welcome='No'";
+    jconfirm("Are you sure to delete the pledge product?");
+}
+
+
+jQuery(document).ready(
+    function(){
+
+        <?php
+        if($_SESSION['notice_info']!=""){
+        ?>
+            jalert('<?php echo $_SESSION['notice_info']; ?>');
+        <?php
+        $_SESSION['notice_info'] = '';
+        }
+        ?>
+    }
+);
+
+
+</script>
+<iframe id="print_frame" name="print_frame" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>

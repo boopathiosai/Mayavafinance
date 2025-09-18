@@ -1,0 +1,80 @@
+<?php
+  if(count($scheme_details)>0){
+    ?><br />
+    
+    
+  <table id="dialog_content" class="list-tbl"  width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr><td colspan=0>Scheme Name</td>
+          <td colspan=7>:&nbsp;&nbsp;<?php echo $scheme_details[0]['scheme_name']; ?> </td>
+      </tr>
+      <tr><td colspan=0>Scheme Interest Type</td>
+          <td colspan=7>:&nbsp;&nbsp;<?php echo $scheme_details[0]['scheme_type']; ?> </td>
+      </tr>
+      <tr><td colspan=0>Scheme Loan Rate</td>
+          <td colspan=7>:&nbsp;&nbsp;<?php echo convertToCurrency($scheme_details[0]['loan_rate']); ?> Per Gram</td>
+      </tr>
+      <tr class="headings">
+      <td rowspan=2 align=left>Start Month</td>
+      <td rowspan=2 align=left>End Month</td>
+      <td colspan=3 align=center>Normal [Min]</td>
+      <td colspan=3 align=center>Penalty [Max]</td>
+      </tr>
+      <tr class="subheadings">
+      <td align=right>Days</td>
+      <td align=right>ROI</td>
+      <td align=right>Amount</td>
+      <td align=right>Days</td>
+      <td align=right>ROI</td>
+      <td align=right>Amount</td>
+      </tr>
+<?php
+        $i=1;
+        $initialRate = 0;
+        foreach($scheme_details as $scheme){
+            
+            $div_days = $scheme['div_days'];
+            $start_date = ($scheme['start_date']);
+            $end_date = $scheme['end_date'];
+            
+            $slab_days = floatval($scheme['slab_days']);
+            $no_days = floatval($scheme['no_days']);
+            
+            $loan_amount = floatval($scheme['loan_amount']);
+            
+            if($i==1){
+                $initial_rate = floatval($scheme['rate_of_interest']);
+            }
+            
+            $calc_interest_rate = (strtolower($scheme['scheme_type'])=='flat') ? ($initial_rate * 12) : floatval($scheme['rate_of_interest']);
+            
+            //$i = (strtolower($scheme_details[0]['scheme_type'])=='flat') ? ($i * 12) : $i;
+            
+            $normal_amount = ((floatval($loan_amount/100) * $initial_rate ) / $div_days) *  $slab_days;
+            $penalty_amount = ((floatval($loan_amount/100) * $calc_interest_rate ) / $div_days) *  $no_days;
+            
+            
+            {
+  ?>
+
+      <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+      <td align=left> <?php echo $scheme['start']; ?> </td>
+      <td align=left> <?php echo $scheme['end']; ?> </td>
+      <td align=right> <?php echo $slab_days; ?> </td>
+      <td align=right> <?php echo unitDisplay($initial_rate , true,'%','after'); ?> </td>
+      <td align=right> <?php echo convertToCurrency($normal_amount); ?>  </td>
+      
+      <td align=right> <?php echo $no_days; ?> </td>
+      <td align=right> <?php echo unitDisplay($calc_interest_rate , true,'%','after'); ?> </td>
+      <td align=right> <?php echo convertToCurrency($penalty_amount); ?>  </td>
+      </tr>
+        <?php
+        }
+        
+    $i++;
+    }
+ ?>
+  </table>
+ <?php  
+  }
+
+  ?>

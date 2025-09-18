@@ -1,0 +1,130 @@
+<div id="content_div">
+ <?php
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+?>
+    <!--div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td><a href="javascript:;">Reports</a> &raquo;<a href="javascript:;">Branch Wise CashIn Details Report</a></td>
+    
+        <td align="left" width="10%" >
+        <?php
+        if($search_args != "")
+        {
+        $diaply_style ="";
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+        <?php
+        }
+        else{
+        $diaply_style = 'style="display:none;"';
+        ?>
+        <div id="serach_button_div">
+        <a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+        <?php
+        }
+        ?>
+        </td>
+       </tr>
+      </table>
+  </div>
+        <div id="contentarea">
+            <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td colspan="2">
+                    <?php include ADMIN_LAYOUT_PATH . 'elements/report_search.html'; ?>
+                    </td>
+                </tr>
+            </table>
+      <div-->
+   <form>
+       <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+    <tr>
+        <td class="title" colspan="3"><?php echo $page_title?></td>
+        <td class="title" colspan="5" align=right>
+        
+            <a href="<?php echo $module_name;?>.php?type=export_pdf&<?php echo $search_args; ?>" class="greybtn" id="pdf_report">PDF</a>
+            <a href="<?php echo $module_name;?>.php?type=export_xls&<?php echo $search_args; ?>" class="greybtn" id="xls_report">XLS</a>
+            <a href="javascript:" onclick="transaction_print_preview('<?php echo $module_name; ?>','print_dialog','37','<?php echo $search_args; ?>','<?php echo $page_title; ?> - Print Preview',1020,700);" class="greybtn" id="print_report">Print</a>
+        
+        </td>
+     </tr>  
+          <tr class="headings">
+          <td align="center" width="4%">
+          </td>
+          <td width="25%">Date</td>
+          <td width="24%">Branch Name</td>    
+          <td width="22%">Cash In</td>
+          <td></td>
+          </tr>
+            <?php
+              if(count($data) > 0) {
+                for($i=0;$i<count($data);$i++){ 
+                $change_status = ($data[$i]['status'] == 1) ? 0 : 1;
+            ?>
+         <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+           <td align="center">
+           </td>
+          <td align="left"><?php echo htmlentities(stripslashes($data[$i]['transaction_date']), ENT_QUOTES); ?></td>     
+          <td align="left"><?php if($data[$i]['name']=='') echo "-";
+                                 else echo htmlentities(stripslashes($data[$i]['name']), ENT_QUOTES);?>
+          </td> 
+          <td align="left"><?php echo convertToCurrency(stripslashes($data[$i]['cash_in']));?></td> 
+         <td align="center">
+          </td>
+         </tr> 
+            <?php
+                }
+            } else {
+            ?>
+            <tr class="bg-row">
+            <td colspan="11" align="center" height="50">No records found</td>
+            </tr>
+            <?php
+            }
+            ?>
+     <tr class="headings">
+     <td colspan=100%>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+   </table>
+        
+   </form>
+    <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>    
+</div>
+<script>
+$(document).ready(function(){
+$('#cus_id').focus();
+$("input").not( $(":button,:hidden") ).keypress(function (evt) {
+            if (evt.keyCode == 13) {
+                iname = $(this).val();
+                if (iname !== 'Submit'){    
+                    var fields = $(this).parents('form:eq(0),body').find('input:text');                 
+                    
+                    var index = fields.index( this );
+                    if ( index > -1 && ( index + 1 ) < fields.length) {
+                        fields.eq( index + 1 ).focus();
+                    }
+                    else
+                    {                   
+                      search_customer();
+                    }
+                    return false;
+                }
+            }
+        });
+
+});
+</script>
+
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>

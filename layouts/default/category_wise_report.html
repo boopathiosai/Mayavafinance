@@ -1,0 +1,182 @@
+<div id="content_div">
+ <?php
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+?>
+    <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td><a href="javascript:;">Reports</a> &raquo;<a href="javascript:;">Category Wise </a></td >
+        <td align="left" width="10%" >
+        	 <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+       <!--  <?php
+        if($search_args != "")
+        {
+        $diaply_style ="";
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+        <?php
+        }
+        else{
+        $diaply_style = 'style="display:none;"';
+        ?>
+        <div id="serach_button_div">
+        <a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+        <?php
+        }
+        ?> -->
+        </td >
+      </tr>
+      </table>
+  </div>
+  <!--Modified by karthik-->
+     <div id="contentarea">
+            <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td colspan="2">
+                    <?php include ADMIN_LAYOUT_PATH . 'elements/categorywise_report_search.html'; ?>
+                    </td>
+                </tr>
+            </table>
+      <div>
+      <br>
+        <?php   
+
+     if($search_args == "")  {
+        exit;
+     }
+     
+     ?>
+       <form>
+       <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+         <tr>
+            <td class="title" colspan="6"><?php echo $page_title; ?></td>
+            <td class="title" colspan="6" align=right>
+
+            <a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_pdf&<?php echo $search_args; ?>" class="greybtn" id="pdf_report" onclick= "pdf_report('<?php echo $module_name;?>.php?type=export_pdf&<?php echo $search_args;?>');">PDF</a>
+            <a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_xls&<?php echo $search_args; ?>" class="greybtn" id="xls_report" onclick= "xls_report('<?php echo $module_name;?>.php?type=export_xls&<?php echo $search_args;?>');">XLS</a>
+            <a href="javascript:" onclick="print_preview('<?php echo $module_name; ?>','print_dialog','37','<?php echo $search_args; ?>','print_report',1070,700);" class="greybtn" id="print_report">Print</a>
+            </td>
+            
+         </tr>      
+          <tr class="headings">
+			<td rowspan="2" width="5%"></td>  
+			<td rowspan="2" align="center"><strong>Loan Date Onwards</strong></td>
+			<td rowspan="2" align="center"><strong>sub_branch_code</strong></td>
+			<td rowspan="2" align="center"><strong>Total Loan ID</strong></td>
+			<td rowspan="2" align="center"><strong>Total Category</strong></td>
+			<td rowspan="2" align="center"><strong>Total Product</strong></td>
+			<td rowspan="2" align="center"><strong>Total With</strong></td>
+			<td rowspan="2" align="center"><strong>Total Without</strong></td>
+			<td rowspan="2" align="center"><strong>Total No Items</strong></td>
+			<td colspan="2" align="center"><strong>Toatal Weight</strong></td>
+			<td rowspan="2" align="left"><strong>Total Loan Amount(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+			<td rowspan="2" align="center" width="13%"><strong>Toatal Loan Rate(<?php echo CURRENCY_SYMBOL;?>)</strong></td>  
+          </tr>
+
+		<tr class="subheadings">
+			<td align="right">G</td>
+			<td align="right">Mg</td>
+		</tr>
+
+        <?php
+			 if(count($data) > 0) {
+					/*echo $query_amount="SELECT 
+					P.id,
+					DATE_FORMAT(P.loan_date,'%Y-%m-%d') AS loan_date, 
+					P.cash_flow_id,
+					GROUP_CONCAT( DISTINCT P.loan_id ),
+					COUNT(P.loan_id),
+					SUM(P.loan_amount) AS total_loan_amount, 
+					SUM((COALESCE(P.total_net_weight, 0.00 ))) AS total_pledged_weight,
+					CF.id,
+					CF.branch_id,
+					CF.transaction_type,
+					CF.date_transaction 	
+					FROM mf_pledge AS P
+					INNER JOIN mf_cash_flow_transactions AS CF ON Cf.id = P.cash_flow_id
+					WHERE P.status =1
+					AND CF.transaction_type = 'cashout'
+					GROUP BY DATE_FORMAT(P.loan_date,'%Y-%m-%d') ". Paging::get_sql_limit();
+					$datas = $app->getrows($query_amount);*/
+
+	       
+					
+	        for($i=0;$i<count($data);$i++){
+
+                    $category = $data[$i]['category_count'];
+					$product_name = $data[$i]['total_product_name'];
+					$product_with = $data[$i]['total_product_with'];
+					$product_without = $data[$i]['total_product_without'];
+                    $product_item = $data[$i]['total_item_count'];
+
+					/*Total total pledged weight calculation for loan rate*/
+					$product_weight = $data[$i]['total_pledged_weight'];
+                    
+					/*Total laon rate calculation*/
+					if($product_weight != 0){
+                    $total_rate = $data[$i]['total_loan_amount']/$product_weight;
+				     }
+					
+					/*Gram and Milli gram calculation*/ 
+					$total_weight = floatval($data[$i]['total_pledged_weight']);
+					$total_weight_gs =  intval($total_weight);
+					$total_weight_mgs =  intval(floatval($total_weight - intval($total_weight)) * 1000);
+
+		?>
+         <tr class="groups" id="<?php echo $data[$i]['id'].$data[$i]['loan_date'];?>">
+				<td align="left">
+				<a href="javascript:" onclick="show_sub_list_by_query('<?php echo $module_name;?>','&search_sdate=<?php echo $data[$i]['loan_date'];?>&search_edate=<?php echo $data[$i]['loan_date']; ?>','<?php echo $data[$i]['id'].$data[$i]['loan_date'];?>');">
+				<img id="img_drop_<?php echo $data[$i]['id'].$data[$i]['loan_date'];?>" src="./images/plus-sign.jpg" border=0 width="16px">
+				</a>
+				</td>
+				<td align="center"><?php echo date("d-M-Y",strtotime($data[$i]['loan_date']));?></td>
+				<td align="left"><?php echo nl2br($data[$i]['sub_details']); ?></td> 
+				<td align="center"><?php echo htmlentities(stripslashes($data[$i]['total_loanid']), ENT_QUOTES); ?> </td>
+				<td align="center"><?php echo $category;?></td>
+				<td align="center"><?php echo $product_name;?></td>
+				<td align="center"><?php echo $product_with;?></td>
+				<td align="center"><?php echo $product_without;?></td>
+				<td align="center"><?php echo $product_item; ?></td>
+				<td align="right"><?php echo $total_weight_gs;?></td>
+				<td align="right"><?php echo $total_weight_mgs;?></td>
+				<td width="15%" align="right"><?php echo convertToCurrency(htmlentities(stripslashes($data[$i]['total_loan_amount'])), ENT_QUOTES); ?></td>
+				<td align="right"> <?php echo convertToCurrency(round($total_rate)); ?> </td>
+		  <tr>
+            <td colspan="12">
+            <div id="sublist_<?php echo $data[$i]['id'].$data[$i]['loan_date'];?>" class="display_view"></div>
+            </td>
+         </tr>
+        </tr> 
+
+            <?php
+                }
+            } else {
+            ?>
+            <tr class="bg-row">
+            <td colspan="12" align="center" height="50">No records found</td>
+            </tr>
+            <?php
+            }
+            ?>
+     <tr class="headings">
+     <td colspan="12">
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+        </table>
+        
+   </form>
+    <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>          
+ </div>           
+
+<!--For the print option, days less 30 to display the results. Default value 30-->
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>

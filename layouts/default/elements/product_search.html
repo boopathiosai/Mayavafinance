@@ -1,0 +1,44 @@
+<div id="search_table" <?php echo $diaply_style;?> >
+<form id="search_form" name="search_form">
+
+<table class="search-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr class="row0">
+      <td align="left" class="title" colspan="3">Search</td>         
+      <td align="right" class="title">
+        <a href="javascript:;"  onclick="document.location='products.php'" class="button">VIEW ALL</a>
+        <a href="javascript:;"  onclick="search_items('<?php echo  $module_name; ?>');" class="button">SEARCH</a>
+      </td>
+    </tr>
+    <tr class="row0">
+    <td align="left" width="16%">Search by Product:</td>
+    <td align="left"><input name="key" type="text" id="key"  class="text-field"value="<?php echo $search_key; ?>"/></td>    <td align="left" width="16%">Search by Category:</td>
+     <td align="left" valign="middle">
+        <select name="category" id="category" class="text-field">
+        <?php 
+            $category_data = get_dropdown_list_with_field('id', 'category', CATEGORIES);
+        ?>
+        <option value="">Select</option>
+        <?php
+        //echo " <optgroup label='With Stone'>";
+        //$category_data = get_dropdown_list_with_field_optiongroup('id', 'category','1', CATEGORIES);
+        echo build_select_options($category_data,$search_category); 
+        //echo " <optgroup label='Without Stone'>";
+        //$category_data = get_dropdown_list_with_field_optiongroup('id', 'category','0', CATEGORIES);
+        //echo build_select_options($category_data,$search_category); 
+        ?>
+     </td>  
+    </tr>
+
+</table>
+            
+</form>
+</div>
+
+<script>
+jQuery(document).ready(function(){ 
+
+search_enter_action('<?php echo $module_name; ?>');
+
+}
+);
+</script>

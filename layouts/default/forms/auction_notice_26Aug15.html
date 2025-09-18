@@ -1,0 +1,320 @@
+<div id="print_content">
+<?php  
+$categories = $product_data;
+//echo "<pre>";
+//print_r($product_details);
+
+	  $fetch_cust_id = $product_data['customer_id'];
+
+	  $query = "SELECT DISTINCT P.id, P.sub_branch_id, P.loan_id, P.customer_id, PD.pledge_id, PD.product_id,PS.name, C.name, B.name as sub_branch_name, B.sub_branch_code, B.license_no, B.address, B.location
+                FROM mf_pledge as P
+                LEFT JOIN mf_pledge_details as PD ON P.id = PD.pledge_id
+                LEFT JOIN mf_customers as C ON C.id = P.customer_id
+		        LEFT JOIN mf_products as PS ON PS.id = PD.product_id
+                LEFT JOIN mf_sub_branch as B ON P.sub_branch_id = B.id
+		        WHERE 1 = 1 AND P.customer_id = '$fetch_cust_id'";
+                
+                $data_sub_addr = $app->getrows($query);
+
+ ?>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>சரவணா பைனான்ஸியர்ஸ்</title>
+<link href="css/style_print.css" rel="stylesheet" type="text/css" />
+<link href="css/fonts_print.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<table width="800" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="700" colspan="2" align="center" style="font-size:10px">உ</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+    <h1 class="line">பொது நகை ஏல அறிவிப்பு</h1>
+    <p>கீழ்கண்ட அடகு  கடை வசம் பட்டியலில் கண்டுள்ள பொருட்கள் அடகு  வைக்கப்பட்டு அடகு  கடை சட்டப்படி காலங்கடந்து விட்டபடியால் அதிகார வரம்புக்குட்பட்ட வருவாய் கோட்ட அலுவலா் அவா்கள் அனுமதி வழங்கியதின் பேரில்</p>
+    <p style="font-size:12px; padding-top:10px; padding-bottom:10px; font-weight:bold;">கோவை கூடுதல் மாவட்ட நீதிபதி அவா்கள் ப.மு. 62, 818 / 2002 கி - 6 நாள் 5-3-2004 உத்தரவுப்படி அரசாங்க ஏற்பளிக்கப் பெற்ற ஏலதாரா்</p>
+    <p style="font-size:16px; font-weight:bold;">வெ. செந்தாமரைக்கண்ணன்</p>
+    <p>124, கோனாா் குடியிருப்பு, வால்பாறை</p>
+   <p>அவா்கள் பட்டியலில் கண்டுள்ள பொருட்கள் அடகு கடையின் பொறுப்பில்</p>
+    </td>
+  </tr>
+  <tr>
+    <td height="40" colspan="2" align="center"><table width="50%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12%"><p style="font-size:16px; font-weight:bold;">நாள்</p></td>
+        <td width="67%"><input name="input" type="text" class="fcolr" value="<?php echo  date("d/m/Y");?>"></td>
+        <td width="21%" align="right"><p style="font-size:16px; font-weight:bold;">அன்று</p></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><p style="font-size:12px; padding-top:10px; padding-bottom:10px; font-weight:bold;">அதிகார வரம்புக்குட்பட்ட வட்டாட்சியா் அல்லது துணை வட்டாட்சியா்  முன்னிலையில் காலை / பகல் / மாலை<br>
+--------------- மணிக்கு மேல் பகிரங்கமாக ஏலம் விடப்படும்.</p></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+    <div id="tab1">
+    <table width="100%" border="0" cellpadding="0" cellspacing="1">
+      <tr class="tab-head">
+        <td width="50%" height="40" style="font-size:12px; background-color:#333;"><strong>ஏலம் போடப்படும் இடம்</strong></td>
+        <td width="50%" height="40" style="font-size:12px; background-color:#333;"><strong>அடகு கடையின் முகவரி</strong></td>
+        </tr>
+      <tr>
+        <td><label for="textarea"></label>
+          <textarea name="textarea" rows="5" id="textarea" style="text-align:left">
+		   <?php echo $data_sub_addr[0]['sub_branch_name']."\n"; 				
+				 echo nl2br($data_sub_addr[0]['address']); ?>
+			</textarea></td>
+        <td><textarea name="textarea" rows="5" id="textarea" style="text-align:left">
+		 <?php echo $data_sub_addr[0]['sub_branch_name']."\n"; 				
+			   echo nl2br($data_sub_addr[0]['address']); ?>
+		</textarea></td>
+      </tr>
+      </table>
+    </div>
+    
+    
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><p style="font-size:12px; padding-top:10px; padding-bottom:10px; font-weight:bold;">ஏல நிபந்தனைகள்</p></td>
+  </tr>
+  <tr>
+    <td height="20" colspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td height="20" align="center">1.</td>
+        <td>ஏலம் கேட்க விரும்புகிறவா்களிடம் 25% சதவிகிதம் அட்வான்ஸ் கேட்க ஏலதாரருக்கு உரிமையுண்டு</td>
+      </tr>
+      <tr>
+        <td height="20" align="center">2.</td>
+        <td>ஏலம் கேட்க விரும்புகிறவா்கள் ஏல தினத்தன்று பொருட்களை நன்றாக பரிசீலனை செய்த பிறகு ஏலம் கேட்க வேண்டும்</td>
+      </tr>
+      <tr>
+        <td height="20" align="center">3.</td>
+        <td>ஏலம் கேட்க முடிவான பிறகு எவ்வித குறை கூறினாலும் ஏலதாரரும் அடகு கடைகாரரும் பொறுப்பாளியாக மாட்டார்கள்</td>
+      </tr>
+      <tr>
+        <td height="20" align="center">4.</td>
+        <td>ஏலத்தில் அதிக தொகைக்கு கேட்பவருக்கு ஏலம் முடிவு செய்யப்படும்</td>
+      </tr>
+      <tr>
+        <td height="20" align="center">5.</td>
+        <td>அடகு கடைகாரரும் ஏலம் கேட்க உரிமை உண்டு</td>
+      </tr>
+      <tr>
+        <td height="20" align="center" valign="top">6.</td>
+        <td>எவ்வித காரணமும் தெரிவிக்காமல் ஏலத்தை ஒத்திவைக்க ஏலதாரருக்கு முழு உரிமையுண்டு. மறு  ஏலத் தேதி பொதுமக்களுக்கும், அடகு வைத்தவர்களுக்கும் செய்தித்தாள் வாயிலாக அறிவிக்கப்படும்</td>
+      </tr>
+      <tr>
+        <td height="20" align="center" valign="top">7.</td>
+        <td>ஏலம் எடுத்தவர்கள் அன்றைய தினமே முன் பணம் போக மீதித் தொகையை அடகு கடைகாரரிடம் செலுத்தி ஏலத்தில் எடுத்துக்கொண்ட பொருட்களை பெற்றுக் கொள்ள வேண்டும். தவறினால் ஏலத்தினால் எடுத்துக்கொண்ட பொருட்களை மறு ஏலம் போட்டு குறைவுபடும் தொகையை சட்டபடி வசூல் செய்ய ஏலதாரருக்கு  உரிமையுண்டு</td>
+      </tr>
+      <tr>
+        <td height="20" align="center" valign="top">8.</td>
+        <td>அடகு வைத்தவர் ஏலத் தேதிக்கு முன் அடகு  பொருட்களை மீட்டுக்கொள்ள வேண்டியது அவ்வாறு மீட்க தவறும் பட்சத்தில் அடகு  பொருட்களை ஏலம் போன தொகையிலிருந்து அடகு கடைக்கு சேர வேண்டிய அசல், வட்டி மற்றும் ஏலச் செலவுகள் ஆகியவை போக மீதித் தொகை இருப்பின் அத்தொகையைத்தான் அடகு வைத்தவர் பெற்றுக்கொள்ள  உரிமை  உள்ளவர்</td>
+      </tr>
+      <tr>
+        <td height="20" align="center">9.</td>
+        <td>பட்டியலில் அச்சுப்பிழை இருந்தால் அடகு ரசீதிலுள்ளபடி ஒத்துக்கொள்ளபடும்</td>
+      </tr>
+      <tr>
+        <td height="20" align="center" valign="top">10.</td>
+        <td>அடகு வைத்தவர்கள் பட்டியலில் அடங்கிய பொருட்களை ஏலம் போட ஆட்சேபனை இருந்தால் ஏலம் போடும் தினத்திற்கு ஒரு வாரம்    முன்பாக ஏலதாரருக்கு தெரியப்படுத்த வேண்டும். ஏலம் போட்டு முடிவடைந்த பிறகு எவ்வித நடவடிக்கை மேற்கொண்டாலும் ஏலதாரர் எவ்விதத்திலும் பொறுப்பாளியாக மாட்டார்</td>
+      </tr>
+      <tr>
+        <td width="3%" height="20" align="center" valign="top">11.</td>
+        <td width="97%">ஏலதாரரின் அனுமதியில்லாமல் ஏல விளம்பரம் வினியோகம் செய்தால் சட்டப்படி நடவடிக்கை எடுக்கப்படும் மேற்படி நிபந்தனைகளைத் தவிர ஏலதாரர் ஏககாலத்தன்று தெரிவிக்கும் மற்ற நிபந்தனைகளுக்கு ஏலம் கேட்பவர் கட்டுபட்டவர் ஆவார்</td>
+        </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="50%"><p style="font-size:12px; padding-top:10px; padding-bottom:10px; font-weight:bold;">ஏலதாரா் உத்திரவுப்படி அனுப்புதல்</p></td>
+        <td width="50%"><p style="font-size:12px; padding-top:10px; padding-bottom:10px; font-weight:bold;">வெ. செந்தாமரைக்கண்ணன், ஏலதாரா்.</p></td>
+      </tr>
+      <tr>
+        <td height="25" valign="top">வ.எண். | அடகு கடையின் முகவரி</td>
+        <td valign="top">Reg. with A/D</td>
+      </tr>
+      <tr>
+        <td colspan="2">
+        <div id="tab1">
+        <table width="100%" border="0" cellpadding="0" cellspacing="1">
+          <tr>
+            <td width="50%">
+              <textarea name="textarea" rows="5" id="textarea" style="text-align:left">
+			  <?php echo $data_sub_addr[0]['sub_branch_name']."\n"; 				
+					echo nl2br($data_sub_addr[0]['address']); ?>
+			  </textarea></td>
+            <td width="50%">
+			<textarea name="textarea" rows="5" id="textarea" style="text-align:left">
+			<?php echo $product_data['customer_name']."\n";
+
+			echo $product_data['customer_street']."\n";
+
+			echo $product_data['customer_location']."\n";
+
+			echo "PH:".$product_data['contact_no']."\n";
+
+			echo $product_data['customer_postal_code']."\n"; ?>
+			</textarea></td>
+          </tr>
+        </table>
+        </div>
+        </td>
+        </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2">
+    <div id="tab1">
+    <table width="100%" border="0" cellpadding="0" cellspacing="1">
+      <tr class="tab-head">
+        <td width="12%" height="40" style="font-size:11px; background-color:#333;">வரிசை எண்</td>
+        <td width="15%" height="40" style="font-size:11px; background-color:#333;">அடகு எண்</td>
+        <td width="15%" style="font-size:11px; background-color:#333;">அடகு தேதி</td>
+        <td width="20%" style="font-size:11px; background-color:#333;">அடகு அசல் ரூபாய் </td>
+        <td width="38%" style="font-size:11px; background-color:#333;">பொருட்களின் விபரம், எடை மதிப்பு</td>
+      </tr>
+	  <?php foreach($product_details as $key => $data) {  ?>
+      <tr>
+        <td><input type="text" class="cen" value="<?php echo $key + 1; ?>"></td>
+        <td><input type="text" class="cen" value="<?php echo $data['loan_id']; ?>"></td>
+        <td><input type="text" class="cen" value="<?php echo $data['loan_date']; ?>"></td>
+        <td><input type="text" class="cen" value="<?php echo $data['loan_amount']; ?>"></td>
+        <td><input type="text" class="cen" value="<?php 
+					echo $data['total_gross_weight'].' மி கி &nbsp; '.$data['product_name'];
+					?><?php echo '&nbsp;உள்ள &nbsp;'.$data['product_with'].'&nbsp;இல்லாத‌ &nbsp;'.$data['product_without']; ?>"</td>
+      </tr>	 
+	  <?php
+	   }
+	   ?>
+      
+    </table>
+    </div>
+    </td>
+  </tr>
+  <tr>
+    <td height="30" colspan="2">&nbsp;</td>
+  </tr>
+</table>
+</body>
+</html>
+</div>
+<style>
+body {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px !important;
+	color: #039;
+}
+h1 {
+	font-size: 25px !important;
+	line-height: 16px;
+	color: #039;
+}
+h2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 17px !important;
+	line-height: 30px;
+	color: #039;
+	border-top-width: 2px;
+	border-top-style: solid;
+	border-top-color: #039;
+	padding-top: 20px;
+	padding-bottom: 0px;
+	margin-top: 20px;
+	margin-right: 0px;
+	margin-bottom: 0px !important;
+	margin-left: 0px;
+	font-weight: bold;
+}
+p {
+	font-size: 10px !important;
+	line-height: 22px;
+	margin: 0px;
+	padding: 0px;
+}
+.main-content {
+	text-align: justify;
+}
+input {
+	width: 100%;
+	font-family: Arial, Helvetica, sans-serif;
+	border: 1px solid #FFF;
+	font-size: 10+px !important;
+}
+#tab1 tr td {
+	border: 1px solid #CCC;
+	text-align: center !important;
+}
+#tab1 input {
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+}
+.cen {
+	text-align: center !important;
+}
+.cen1 {
+	text-align: center !important;
+	width: 150px;
+	margin: 0px;
+	padding: 0px;
+}
+.tab-head {
+	color: #FFF;
+	background-color: #333;
+	font-weight: bold;
+}
+.fcolr {
+	border: 2px solid #039;
+	padding: 8px;
+	text-align: center;
+	font-weight: bold;
+	color: #039;
+}
+#textarea {
+	width: 90%;
+	margin: 0px;
+	padding: 10px;
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	text-align: center;
+}
+.line {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-bottom-color: #039;
+	padding-bottom: 15px;
+	width: 47%;
+}
+</style>
+<style>
+	#back_page { width:100%;}
+	#hd div,#print_cont div { float:left;padding:5px 0px; }
+	#hd { height:70px}
+	div#print_cont{clear:left;font-weight:bold; }
+
+</style>
+<iframe id="print_frame" name="print_frame" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>

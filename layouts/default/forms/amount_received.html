@@ -1,0 +1,112 @@
+<?php  
+    session_start();
+if($customer_data['status'] == "0") { 
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+   if($customer_data['id']!='')
+   {
+        $_SESSION['customer_id'] = $customer_data['id'];
+   }
+   else
+   {
+        $_SESSION['customer_id'] = "temp";
+   }
+  
+    ?>
+
+<div class="clear clearfix"></div>
+
+     <div id="contentarea">
+     <form name="amount_received" id="amount_received" method="post" style="margin: 0px;">
+      <table class="frm-cntr" width="95%" border="0" align="center" cellpadding="0" cellspacing="0">
+   
+      <tr>
+        <td width="100%"><table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          <tr>
+            <td id="branch_name">Amount Received Branch Name</td>
+            <input type="hidden" name="mpval[transfer_amount]" value="<?php   echo $data[0]['transfer_amount'];?>">
+            <input type="hidden" name="mpval[transfer_date]" id="tran_date" value="<?php   echo $data[0]['transfer_date'];?>">
+            <input type="hidden" name="mpval[receiver_user_id]" value="<?php   echo $data[0]['receiver_user_id'];?>">
+            <input type="hidden" name="mpval[transfer_user_id]" id="transfer_user_id" value="<?php   echo $data[0]['transfer_user_id'];?>">
+            
+            
+            <td align="left">
+            <?php 
+            if($_SESSION['session_usergroupname'] == 'Super Admin' && !empty($customer_data['branch_id'])){
+                  echo $_SESSION['session_user_branch_name'];
+            }else{
+                //$branch = $_SESSION['session_user_branch_id'];
+                echo $_SESSION['session_user_branch_name'];
+            } 
+            ?>
+                
+              <input type="hidden" name="mpval[transfer_branch_id]" value="<?php   echo $data[0]['transfer_branch_id'];?>">
+              <input type="hidden" name="mpval[request_branch_id]" value="<?php   echo $data[0]['request_branch_id'];?>">
+              <input type="hidden" name="mpval[request_id]" value="<?php   echo $data[0]['request_id'];?>">
+              <input type="hidden" name="pval[id]" value="<?php   echo $uval['id'];?>">
+            
+            </td>
+          </tr>
+         <tr>
+            <td id="received_date">Amount Received Date*</td>
+            <td align="left"><?php //p_arr($data); ?>
+            <input name="pval[received_date]" id="received_date1" value="<?php echo ($data[0]['received_date']) ? "" : date("d-m-Y",strtotime($data[0]['received_date'])); ?>" maxlength="40" type="text" class="calendar textfield-m"/>
+            &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('received_date1', 'calender_trigger', '%d-%m-%Y' )" onclick="jQuery('#received_date1').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+            </td>
+          </tr>
+          <tr><td></td><td></td></tr>
+    </table>            
+     
+          </form>
+<div class="clear clearfix"></div>
+
+</body>
+<script type="text/javascript">
+formParam = "type=save";
+formId = "amount_received";
+formPage = "amount_received";
+ $(document).ready(function(){
+        if($("#received_mode1").val() == 'cash'){
+            $(".cheque_details_div").hide();
+        }
+        $("input,select,textarea").not( $(":button,:hidden") ).keypress(function (evt) {
+            if (evt.keyCode == 13) {
+                iname = $(this).val();
+                if (iname !== 'Submit'){    
+                    var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:radio,input:checkbox,textarea,select');                   
+                    
+                    var index = fields.index( this );
+                    if ( index > -1 && ( index + 1 ) < fields.length) {
+                        fields.eq( index + 1 ).focus();
+                    }
+                    else
+                    {                   
+                      //Save Action 
+                    }
+                    return false;
+                }
+            }
+        });
+        
+        enable_save_action();
+        
+        set_date_picker();
+
+        $("#postal_code_input").numeric();
+		$("#contact_no_input").numeric({allow:"+-"});
+    });
+function cheque_details_show(opt){
+    $(".cheque_details_div").hide();
+    if(opt.value != 'cash'){
+      $("#cheque_details1").val("");  
+      $(".cheque_details_div").show();
+      
+    }else{
+      $("#cheque_details1").val("Cash");      
+    }
+}
+</script>
+
+</html>

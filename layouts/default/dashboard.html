@@ -1,0 +1,170 @@
+ <?php
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+//print_r($menu);
+//print_r(can_edit($_SESSION[$app->session_usertype1], $module_name));
+?>
+
+   <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td ><a href="javascript:;">Home</a> &raquo;<a href="javascript:;">Dashboard</a> </td >
+        <td >
+        
+        <!--<span class="btn-rht"><a href="javascript:;" class="greybtn">SAVE</a><a href="javascript:;" class="greybtn">RESET</a> <a href="javascript:;" class="greybtn">BACK</a></span>-->
+        
+        </td>
+      </tr>
+      </table>
+ </div>
+
+  <div id="contentarea">  
+<?php
+//p_arr($scheme_data);echo "<hr>";
+//p_arr($rate_data);echo "<hr>";
+//p_arr($msg_data);echo "<hr>";
+?>
+    
+    <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">      
+      <tr>
+        <td class="title">Dashboard</td>
+      </tr>
+      <tr>
+            <td>
+            <div class="calagory-rate">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+      <td>&nbsp;</td>
+
+    <td colspan="2" class="hding">Category Rates</td>
+    </tr>
+  <tr class="lit-grey">
+  <td width="3%">&nbsp;</td>
+    <td width="55%" ><strong>Category Name</strong></td>
+    <td width="42%"><strong>Rates</strong></td>
+  </tr>
+  <?php
+  
+  if(count($rate_data)>0){
+  for($i=0;$i<count($rate_data);$i++){
+  ?>
+  <tr <?php echo ($i % 2 == 0) ? "" : "class=\"lit-grey\""; ?> >
+      <td>&nbsp;</td>
+
+    <td><?php echo $rate_data[$i]['config_name']; ?><!-- <?php echo htmlentities(stripslashes($rate_data[$i]['config_name']), ENT_QUOTES); ?> --></td>
+    <td><?php echo convertToCurrency($rate_data[$i]['config_value'],false); ?></td>
+  </tr>
+  <?php
+  }
+  
+  }else{
+  ?>
+  <tr><td colspan=3 align=center>No Records</td></tr>
+  <?php
+  }
+  ?>
+</table>
+
+            
+            </div>
+            <div class="admin-msg">
+            
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+      <td width="3%">&nbsp;</td>
+
+    <td colspan="3" class="hding">Latest Messages</td>
+    </tr>
+  <tr class="lit-grey">
+      <td>&nbsp;</td>
+
+    <td width="19%"><strong>Date </strong></td>
+    <td width="28%"><strong>Subjects</strong></td>
+    <!--<td width="29%"><strong>Message</strong></td>-->
+    <td width="21%"><strong>Status</strong></td>
+  </tr>
+  
+  <?php
+    
+    if(count($msg_data)>0){
+    for($i=0;$i<count($msg_data);$i++){
+    
+  ?>
+  
+  <tr <?php echo ($i % 2 == 0) ? "" : "class=\"lit-grey\""; ?> >
+    <td>&nbsp;</td>
+    <td><?php echo date('d-M-y',strtotime($msg_data[$i]['sent_date'])); ?></td>
+    <td><?php echo htmlentities(stripslashes($msg_data[$i]['subject']), ENT_QUOTES); ?></td>
+    <!--<td><?php echo htmlentities(stripslashes(substr($msg_data[$i]['message'],0,20)), ENT_QUOTES); ?>...</td>-->
+    <td><?php echo htmlentities(stripslashes($msg_data[$i]['status_text']), ENT_QUOTES); ?></td>
+  </tr>
+   <?php
+   }
+   
+   }else{
+   ?>
+   <tr><td colspan=4 align=center>No Records</td></tr>
+   <?php
+   }
+  ?>
+</table>
+            </div>
+<div class="clear clearfix"></div>
+
+    <div class="scheme-det">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+  <td width="0%">&nbsp;</td>
+    <td colspan="7" class="hding">Scheme Details</td>
+    </tr>
+    
+  <tr class="lit-grey">
+  <td>&nbsp;</td>
+    <!--<td width="16%"><strong>Scheme ID</strong></td>-->
+    <td width="20%"><strong>Scheme Name</strong></td>
+    <td width="20%"><strong>Scheme Type</strong></td>
+    <td width="20%"><strong>Loan Rate</strong></td>
+    <td width="25%"><strong>Description</strong></td>
+    <td width="20%"><strong>ROI</strong></td>
+    <td width="9%"><strong>Status</strong></td>
+  </tr>
+  <?php
+    
+    if(count($scheme_data)>0){
+    for($i=0;$i<count($scheme_data);$i++){
+    
+  ?>
+  <tr <?php echo ($i % 2 == 0) ? "" : "class=\"lit-grey\""; ?> >
+    <td>&nbsp;</td>
+    <!--<td><?php echo htmlentities(stripslashes($scheme_data[$i]['id']), ENT_QUOTES); ?></td>-->
+    <td><?php echo $scheme_data[$i]['scheme_name']; ?></td>
+    <td><?php echo $scheme_data[$i]['scheme_type']; ?></td>
+    <td><?php echo convertToCurrency($scheme_data[$i]['loan_rate'], false); ?></td>
+    <td><?php echo htmlentities(stripslashes($scheme_data[$i]['description']), ENT_QUOTES); ?></td>
+    <td><?php echo htmlentities(stripslashes($scheme_data[$i]['roi']), ENT_QUOTES); ?></td>
+    <td><?php echo htmlentities(stripslashes($scheme_data[$i]['status_text']), ENT_QUOTES); ?></td>
+  </tr>
+   <?php
+   }
+   
+   }else{
+   ?>
+   <tr><td colspan=5 align=center>No Records</td></tr>
+   <?php
+   }
+  ?>
+</table>
+
+    
+    
+
+</div>
+</td>
+      </tr>
+    </table>
+    <div class="clear clearfix"></div><!--contentarea ends here-->
+  </div>
+

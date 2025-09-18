@@ -1,0 +1,68 @@
+<div id="print_content">
+<?php  
+session_start();
+$categories = $product_data;
+
+//p_arr($product_data);
+
+?>
+ <div id="contentarea">
+     <form name="customer_form" method="post" style="margin: 0px;">
+      <div class="" width="98%" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
+	    
+			<!--<div><strong>Pre Auction Notice Information</strong></div>-->
+
+			<br><br><br><br><br><br><br><br><br><br><br><br>
+
+		<div align=right style="padding-right:100px; margin-bottom:270px; font-size:18px">
+			<div>
+						<table>
+			<tr><td align=left>
+			<?php 
+			$address = explode(',',$product_data['branch_address']);
+			for($i=0; $i<=count($address);$i++) {
+				echo "<br>".$address[$i];
+			}
+			?>  
+			</td>
+			<td align=left>
+			<?php 
+			$address = explode(',',$product_data['branch_address']);
+			for($i=0; $i<=count($address);$i++) {
+				echo "<br>".$address[$i];
+			}
+			?>  			
+			</td>
+			</tr>
+			</table>
+			</div>
+<br><br><br><br><br><br><br><br><br><br><br><br>
+
+			<div style="width:100%;" class="customer_address">
+			<table>
+			<tr><td align=left>
+			<?php 
+			$address = explode(',',$product_data['branch_address']);
+			for($i=0; $i<=count($address);$i++) {
+				echo "<br>".$address[$i];
+			}
+			?>  
+			</td>
+			<td align=left>
+			<?php 
+			echo $product_data['customer_name']."<br>".
+				 $product_data['customer_street']."<br>".
+				 $product_data['customer_location']."<br>
+			<b>PIN CODE :</b>".$product_data['customer_postal_code']."<br>
+			<b>Contact Number :</b>".$product_data['contact_no']."<br>";
+			?>
+			
+			</td>
+			</tr>
+			</table>
+			</div>
+			
+       </form>   
+</div>         
+</div>             
+<iframe id="print_frame" name="print_frame" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>

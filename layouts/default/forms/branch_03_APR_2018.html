@@ -1,0 +1,203 @@
+<?php  if($branch_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+    
+    if($branch_data['edit_status'] == "0") {
+        $edit_inactive="checked";
+    }else{
+        $edit_active="checked";
+    }
+    
+?>
+<div class="clear clearfix"></div>
+
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Masters</a> &raquo;<a href="branches.php">Branch Master</a></td >
+        <td ><span class="btn-rht">
+         <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" tabindex="10">RESET</a>
+        <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');" tabindex="11">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+
+  <div id="contentarea">
+   <form name="branch_form" method="post" style="margin: 0px;">
+    <div id="msg"></div>
+   <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+     <tr>
+        <td class="title">Branch Master</td>
+      </tr>
+      <tr>
+
+        <td width="50%">
+
+        <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="20%" id="organization_name">Organization Name/Company Name * </td>
+            <td width="61%" align="left">
+            <?php
+               // TODO: Modify if needed
+               //  Assign default array for Organization select
+               //$organization_data = array(1=>'Mayava Finance');
+                include('includes/organization_details.php');
+              ?>
+            <select name="pval[organization_name]" id="name_select" onchange="remove_red('organization_name');" tabindex="1">
+            <option value="<?php echo $branch_data['organization_name'];?>">-- Select Organization --</option>
+               <?php
+                 echo build_select_options($organization_data,$branch_data['organization_name']);
+               ?>
+            </select>
+            </td>
+          </tr>
+          <tr>
+            <td id="name"><span class="add">Branch name* </span></td>
+            <td align="left"><input name="pval[name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($branch_data['name']);?>" tabindex="2"/></td>
+          </tr>
+          <?php if(is_superadmin($_SESSION['session_usergroupname'])){ ?>
+          <tr>
+            <td id="branch_code">Branch code </td>
+            <td align="left">
+            <?php
+           // if($uval[id] > 0){ echo stripslashes($branch_data['branch_code']); ?>
+
+            <!--<input name="pval[branch_code]" maxlength="40" type="hidden" class="textfield-m" onfocus="remove_red('branch_code');" value ="<?php echo stripslashes($branch_data['branch_code']); ?>" tabindex="3">-->
+            <?php //}else{ ?>
+            <input name="pval[branch_code]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('branch_code');" value ="<?php echo stripslashes($branch_data['branch_code']); ?>" tabindex="3">
+            <?php// } ?>
+            </td>
+          </tr>
+         <?php } ?>
+          <tr>
+            <td id="description">Branch description* </td>
+            <td align="left"><textarea name="pval[description]" onfocus="remove_red('description');" tabindex="4"><?php echo stripslashes($branch_data['description']); ?></textarea></td>
+          </tr>
+          <tr>
+            <td id="location">Branch location* </td>
+            <td align="left"><input name="pval[location]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('location');" value = "<?php echo stripslashes($branch_data['location']); ?>" tabindex="5"></td>
+          </tr>
+          <tr>
+            <td id="address">Branch address* </td>
+            <td align="left"><textarea name="pval[address]" onfocus="remove_red('address');" tabindex="6"><?php echo stripslashes($branch_data['address']); ?></textarea></td>
+          </tr>
+          <tr>
+            <td id="system_ip">System Ip*</td>
+            <td align="left"><input name="pval[system_ip]" maxlength="40" type="text" onfocus="remove_red('system_ip');" value = "<?php echo stripslashes($branch_data['system_ip']); ?>" tabindex="5"></td>
+          </tr>
+          
+          <!-- DSSK changes -->
+           <?php if(is_superadmin($_SESSION['session_usergroupname'])){ ?>
+          <?php
+            $time_type = array('PM'=>'PM','AM'=>'AM');    
+            // echo date('h:i',strtotime($branch_data['out_time']));
+            // echo $branch_data['out_time'];
+            if($branch_data['out_time'] != ""){
+            $outTime = date('h:i',strtotime($branch_data['out_time']));
+            }else{
+            $outTime = "";
+            }
+          ?>
+          <tr>
+              <td id="out_time">Shiftout time* </td>
+              <td align="left">
+                  <input name="pval[out_time]" maxlength="5" type="text" maxlength="5" placeholder="HH:MM" onfocus="remove_red('out_time');" value = "<?php echo $outTime; ?>" tabindex="5" 
+style="width: 151px;">
+                  <select name="pvalt[time_type]" style="width: 47px;margin-left: -4px;height: 25px;">
+                     <?php   echo build_select_options($time_type,date('A',strtotime($branch_data['out_time'])));  ?>      
+                     <!-- <option value="AM">AM</option>
+                      <option value="PM">PM</option> -->
+                  </select>
+              </td>
+          </tr>
+          <?php 
+          $week_days = array(0=>'Sunday',1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday');
+          ?>
+           <tr>
+              <td id="out_time">Weekend* </td>
+              <td align="left">
+                  <select name="pval[weekend]" id="weekend">                      
+                  <?php  echo build_select_options($week_days,$branch_data['weekend']);  ?>                    
+                  </select> 
+              </td>
+          </tr>
+          <tr>
+            <td>Edit Status </td>
+            <td><label>
+              <input name="pval[edit_status]" type="radio" class="radio" value="1" <?php echo $edit_active; ?> tabindex="8"/>
+              Active</label>
+                <label>
+                <input name="pval[edit_status]" type="radio" class="radio" value="0" <?php echo $edit_inactive; ?> tabindex="9"/>
+              Inactive </label></td>
+          </tr>
+          
+          <?php } ?>
+          <!-- \.DSSK changes -->
+          <tr>
+            <td id="additional_info">Additional information</td>
+            <td align="left"><textarea name="pval[additional_info]" onfocus="remove_red('additional_info');" tabindex="7"><?php echo stripslashes($branch_data['additional_info']); ?></textarea></td>
+          </tr>
+          
+          <!-- sathish santhosh kumar 18_MAY_2017 --->
+          
+<!--           <tr>
+            <td width="20%" id="leaveday">Leave Day </td>
+            <td width="61%" align="left">
+            <select name="pval[leave_day]" id="day_select" onchange="remove_day('day_name');" tabindex="1">
+            <option value="0">-- Select Holiday --</option>
+            <option value="1">Sunday</option>
+            <option value="2">Monday</option>
+            <option value="3">Tuesday</option>
+            <option value="4">Wednesday</option>
+            <option value="5">Thursday</option>
+            <option value="6">Friday</option>
+            <option value="7">Saturday</option>
+               
+            </select>
+            </td>
+          </tr>-->
+          
+          <!-- \.sathish santhosh kumar 18_MAY_2017 --->
+          
+          
+           <tr>
+            <td>Status </td>
+            <td><label>
+              <input name="pval[status]" type="radio" class="radio" value="1" <?php echo $active; ?> tabindex="8"/>
+              Active</label>
+                <label>
+                <input name="pval[status]" type="radio" class="radio" value="0" <?php echo $inactive; ?> tabindex="9"/>
+              Inactive </label></td>
+          </tr>
+        <tr>
+           <td colspan="2"><span id="mand_note">* indicates mandatory fields</span> </td>
+        </tr>
+        </table>
+
+         <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+
+          <?php }?>
+      </td>
+      </tr>
+
+    </table>
+    </form>
+    <div class="clear clearfix"></div><!--contentarea ends here-->
+  </div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        form_enter_focus(jQuery('#name_select'),8,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        enable_save_action();
+
+    });
+</script>
+</html>

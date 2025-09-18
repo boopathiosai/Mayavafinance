@@ -1,0 +1,72 @@
+<div id="print_content">
+<?php  
+    $i=1;
+    
+
+    
+
+         ?>          
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="4" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix); ?></td>
+          </tr>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+      <td width="20%"><strong>Date</strong></td>
+      <?php
+      if($_SESSION['session_usergroupname'] == 'Super Admin'){
+      ?>
+      <td width="20%" align="left" valign="middle"><strong>Branch</strong></td>
+      <?php } ?>
+      <td width="30%" align="left"><strong>Purpose</strong></td>
+      <td width="30%"  align="right"><strong>Cash Out(<?php echo CURRENCY_SYMBOL;?>)</strong></td>  
+           </tr>
+            
+          <?php
+          $j=1;
+          $i=$i+1;
+      if(count($data)>0) {
+          foreach($data as $rows)
+          {
+            
+
+             ?>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+      
+      <td align="left"><?php echo htmlentities(stripslashes($rows['report_date']), ENT_QUOTES); ?> </td>
+      <?php      
+        if($_SESSION['session_usergroupname'] == 'Super Admin'){      ?>
+      <td align="left"><?php echo htmlentities(stripslashes($rows['branch_name']), ENT_QUOTES); ?></td>
+      <?php } ?>
+       <td align="left"><?php echo htmlentities(stripslashes($rows['purpose']), ENT_QUOTES); ?></td>
+       <td align="right"><?php echo convertToCurrency($rows['amount_cash_out']); ?></td>
+
+         </tr> 
+         <?php
+            $i++; 
+            $j++;
+          }
+          }else{
+          
+          ?>
+          <tr><td colspan=4 align="center">No Records Found</td></tr>
+          <?php
+          }
+?>
+       </table>
+
+</div>           
+<iframe id="print_frame" name="print_frame"  title="<?php echo ($heading_suffix=="") ? ($page_title) : ($page_title . " - ".$heading_suffix); ?>" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>           
+            
+           
+
+   
+
+
+
+
+
+
+
+
+
+

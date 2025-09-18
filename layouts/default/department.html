@@ -1,0 +1,150 @@
+ <div id="content_div">
+  <?php
+ 
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+  // echo "<pre>";
+  // print_r($_SESSION);
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Masters &raquo; <a href="departments.php"><?php echo $page_title?></a></td >
+        <td class="title" colspan="8">
+        <span class="btn-rht">
+        <?php 
+        if(can_add($_SESSION['session_usertype'], $module_name))
+        {       
+        ?>
+        <a href="javascript:;" onclick = "return create_function('content_div', '<?php echo $module_name; ?>','<?php echo $search_args; ?>');" class="greybtn">ADD NEW</a>
+        <?php
+        }
+        if(can_delete($_SESSION['session_usertype'], $module_name))
+        {
+        ?>
+        <a href="javascript:;" onclick = "delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $data[$i][id]; ?>');" class="greybtn">DELETE</a>    
+        <?php
+        }
+        ?>
+        </span> 
+        </td>          
+      </tr>
+      </table>
+  </div>
+
+ <div id="contentarea"> 
+ <br>
+    <form>    
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+      <tr>
+        <td class="title" colspan="9">Department&nbsp;History</td>      
+      </tr>
+      <tr class="headings">
+     <?php
+        if(count($data) > 0)
+        {?>
+          <td align="center" width="4%"><input type="checkbox" name="selall" id="selall" onclick="chk_all(),highlight_all();"/></td>
+        <?php
+        }else{?>
+        
+        <td align="center" width="4%"></td>
+        <?php
+        }?>
+      <td width="20%"><strong>Branch Name</strong></td>
+      <td width="20%" align="left"><strong>Department Name</strong></td>
+      <td width="" align="left"><strong>Description</strong></td>
+      <td width="90" align="center"><strong>Status</strong></td>     
+
+      <td colspan="2"   align="left"><strong>Action</strong></td>
+
+     </tr>
+        <?php
+                if(count($data) > 0) {
+                    for($i=0;$i<count($data);$i++){ 
+                  $change_status = ($data[$i]['status'] == 1) ? 0 : 1;		
+
+				   $title =  ($data[$i]['status'] == 1) ? "Click here to disable" :  "Click here to enable";
+	
+                ?>
+      <tr class="row0" id="<?php echo $data[$i]['id'];?>">
+       <td align="center"><input type="checkbox" name="list[]" id="list[]" onclick="chkselcount('list[]'),highlight(this);" value='<?php echo $data[$i]['id']; ?>'/></td>
+      <td align="left"><?php echo htmlentities(stripslashes($data[$i]['branch_name']), ENT_QUOTES); ?></td>
+      <td align="left"><?php echo htmlentities(stripslashes($data[$i]['department_name']), ENT_QUOTES); ?></td> 
+      <td align="left"><?php echo htmlentities(stripslashes($data[$i]['description']), ENT_QUOTES); ?></td> 
+<?php      
+if(can_change_status($_SESSION['session_usergroupname'])){      ?>
+      <td align="center">
+       <div id="status_div<?php echo $data[$i]['id']; ?>">
+        <a href="javascript:;" onclick="change_status('status_div<?php echo $data[$i]['id']; ?>', '<?php echo $module_name; ?>', <?php echo $data[$i]['id']; ?>, <?php echo $change_status; ?>);">
+        <img src="images/<?php echo $data[$i]['status_text']; ?>.gif"  title="<?php echo $title; ?>"/></a>
+        </div>
+      </td>
+<?php
+}else{
+?>
+      <td align="center">
+       <a href="javascript:;" onclick="jalert(this.title)" title="<?php echo NO_STATUS_PRIVILEGE; ?>">
+        <img src="images/<?php echo $data[$i]['status_text']; ?>.gif" border=0 /></a>
+       </a>
+      </td>
+
+<?php
+}
+
+      if(can_edit($_SESSION['session_usertype'], $module_name))
+      {
+      ?><td width="3%" valign="middle"><a href="javascript:;" onclick="edit_function('content_div','<?php echo $module_name; ?>','<?php echo $data[$i][id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" title="Edit"><img src="images/edit.jpg" /></a> </td>
+      <?php
+      }
+      else
+            {
+            ?>
+            <td width='3%' valign='middle'><a href='javascript:;' onclick='jalert(this.title)' title='<?php echo NO_EDIT_PRIVILEGE; ?>'><img src='images/edit_gray.jpg'/></a></td>
+            <?php
+            }
+
+      if(can_delete($_SESSION['session_usertype'], $module_name))
+      {
+      ?>
+        <td width="5%" valign="middle"><a href="javascript:;" onclick="delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $data[$i][id]; ?>');" title="Delete"><img src="images/delete.jpg" border="0" /></a></td>
+      <?php 
+      }
+       else
+            {
+            ?>
+            <td width='5%' valign='middle'><a href='javascript:;' onclick='jalert(this.title)' title='<?php echo NO_DELETE_PRIVILEGE; ?>'><img src='images/delete_gray.jpg'/></a></td>
+            <?php
+            }
+      ?>
+      </tr> 
+       
+        <?php
+            }
+
+        } else {
+        ?>
+        <tr class="bg-row">
+        <td colspan="10" align="center" height="50">No records found</td>
+        </tr>
+        <?php
+        }
+        ?>
+     <tr class="headings">
+     <td colspan=100%>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+    </table> 
+   </form>
+
+    <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>   
+ 
+          
+            

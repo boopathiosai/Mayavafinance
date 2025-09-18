@@ -1,0 +1,129 @@
+<?php  if($department_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+    ?>
+    <div class="clear clearfix"></div>
+    <div class="breadcrumbs">
+    <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>Masters</a> &raquo;<a href="departments.php">Department Master</a></td >
+        <td ><span class="btn-rht">
+        <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a> <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span>
+        </td>
+      </tr>
+      </table>
+     </div>
+     <div id="contentarea">
+        <form name="department_form" method="post" style="margin: 0px;">
+        <div id="msg"></div>
+                  <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="title">Department Master</td>
+                  </tr>
+                  <tr>
+                    <td><table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+                      
+                        <tr>
+                        <td id="organization_name" width="18%"><span class="add"> Organization Name <span class="star">*</span></span></td>
+                        <td>
+                            
+                <?php 
+                if($_SESSION['session_usertype']!=1)
+                { 
+                    echo "<input type='hidden' name='pval[organization_name]'  value='".ORGANIZATION_NAME."'/>";
+                    echo ORGANIZATION_NAME;
+                } 
+                else 
+                {
+                                   include('includes/organization_details.php');                        
+                                  ?>
+                            <select id='name_select' name="pval[organization_name]"  onchange="remove_red('organization_name');">
+                            <option value="<?php echo $department_data[organization_name];?>">-- Select Organization --</option>
+                                               <?php              
+                                               echo build_select_options($organization_data,$department_data['organization_name']); 
+                                               ?>
+                            </select> 
+                <?php
+                }?>
+                            
+                            
+                            </td>
+                      </tr>
+                      <tr>
+                        <td id="branch_id"><span class="add"> Branch Name <span class="star">*</span></span></td>
+                        <td>
+                        
+                <?php 
+                if($_SESSION['session_usertype']!=1)
+                { 
+                    echo "<input type='hidden' name='pval[branch_id]'  value='$_SESSION[session_user_branch_id]'/>";
+                    echo $_SESSION['session_user_branch_name'];
+                } 
+                else 
+                {
+                    //Get Branch name from branch table
+                       $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);       
+                ?>
+                 <select name="pval[branch_id]" onchange="remove_red('branch_id');">
+                <option value="">-- Select Branch --</option>
+                   <?php              
+                    echo build_select_options($branch_data,$department_data['branch_id']); 
+                   ?>
+                </select>
+                <?php
+                }?>
+                            
+                        </td>
+                      </tr>
+
+                     <tr>
+                        <td id="department_name"><span class="add"> Department Name <span class="star">*</span></span></td>
+                        <td><input name="pval[department_name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('department_name');" value = "<?php echo stripslashes($department_data['department_name']); ?>" id="department"></td>
+                      </tr>
+
+
+                    <tr>
+                        <td id="description"><span class="add"> Description </span></td>
+                        <td><textarea name="pval[description]" onfocus="remove_red('description');"><?php echo stripslashes($department_data['description']); ?></textarea>
+                    </td>
+                    </tr>           
+                     <tr>
+                    <td>Status </td>
+                    <td><label>
+                      <input name="pval[status]" type="radio" class="radio" value="1" <?php echo $active; ?> />
+                      Active</label>
+                        <label>
+                        <input name="pval[status]" type="radio" class="radio" value="0" <?php echo $inactive; ?> />
+                      Inactive </label></td>
+          </tr>
+          <tr>
+             <td colspan="2"><span id="mand_note">* indicates mandatory fields</span> </td>
+           </tr>   
+    </table>    
+            
+  <?php if($uval[id] > 0){ ?>
+      <input name="type"  type="hidden"  value = "update">  
+      <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+      <?php  }else{ ?>
+      <input name="type"  type="hidden"  value = "add">
+      
+      <?php }?>
+</form>
+<div class="clear clearfix"></div>
+</div>
+</body>
+<script type="text/javascript">
+var flag = <?php echo $_SESSION['session_usertype']; ?>;
+    $(document).ready(function(){   
+        if(flag != 1 ) { 
+			$('#department').focus();
+			document.department_form.department.focus();
+		}
+        form_enter_focus(jQuery('#name_select'),5,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        enable_save_action();
+    });
+</script>
+</html>

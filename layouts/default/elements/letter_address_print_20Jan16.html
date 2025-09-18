@@ -1,0 +1,76 @@
+<style>
+#letter_print {
+margin-top:20px;
+}
+
+.print_letter {
+  float: left;
+  margin-left: 90px;
+}
+</style>
+<?php
+
+$fetch_cust_id = $product_data[0]['customer_id'];
+
+	 $query = "SELECT DISTINCT P.id, P.sub_branch_id, P.loan_id, P.customer_id, PD.pledge_id, PD.product_id,PS.name, C.name, B.name as sub_branch_name, B.sub_branch_code, B.license_no, B.address, B.location, B.contact_no, B.license_no
+                FROM mf_pledge as P
+                LEFT JOIN mf_pledge_details as PD ON P.id = PD.pledge_id
+                LEFT JOIN mf_customers as C ON C.id = P.customer_id
+		        LEFT JOIN mf_products as PS ON PS.id = PD.product_id
+                LEFT JOIN mf_sub_branch as B ON P.sub_branch_id = B.id
+		        WHERE 1 = 1 AND P.customer_id = '$fetch_cust_id'";
+                
+                $data_sub_addr = $app->getrows($query);
+?>
+<table width="100%" border="0" cellpadding="3" cellspacing="0">
+<tr style="height:90px">
+    <td width="30%">&nbsp;</td>
+    <td width="50%">&nbsp;</td>
+    <td width="20%">&nbsp;</td>
+</tr>
+<tr>
+    <td>&nbsp;</td>
+    <td valign="top">
+	<?php
+	foreach($product_data as $product_datas)
+	{
+	
+	?>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" id="letter_print">
+			<tr style="height:30px"><td></td></tr>
+            <tr style="height:25px"><th align="left"><font size="+2"><span class="print_letter"><?php echo $product_datas['customer_name']; ?></span></font></th></tr>
+            <tr style="height:25px"><th align="left"><font size="+1"><span class="print_letter"><?php echo $product_datas['customer_street']; ?></span></font></th></tr>
+            <tr style="height:25px"><th align="left"><font size="+1"><span class="print_letter"><?php echo $product_datas['customer_location']; ?></span></font></th></tr>
+            <tr style="height:25px"><th align="left"><font size="+1"><span class="print_letter"><?php echo "PH:".$product_datas['contact_no']; ?></span></font></th></tr>
+            <tr style="height:25px"><th align="left"  style="float: right; margin-right: 205px;"><font size="+1"><?php echo $product_datas['customer_postal_code']; ?></font></th></tr>
+        </table>
+	<?php
+	} ?>
+    </td>
+    <td>&nbsp;</td>
+</tr>
+<tr style="height:120px">
+    <td width="30%">&nbsp;</td>
+    <td width="50%">&nbsp;</td>
+    <td width="10%">&nbsp;</td>
+</tr>
+<tr>
+    <td>&nbsp;</td>
+    <td>
+	<?php
+		foreach($product_data as $product_datas){
+		?>
+        <table width="120%" border="0" cellpadding="0" cellspacing="0" >
+            <tr><th align="center">
+            <font size="+2"><?php echo $data_sub_addr[0]['sub_branch_name']; ?></font><br/>
+            <font size="+1"><?php echo nl2br($data_sub_addr[0]['address']); echo "\n\n\n\n\n\n";?><br/>
+			 போன்: <?php echo $data_sub_addr[0]['contact_no']; ?>
+			</font>
+            </th></tr>
+        </table>
+		<?php
+		}?>
+    </td>
+    <td>&nbsp;</td>
+</tr>
+</table>

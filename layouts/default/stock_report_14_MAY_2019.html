@@ -1,0 +1,259 @@
+ <div id="content_div">
+ <?php
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+    echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+    unset($_SESSION['success_msg']);
+ } 
+//print_r($menu);
+//print_r(can_edit($_SESSION[$app->session_usertype1], $module_name));
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td >&nbsp;Reports &raquo;<a href="<?php echo $module_name; ?>.php"><?php echo $page_title; ?></a></td >
+        <td width=6%>
+        <?php
+        if($search_args != "")
+        {
+        $diaply_style ="";
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+        <?php
+        }
+        else{
+        $diaply_style = 'style="display:none;"';
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+        <?php
+        }
+        ?>
+        </td>
+      </tr>
+      </table>
+ </div>
+ <div id="contentarea">  
+ <br>
+    
+     <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">   
+     <tr>
+        <td colspan="100%"> 
+        <?php include ADMIN_LAYOUT_PATH . 'elements/report_search.html'; ?>
+      </td>
+    </tr>  
+   </table>
+<div>
+       <br>
+     <?php   
+     
+     //if($search_args!="")   
+     {
+     
+     ?>
+    <form>
+
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">  
+
+ 
+     
+     <tr>
+        <td class="title" colspan="10"><?php echo $page_title; ?></td>
+        <td class="title" colspan="9" align=right>
+        
+            <a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_pdf&<?php echo $search_args; ?>" class="greybtn" id="pdf_report" onclick= "pdf_report('<?php echo $module_name;?>.php?type=export_pdf&<?php echo $search_args;?>');">PDF</a>
+            <a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_xls&<?php echo $search_args; ?>" class="greybtn" id="xls_report" onclick= "xls_report('<?php echo $module_name;?>.php?type=export_xls&<?php echo $search_args;?>');">XLS</a>
+            <a href="javascript:" onclick="print_preview('<?php echo $module_name; ?>','print_dialog','37','<?php echo $search_args; ?>','<?php echo $page_title; ?> - Print Preview',1070,700);" class="greybtn" id="print_report">Print</a>
+        
+        </td>
+     </tr>    
+     <tr class="subheadings">
+      <td rowspan=3></td>
+	<td rowspan=3 width="7%">sub_branch</td>  
+      <td rowspan=3 width="10%"><strong>Date</strong></td>
+      
+       <td rowspan=3 width="10%"><strong>Branch</strong></td>     
+      <td colspan=2 width="11%"  align=center><strong>Weight In</strong></td>
+      <td colspan=2 width="11%"  align=center><strong>Weight Out</strong></td>
+      <td colspan=4 width="15%"  align=center><strong>Total Weight</strong></td>
+      <td colspan=2 width="11%"  align=center><strong>Loan count</strong></td>
+      <td colspan=2 width="10%"  align=center><strong>Total Loan count</strong></td>
+      <td colspan=4 width="25%"  align=center><strong>Stock Value</strong></td> 
+      <!--  <td colspan=2 width="20%" align=center><strong>Balance</strong></td>-->
+      
+     </tr>
+     <tr class="subheadings" bgcolor="#F0F0F0">
+       <td align="right" rowspan="2">G</td>
+       <td align="right" rowspan="2">Mg</td>
+       <td align="right" rowspan="2">G</td>
+       <td align="right" rowspan="2">Mg</td>
+       <td align="center" colspan="2">Open.</td>
+       <td align="center" colspan="2">Close.</td>            
+       <td align="right" rowspan="2">In</td>
+       <td align="right" rowspan="2">Out</td>
+       <td align="right" rowspan="2">Open.</td>
+       <td align="right"rowspan="2">Close.</td>
+       <td align="right" rowspan="2" width="7%">In (<?php echo CURRENCY_SYMBOL;?>)</td>
+       <td align="right" rowspan="2" width="7%">Out (<?php echo CURRENCY_SYMBOL;?>)</td>
+       <td align="right" rowspan="2" width="8%">Opening (<?php echo CURRENCY_SYMBOL;?>)</td>
+       <td align="right" rowspan="2" width="8%">Closing (<?php echo CURRENCY_SYMBOL;?>)</td>
+       
+     </tr>
+     <tr class="subheadings" bgcolor="#F0F0F0"><td align="right">G</td>
+       <td align="right">Mg</td>
+       <td align="right">G</td>
+       <td align="right">Mg</td> 
+       </tr>
+<?php
+$closing_item= 0.00;
+  
+    if(count($data) > 0) {
+ 
+         for($i=0;$i<count($data);$i++){ 
+    
+            /*$ob_query = "SELECT sCF.opening_balance 
+                FROM mf_cash_flow_transactions AS sCF 
+                WHERE sCF.branch_id = ".$data[$i]['branch_id']." 
+                AND DATE_FORMAT(sCF.date_transaction,'%Y-%m-%d') = DATE_FORMAT('".$data[$i]['report_date']."','%Y-%m-%d')
+                ORDER BY sCF.date_transaction ASC, sCF.id ASC
+                LIMIT 0,1";
+            $cb_query = "SELECT sCF.closing_balance 
+                FROM mf_cash_flow_transactions AS sCF 
+                WHERE sCF.branch_id = ".$data[$i]['branch_id']."
+                AND  DATE_FORMAT(sCF.date_transaction,'%Y-%m-%d') = DATE_FORMAT('".$data[$i]['report_date']."','%Y-%m-%d')
+                ORDER BY sCF.date_transaction DESC, sCF.id DESC
+                LIMIT 0,1";
+            $ow_query = "SELECT COALESCE(SUM(sP.total_net_weight),0.00) 
+                FROM ".PLEDGE." AS sP 
+                WHERE sP.branch_id = ".$data[$i]['branch_id']." AND DATE_FORMAT(sP.loan_date ,'%Y-%m-%d') < DATE_FORMAT('".$data[$i]['report_date']."','%Y-%m-%d')
+                AND sP.id NOT IN (SELECT loan_id FROM ".REDEMPTION." AS sR WHERE sR.paid_on < DATE_FORMAT('".$data[$i]['report_date']."','%Y-%m-%d'))
+                AND sP.id NOT IN (SELECT loan_id FROM ".PRODUCT_AUCTION." AS sA WHERE sA.paid_on < DATE_FORMAT('".$data[$i]['report_date']."','%Y-%m-%d'))";
+                
+            $cw_query = "SELECT COALESCE(SUM(sP.total_net_weight),0.00) 
+                FROM ".PLEDGE." AS sP 
+                WHERE sP.branch_id = ".$data[$i]['branch_id']." AND DATE_FORMAT(sP.loan_date ,'%Y-%m-%d') < DATE_FORMAT((DATE_ADD('".$data[$i]['report_date']."', INTERVAL 1 DAY)) ,'%Y-%m-%d')
+                AND sP.id NOT IN (SELECT loan_id FROM ".REDEMPTION." AS sR WHERE sR.paid_on < DATE_FORMAT((DATE_ADD('".$data[$i]['report_date']."', INTERVAL 1 DAY)) ,'%Y-%m-%d'))
+                AND sP.id NOT IN (SELECT loan_id FROM ".PRODUCT_AUCTION." AS sA WHERE sA.paid_on < DATE_FORMAT((DATE_ADD('".$data[$i]['report_date']."', INTERVAL 1 DAY)) ,'%Y-%m-%d'))";
+
+
+        
+            $ob_row = $app->getrow($ob_query);
+            $cb_row = $app->getrow($cb_query);
+            $ow_row = $app->getrow($ow_query);
+            $cw_row = $app->getrow($cw_query);
+    
+                            
+            $data[$i]['opening_balance'] = $ob_row[0];
+            $data[$i]['closing_balance'] = $cb_row[0];
+            $data[$i]['opening_weight'] = $ow_row[0];
+            $data[$i]['closing_weight'] = $cw_row[0]; 
+
+            
+            
+            $amount_in = floatval($data[$i]['amount_in']);
+            $amount_out = floatval($data[$i]['amount_out']);
+            
+            $weight_in = floatval($data[$i]['weight_in']);
+            $weight_out = floatval($data[$i]['weight_out']);
+            
+            $weight_in_gs =  intval($weight_in);
+            $weight_in_mgs =  intval(floatval($weight_in - intval($weight_in)) * 1000);
+            $weight_out_gs =  intval($weight_out);
+            $weight_out_mgs =  intval(floatval($weight_out - intval($weight_out)) * 1000);
+            
+            $opening_weight = floatval($data[$i]['opening_weight']);
+            $closing_weight = floatval($data[$i]['closing_weight']);
+
+            $opening_weight_gs =  intval($opening_weight);
+            $opening_weight_mgs =  intval(floatval($opening_weight - intval($opening_weight)) * 1000);
+            $closing_weight_gs =  intval($closing_weight);
+            $closing_weight_mgs =  intval(floatval($closing_weight - intval($closing_weight)) * 1000);*/
+
+            /*$opening_item = floatval($data[$i]['opening_item']);
+            $closing_item = floatval($data[$i]['closing_item']);*/
+
+           /* $opening_item = $closing_item ;
+            $closing_item+= floatval($data[$i]['no_of_issued'])- floatval($data[$i]['no_of_return']);
+            
+            $item_in = floatval($data[$i]['no_of_issued']);
+            $item_out = floatval($data[$i]['no_of_return']);*/
+            
+             /*$opening_amount = floatval($data[$i]['opening_balance']);
+            $closing_amount = floatval($data[$i]['closing_balance']); */
+
+            $opening_amount =   $closing_amount;
+            $closing_amount += $data[$i]['loan_amount_out'] - $data[$i]['total_redeem'] ; 
+            
+
+?>
+    
+     <tr class="groups" id="<?php echo $data[$i]['report_date']; ?>" height="40">
+          <td align=left>
+          
+          <a href="javascript:" onclick="show_sub_list_by_query('<?php echo $module_name; ?>','&search_sdate=<?php echo $data[$i]['report_date']; ?>&search_edate=<?php echo $data[$i]['report_date']; ?>&search_branch_id=<?php echo $data[$i]['branch_id']; ?>','<?php echo $data[$i]['id']; ?>');">
+            <img id="img_drop_<?php echo $data[$i]['id']; ?>" src="./images/plus-sign.jpg" border=0 width="16px">
+          </a>
+          
+          </td>
+	<td align="left"><?php echo nl2br($data[$i]['sub_details']); ?></td>
+       <td align="left"><?php echo date("d-M-Y",strtotime($data[$i]['report_date'])); ?> </td>
+	
+       <td align="left"><?php echo htmlentities(stripslashes($data[$i]['branch_name']), ENT_QUOTES); ?> </td>
+       <td align="right"> <?php echo $data[$i]['weight_in_gs']; ?> </td>
+       <td align="right"> <?php echo $data[$i]['weight_in_mgs']; ?> </td>
+       <td align="right"> <?php echo $data[$i]['weight_out_gs']; ?> </td>
+       <td align="right"> <?php echo $data[$i]['weight_out_mgs']; ?> </td>
+       <td align="right"><?php echo $data[$i]['opening_weight_gs']; ?></td>
+       <td align="right"><?php echo $data[$i]['opening_weight_mgs']; ?></td>
+       <td align="right"><?php echo $data[$i]['closing_weight_gs']; ?></td>
+       <td align="right"><?php echo $data[$i]['closing_weight_mgs']; ?></td>
+       <td align="right"> <?php echo $data[$i]['item_in']; ?> </td>
+       <td align="right"> <?php echo $data[$i]['item_out']; ?> </td>
+       <td align="right"><?php echo $data[$i]['opening_item']; ?>  </td>
+       <td align="right"><?php echo $data[$i]['closing_item']; ?>  </td>    
+       <td align="right"> <?php echo convertToCurrency(stripslashes($data[$i]['amount_out']),false);?> </td>
+       <td align="right"> <?php echo convertToCurrency(stripslashes($data[$i]['amount_in']),false); ?> </td>   
+       <td align="right"> <?php echo convertToCurrency(stripslashes($data[$i]['opening_amount']),false); ?> </td>
+       <td align="right"> <?php echo convertToCurrency(stripslashes($data[$i]['closing_amount']),false); ?> </td>   
+          
+
+      </tr>  
+         <tr><td colspan="19">
+         <div id="sublist_<?php echo $data[$i]['id']; ?>" class="display_view"></div>
+         
+         </td></tr> 
+<?php
+        }
+
+    } else {
+
+?>
+        <tr class="bg-row">
+        <td colspan="19" align="center" height="50">No records found</td>
+        </tr>
+<?php
+    }
+?>
+     <tr class="headings">
+     <td colspan=19>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+   </table>
+        <?php
+        }
+        ?>
+ 
+    </form>
+     <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>
+ </div>
+
+<!--For the print option, days less 30 to display the results. Default value 30-->
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>

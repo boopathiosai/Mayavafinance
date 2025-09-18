@@ -1,0 +1,75 @@
+
+	    <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+		<tr class="headings">
+			<td rowspan="2"><strong>Loan Date</strong></td>
+			<td rowspan="2"><strong>Loan ID</strong></td>
+			<td rowspan="2"><strong>Category</strong></td>
+			<td rowspan="2"><strong>With</strong></td>
+			<td rowspan="2"><strong>Without</strong></td>
+			<td rowspan="2" align="center"><strong>Product</strong></td>
+			<td rowspan="2" align="center"><strong>Total Items</strong></td>
+			<td colspan="2" align="center"><strong>Weight</strong></td>
+			<td rowspan="2" align="left"><strong>Loan Amount(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+			<td rowspan="2" align="center" width="10%"><strong>Loan Rate</strong></td>
+		</tr>
+		<tr class="subheadings">
+			<td align="right">G</td>
+			<td align="right">Mg</td>
+		</tr>
+              
+<?php
+    if(count($data) > 0) {
+
+    //print_r($data);
+
+        for($i=0;$i<count($data);$i++){
+
+                    $product_name = $data[$i]['product_name'];
+                    $product_item = $data[$i]['item_count'];	
+
+					/*Total pledged weight calculation for loan rate*/
+					$product_weight = $data[$i]['pledged_weight'];
+
+					/*Total laon rate calculation*/
+                    if($product_weight != 0){
+                    $total_rate = $data[$i]['loan_amount']/$product_weight;
+					}
+
+					/*Gram and Milli gram calculation*/ 
+					$total_weight = floatval($data[$i]['pledged_weight']);
+					$total_weight_gs =  intval($total_weight);
+					$total_weight_mgs =  intval(floatval($total_weight - intval($total_weight)) * 1000);
+                    
+
+?>
+
+     <tr class="row0" id="<?php echo $data[$i]['report_date']; ?>" height="40">
+
+              <td align="left"><?php echo date("d-M-Y",strtotime($data[$i]['loan_date'])); ?> </td>
+              <td align="left"><?php echo htmlentities(stripslashes($data[$i]['loan_id']), ENT_QUOTES); ?> </td>
+			  <td align="center"><?php echo $data[$i]['category']; ?></td>
+  			  <td align="center"><?php echo $data[$i]['product_with']; ?></td>
+  			  <td align="center"><?php echo $data[$i]['product_without'];?></td>
+              <td align="center"><?php echo $product_name;?></td>
+              <td align="center"><?php echo $product_item;?></td>
+              <td align="center"><?php echo $total_weight_gs;?></td>
+			  <td align="center"><?php echo $total_weight_mgs;?></td>
+              <td width="15%" align="center">
+              <?php echo convertToCurrency(htmlentities(stripslashes($data[$i]['loan_amount'])), ENT_QUOTES); ?></td>
+              <td align="center"> <?php echo convertToCurrency($total_rate); ?> </td>
+
+      </tr>
+
+<?php
+        }
+
+    } else {
+
+?>
+        <tr class="bg-row">
+        <td colspan="6" align="center" height="50">No records found (Note: You may deleted the related pledge details)</td>
+        </tr>
+<?php
+    }
+?>
+   </table>

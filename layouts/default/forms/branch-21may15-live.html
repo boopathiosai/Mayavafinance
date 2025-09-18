@@ -1,0 +1,121 @@
+<?php  if($branch_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }  
+?>
+<div class="clear clearfix"></div>
+
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Masters</a> &raquo;<a href="branches.php">Branch Master</a></td >
+        <td ><span class="btn-rht">     
+         <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>              
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" tabindex="10">RESET</a> 
+        <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');" tabindex="11">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+
+  <div id="contentarea">
+   <form name="branch_form" method="post" style="margin: 0px;">
+    <div id="msg"></div>
+   <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+     <tr>
+        <td class="title">Branch Master</td>
+      </tr>
+      <tr>
+      
+        <td width="50%">
+        
+        <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">   
+          <tr>           
+            <td width="20%" id="organization_name">Organization Name/Company Name * </td>
+            <td width="61%" align="left">
+            <?php
+               // TODO: Modify if needed
+               //  Assign default array for Organization select 
+               //$organization_data = array(1=>'Mayava Finance');
+                include('includes/organization_details.php');                       
+              ?>
+            <select name="pval[organization_name]" id="name_select" onchange="remove_red('organization_name');" tabindex="1">
+            <option value="<?php echo $branch_data['organization_name'];?>">-- Select Organization --</option>
+               <?php              
+                 echo build_select_options($organization_data,$branch_data['organization_name']); 
+               ?>
+            </select>  
+            </td>
+          </tr>
+          <tr>
+            <td id="name"><span class="add">Branch name* </span></td>
+            <td align="left"><input name="pval[name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($branch_data['name']);?>" tabindex="2"/></td>
+          </tr>
+          <?php if(is_superadmin($_SESSION['session_usergroupname'])){ ?>
+          <tr>
+            <td id="branch_code">Branch code </td>
+            <td align="left">
+            <?php 
+           // if($uval[id] > 0){ echo stripslashes($branch_data['branch_code']); ?>
+            
+            <!--<input name="pval[branch_code]" maxlength="40" type="hidden" class="textfield-m" onfocus="remove_red('branch_code');" value ="<?php echo stripslashes($branch_data['branch_code']); ?>" tabindex="3">-->
+            <?php //}else{ ?>
+            <input name="pval[branch_code]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('branch_code');" value ="<?php echo stripslashes($branch_data['branch_code']); ?>" tabindex="3">
+            <?php// } ?>          
+            </td>
+          </tr>
+         <?php } ?>
+          <tr>
+            <td id="description">Branch description* </td>
+            <td align="left"><textarea name="pval[description]" onfocus="remove_red('description');" tabindex="4"><?php echo stripslashes($branch_data['description']); ?></textarea></td>
+          </tr>
+          <tr>
+            <td id="location">Branch location* </td>
+            <td align="left"><input name="pval[location]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('location');" value = "<?php echo stripslashes($branch_data['location']); ?>" tabindex="5"></td>
+          </tr>
+          <tr>
+            <td id="address">Branch address* </td>
+            <td align="left"><textarea name="pval[address]" onfocus="remove_red('address');" tabindex="6"><?php echo stripslashes($branch_data['address']); ?></textarea></td>
+          </tr>
+          <tr>
+            <td id="additional_info">Additional information</td>
+            <td align="left"><textarea name="pval[additional_info]" onfocus="remove_red('additional_info');" tabindex="7"><?php echo stripslashes($branch_data['additional_info']); ?></textarea></td>
+          </tr>
+           <tr>
+            <td>Status </td>
+            <td><label>
+              <input name="pval[status]" type="radio" class="radio" value="1" <?php echo $active; ?> tabindex="8"/>
+              Active</label>
+                <label>
+                <input name="pval[status]" type="radio" class="radio" value="0" <?php echo $inactive; ?> tabindex="9"/>
+              Inactive </label></td>
+          </tr>
+        <tr>
+           <td colspan="2"><span id="mand_note">* indicates mandatory fields</span> </td>
+        </tr> 
+        </table>
+
+         <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+          
+          <?php }?>
+      </td>
+      </tr>
+  
+    </table> 
+    </form> 
+    <div class="clear clearfix"></div><!--contentarea ends here-->
+  </div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){
+       
+        form_enter_focus(jQuery('#name_select'),8,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        enable_save_action();
+
+    });
+</script>
+</html>

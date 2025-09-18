@@ -1,0 +1,104 @@
+<div id="print_content">
+ <table class="frm-tbl"  width="1027px" border="1" align="center" cellpadding="0" cellspacing="0">
+<?php
+$k=0;
+
+$data_count = count($income_report);
+$gradTotal = 0;
+if($data_count>0){
+	 foreach($income_report as $key => $row){
+                $gradTotal += $row['loan_amount'];
+            }
+}
+$per_td =  (int)$data_count/3;
+?>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="11" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix); ?></td>
+          </tr>
+<table>
+
+<tr>
+<td width="10%">
+<?php
+
+$income_report[] = array('loan_date'=> 'Total','loan_id' =>  $data_count,'total_amount' =>  $total_amount);
+for($i=0;$i<3;$i++)
+{ ?>
+	<td width="">
+	 <table class="frm-tbl" border="1" width="342px" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<th>Lon Date</th>
+	    <th>Loan ID</th>
+		<th>Loan Amount</th></tr>
+<?php $t = 0; $total_amount = 0;
+	for($j=0;$j<=$per_td;$j++) {
+		if(($income_report[$k]['loan_date']!='Total') && ($income_report[$k]['loan_date'] != '')) {
+			$t++;
+	?>
+
+
+        <tr class="<?php echo (($j% 2) == 0) ? 'bg' : 'bg1'; ?>">
+        <td align="left" class="disp-light" width="30%"><?php echo htmlentities($income_report[$k]['loan_date'],ENT_QUOTES); ?></td>
+        <td align="left" class="disp-light" width="30%" ><?php echo htmlentities(stripslashes($income_report[$k]['loan_id']), ENT_QUOTES); ?></td>
+         <td align="left" class="disp-light" width="30%">
+			<?php
+
+				$total_amount += $income_report[$k]['loan_amount'];
+				/*if($income_report[$k]['loan_date']=='Total') echo convertToCurrency($total_amount,false);
+
+				elseif($income_report[$k]['loan_amount']=='') echo "-";
+					else */
+				echo convertToCurrency($income_report[$k]['loan_amount'],false);
+			?>
+		 </td>
+		</tr>
+		<?php
+		} else {
+		?>
+			<tr class="<?php echo (($j% 2) == 0) ? 'bg' : 'bg1'; ?>">
+				<td align="left" class="disp-light" width="30%">-</td>
+				<td align="left" class="disp-light" width="30%">-</td>
+				<td align="left" class="disp-light" width="30%">-</td>
+			</tr>
+		<?php
+		}
+		$k++;
+	}	?>
+	<tr class="<?php echo (($j% 2) == 0) ? 'bg' : 'bg1'; ?>">
+		<td align="left" class="disp-light" width="30%">Total</td>
+		<td align="left" class="disp-light" width="30%"><?php echo $t; ?></td>
+		<td align="left" class="disp-light" width="30%">
+			<?php echo convertToCurrency($total_amount,false);?>
+		</td>
+	</tr>
+
+</table>
+</td>
+<?php } ?>
+</td>
+</tr>
+</table>
+</table>
+<table class="frm-tbl" width="326px" cellspacing="0" cellpadding="0" border="1" align="right">
+<tr class="bg">
+			<td align="left" class="disp-light" width="30%">Grand Total</td>
+			<td align="left" class="disp-light" width="30%"><?php echo $data_count; ?></td>
+			<td align="left" class="disp-light" width="30%"><?php echo $gradTotal; ?></td>
+	</tr>
+</table>
+</div>
+<iframe id="print_frame" name="print_frame" title="<?php echo ($heading_suffix=="") ? $page_title : ($page_title . " - ".$heading_suffix); ?>"  width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

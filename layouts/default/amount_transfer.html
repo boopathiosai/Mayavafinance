@@ -1,0 +1,124 @@
+ <div id="content_div">
+ <?php
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+//print_r($menu);
+//print_r(can_edit($_SESSION[$app->session_usertype1], $module_name));
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td>&nbsp;Transactions&raquo;<a href="<?php echo $module_name;?>.php"><?php echo $page_title?></a></td>
+      </tr>
+      </table>
+ </div>
+ <div id="contentarea">  
+ <br>
+    <form>
+     <table class="list-tbl" width="98%" border="0" align="center" cellpadding="2" cellspacing="0">     
+     <tr>
+        <td class="title" colspan="8">Amount Transfer</td>
+     </tr>    
+     <tr class="headings">
+      <td align="center" width="2%">
+        <!--input type="checkbox" name="selall" id="selall" onclick="chk_all(),highlight_all();"/-->
+      </td>
+      <td width="20%" align="left" colspan="1"><strong>Request Branch </strong></td>
+      <td width="11%" align="left"><strong>Transfer Branch </strong></td>
+      <td width="15%" align="center"><strong>Amount Requested(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="15%" align="center"><strong>Amount Allocation(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="30%" align="center"><strong>Amount Transferred Date</strong></td>
+      <td colspan="2"  width="20%" align="center"><strong>Action</strong></td>
+     </tr>
+        <?php
+        if(count($data) > 0) {
+        for($i=0;$i<count($data);$i++){ 
+
+        ?>
+    <input type="hidden" name="pval[transfer_amount]" value="<?php echo $data[$i]['transfer_amount']?>">
+     <tr class="row0" id="<?php echo $data[$i]['id'];?>">
+      <td align="center">
+          <!--input type="checkbox" name="list[]" id="list[]" onclick="chkselcount('list[]'),highlight(this);" value='<?php echo $data[$i]['id']; ?>'/-->
+      </td>
+      <td align="left">
+        <?php echo htmlentities(stripslashes($data[$i]['request']), ENT_QUOTES);?>
+      </td>
+      <td align="left">
+        <?php echo htmlentities(stripslashes($data[$i]['transfer']), ENT_QUOTES);?>
+      </td>
+      <td align="center">
+        <?php echo convertToCurrency(stripslashes($data[$i]['request_amount']),false);?> 
+      </td>
+
+      <td align="center">
+        <?php echo convertToCurrency(stripslashes($data[$i]['transfer_amount']),false);?> 
+      </td>
+      <td align="center" width="10%">
+      <?php 
+          echo ($data[$i]['transfer_date']=='') ? "-" :htmlentities(stripslashes(date("d M Y",strtotime($data[$i]['transfer_date']))), ENT_QUOTES);
+      ?>
+      </td>
+            <?php
+            
+            if(($data[$i]['status']=="2" || $data[$i]['status']=="3") || ($data[$i]['transfer_branch_id'] != $_SESSION['session_user_branch_id']))
+            {
+            
+            $alert = ($data[$i]['status']=="2" || $data[$i]['status']=="3") ? AMOUNT_ALREADY_TRANSFERED : OTHER_BRANCH_TRANS_ALERT;
+            
+            ?>
+            <td align="center">
+            
+             <a href="javascript:;" class="button-off" onclick="jalert(this.title);" title="<?php echo  $alert; ?>">Transfer</a>
+            </td>
+            
+            <?
+
+            }
+            
+            else
+            {
+                $search_args = "trans_id=".$data[$i]['transfer_branch_id']."&req_id=".$data[$i]['request_branch_id']."&allocate_date=".$data[$i]['allocate_date'];
+            ?>
+            
+            <td align="center">
+            
+             <a href="javascript:;" class="button" onclick="form_actions('amount_transfer','formact_dialog','<?php echo $data[$i]['id'];?>','transfer','<?php echo $search_args;?>','Amount Transfer',750,420,'Transfer');">Transfer</a>
+            </td>
+      <?php
+            }
+            ?>
+            
+     <td></td>
+        </tr> 
+        <?php
+          }// end of for loop
+            } else {
+                ?>
+                <tr class="bg-row">
+                <td colspan="8" align="center" height="50">No records found</td>
+                </tr>
+                <?php
+                }
+                ?>  
+        
+    <tr class="headings">
+         <td colspan=100%>
+         <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html';?>
+         </td>
+     </tr>
+    </table>
+    </form>
+    <div class="clear clearfix"></div><!--contentarea ends here-->  
+  </div>  
+  </div>
+
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>

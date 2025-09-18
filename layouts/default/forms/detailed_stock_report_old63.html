@@ -1,0 +1,298 @@
+<?php // echo "<pre>"; print_r($income_report); ?>
+
+<div id="print_content">
+    <?php 
+    $k=0;
+    $amountSum = array();
+    $data_count = count($income_report);
+    $per_td =  (int)$data_count/4;
+    $per_page = (int)$data_count/140;
+    $rTtl = array();
+    $ttl_count = 0;
+    ?>
+    <table class="frm-tbl"  width="1027px" border="1" align="center" cellpadding="0" cellspacing="0">
+
+<br>
+<br>
+<br>
+<br>
+
+
+        <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <!--<td colspan="11"  style="padding-bottom: 3px;" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix);  ?>-->
+            <td colspan="11"  style="padding-bottom: 8px;" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title)." - Date:".date("d-m-Y h:i:sa") : strtoupper($page_title . " - ".$heading_suffix)." - Date:".date("d-m-Y h:i:sa");  ?>
+                <span class="pdf-pag-no"> <?php echo "Page.No: 1"; ?> </span>                
+            </td>
+        </tr>
+        <?php for($r=0; $r<=$per_page; $r++){ ?>         
+        <table>
+            <?php if($r != 0 ){ ?>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+            <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+                <td colspan="11" class="name-head" style="padding-bottom: 10px;" >
+                    <?php echo ($heading_suffix=="") ? strtoupper($page_title)." - Date:".date("d-m-Y h:i:sa") : strtoupper($page_title . " - ".$heading_suffix)." - Date:".date("d-m-Y h:i:sa"); ?>
+                    <span class="pdf-pag-no"><?php echo "Page.No:"; echo $r+1; ?> </span>
+                </td>
+            </tr>
+            <?php } ?>
+            <tr>
+                <td width="10%">
+                    <?php 
+
+                    $income_report[] = array('loan_date'=> 'Total','loan_id' =>  $data_count,'total_amount' =>  $total_amount);
+                    $amountPSum = 0;
+                    for($i=0;$i<4;$i++)
+                    { ?>
+                <td width="">
+                    <table class="frm-tbl" border="1" width="253px" align="center" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <!--<th>Lon Date</th>-->
+                            <th>ID</th>
+                            <th>Amount</th>
+                            <th>Weight</th>
+                        </tr>        
+
+                        <?php $t = 0; $total_amount = 0; 
+                        if($per_page <= 40){
+                        $y = $per_page;
+                        }else{
+                        $y = 40;
+                        }
+                        for($j=0;$j<= 35;$j++) {
+                        if(($income_report[$k]['loan_date']!='Total') && ($income_report[$k]['loan_date'] != '')) { 
+                        $t++;
+                        ?>
+
+
+                        <tr class="<?php echo (($j% 2) == 0) ? 'bg' : 'bg1'; ?>"> 
+                            <!--<td align="left" class="disp-light" width="30%"><?php echo htmlentities($income_report[$k]['loan_date'],ENT_QUOTES); ?></td>-->
+                            <td align="left" class="disp-light" width="40%" style="font-size: 15px;">
+                                <?php echo htmlentities(stripslashes($income_report[$k]['loan_id']), ENT_QUOTES); ?>
+                            </td>    
+                            <td align="left" class="disp-light" width="30%" style="text-align: right; font-size: 15px;">
+                                <?php
+
+                                $total_amount += $income_report[$k]['loan_amount'];
+                                /*if($income_report[$k]['loan_date']=='Total') echo convertToCurrency($total_amount,false);
+
+                                elseif($income_report[$k]['loan_amount']=='') echo "-";
+                                else */       
+                                /* echo convertToCurrency($income_report[$k]['loan_amount'],false); */
+                                echo $income_report[$k]['loan_amount'];
+                                ?>
+                            </td> 
+                            <td align="left" class="disp-light" width="30%" style="font-size: 15px;">
+                                <?php echo htmlentities(stripslashes($income_report[$k]['weight']), ENT_QUOTES); ?>
+                            </td> 
+                            
+                        </tr>
+                        
+                        
+                        
+                        <?php
+                        } else {
+                        ?>
+                        <tr class="<?php echo (($j% 2) == 0) ? 'bg' : 'bg1'; ?>">
+                            <td align="left" class="disp-light" width="30%">-</td>
+                            <td align="left" class="disp-light" width="40%"><b style="font-size:15px">-</b></td>
+                            <td align="left" class="disp-light" width="30%"><b style="font-size:15px">-</b></td>
+                            <!--<td align="left" class="disp-light" width="30%"><b style="font-size:15px">-</b></td>-->
+                        </tr>
+                        <?php
+                        }
+                        $k++; 
+                        }	
+                        $ttl_count = $ttl_count + $t;
+                        ?>	
+                        <tr class="<?php echo (($j% 2) == 0) ? 'bg' : 'bg1'; ?>"> 
+                            <!--<td align="left" class="disp-light" width="30%">Total</td>-->
+                            <td align="left" class="disp-light"  width="40%"><b style="font-size:16px"> Total(<?php echo $t; ?>)</b></td>
+                            <td align="left" class="disp-light" width="30%" style="text-align: right;" >
+				   <b style="font-size: 16px;">
+                                <?php
+                                if($i == 0){
+                                $t_amount1 = $total_amount;
+                                $rTtl[0] =$rTtl[0] + $t_amount1; 
+                                }elseif($i == 1){
+                                $t_amount2 = $total_amount;
+                                $rTtl[1] =$rTtl[1] + $t_amount2; 
+                                }elseif($i == 2){
+                                $t_amount3 = $total_amount;
+                                $rTtl[2] =$rTtl[2] + $t_amount3; 
+                                }else{
+                                $t_amount4 = $total_amount;
+                                $rTtl[3] =$rTtl[3] + $t_amount4; 
+                                }
+                                $amountPSum = $amountPSum + $total_amount;
+                                /*echo convertToCurrency($total_amount,false);*/
+                                echo $total_amount;
+                                ?>
+				</b>
+                            </td>
+                            <td align="left" class="disp-light" width="30%" style="font-size: 15px;">
+                                &nbsp;
+                            </td> 
+                        </tr>
+                        
+                        
+                        <!--////////-->
+                          <tr>
+                        <?php  if($r == (int)$per_page){
+                        if($i!=3){?>
+                        <td width="40%">&nbsp;</td>
+                         <td width="30%">&nbsp;</td>
+                         <td width="30%">&nbsp;</td>
+                        <?php }else{ ?>                        
+                        
+                         
+                              <td align="left" class="" width="40%"><b  style="font-size: 13px;"> G.Total(<?php echo $ttl_count; ?>)</b></td>                              
+                            
+                              <?php $grand_ttl = 0; for($z=0; $z<=3; $z++){  $grand_ttl = $grand_ttl + $rTtl[$z]; if( $z==3 ){  ?>
+                             <td width="30%">
+                                 <!--<table class="frm-tbl" border="1" width="253px"  align="" cellpadding="0" cellspacing="0">-->
+                                     <!--<tr class="bg">-->                     
+<!--                                       <td align="left" class="" width="30%">Grand Total(<?php echo $ttl_count; ?>)</td>-->
+                                        <!--<td align="left" class="disp-light" width="30%"><?php  echo convertToCurrency($grand_ttl); ?></td>-->                      
+                                        <!--<td align="left" class="" width="30%">-->
+                                           <b style="font-size: 13px" > <?php  echo $grand_ttl; ?> </b>
+                                        <!--</td>-->                      
+                                     <!--</tr>-->
+                                 <!--</table>-->
+                             </td>  
+                             <td align="left" class="disp-light" width="30%" style="font-size: 15px;">
+                                <?php echo htmlentities(stripslashes($income_report[$k]['weight']), ENT_QUOTES); ?>
+                            </td> 
+                             <?php  }} } ?>
+                         </tr>
+                        <?php }else{ ?>
+                        <tr>
+                            <!-- <td width="" height="0" class="hide_td" style="">&nbsp;</td> -->
+                            <!-- <td width="" height="0" class="hide_td" style="">&nbsp;</td> -->
+                            <!-- <td width="" height="0" class="hide_td" style="">&nbsp;</td> -->
+                         
+                        </tr>
+                        <?php } ?>
+                        
+                        <!--//////////-->  
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+
+                    </table>
+                </td>
+                <?php }
+                $amountSum[$r] = $amountPSum;
+                ?>
+                </td>
+            </tr>
+<br><br>        </table>
+        <?php } ?>
+
+        <tr>
+            <td colspan="11">
+
+            </td>
+        </tr>
+    </table>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<!--    <table class=""  width="1027px"  align="" style="margin-left: 6px;" cellpadding="0" cellspacing="0">
+     <tr>
+         <td width="25%"></td>
+         <td width="25%"></td>
+         <td width="25%"></td>
+          <?php $grand_ttl = 0; for($z=0; $z<=3; $z++){  $grand_ttl = $grand_ttl + $rTtl[$z]; if( $z==3 ){  ?>
+         <td width="10%">
+             <table class="frm-tbl" border="1" width="253px"  align="" cellpadding="0" cellspacing="0">
+                 <tr class="bg">                     
+                   <td align="left" class="disp-light" width="30%">Grand Total(<?php echo $ttl_count; ?>)</td>
+                    <td align="left" class="disp-light" width="30%"><?php  echo convertToCurrency($grand_ttl); ?></td>                      
+                    <td align="left" class="disp-light" width="30%"><?php  echo $grand_ttl; ?></td>                      
+                 </tr>
+             </table>
+         </td>  
+         <?php  } } ?>
+     </tr>
+    </table>-->
+    
+<!--    <table class="frm-tbl" border="1" width="253px" align="center" cellpadding="0" cellspacing="0">
+        <tr class="bg">
+            <?php for($z=0; $z<=4; $z++){ ?>
+            <td align="left" class="disp-light" width="30%">Grand Total</td>
+            <td align="left" class="disp-light" width="30%"><?php // echo $data_count; ?></td>
+            			<td align="left" class="disp-light" width="30%"><?php //echo $gradTotal; ?></td>
+            <?php } ?>
+        </tr>
+    </table>-->
+    </br>
+    <!-- <table>
+            <tr>
+                <th>Page No.</th>
+                <th>Amount</th>
+            </tr>      
+                <?php for($z=0; $z <= $r-1; $z++){ ?>
+                <tr  class="<?php echo (($z% 2) == 0) ? 'bg' : 'bg1'; ?>">
+                    <td align="left" class="disp-light" width="50%">
+                        <?php echo $z+1;  ?>
+                    </td>
+                    <td align="left" class="disp-light" width="50%">
+                        <?php   echo convertToCurrency($amountSum[$z]); ?>
+                    </td>
+                </tr>
+                <?php } ?>
+                <tr>
+                    <td>
+                        <b>  Total: </b>
+                    </td>
+                    <td>
+                        <b> <?php  echo convertToCurrency(array_sum($amountSum)); ?> </b>
+                    </td>
+                </tr>
+            </table>-->
+</div>           
+<iframe id="print_frame" name="print_frame" title="<?php echo ($heading_suffix=="") ? $page_title : ($page_title . " - ".$heading_suffix); ?>"  width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>           
+
+<style>
+    .frm-tbl .hide_td {
+     padding: 0px !important; 
+     background-color: none !important;  
+     color: none !important; 
+     font-size: 0px !important;  
+     font-size: 0px !important;  
+     font-weight:none !important;  
+     padding-bottom: 0px !important;  
+     padding-left: 0px !important;  
+     padding-right: 0; 
+     padding-top: 0px !important;  
+     vertical-align: none  !important;  
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+

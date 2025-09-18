@@ -1,0 +1,478 @@
+<?php
+$slab_interest_details = PayInterest::slabInterestDetail($customer_data['pledge_id']);
+$paid_interest_details = PayInterest::paidInterestDetail($customer_data['pledge_id']);
+
+if($type == "edit"){
+	$pay_interest_details = PayInterest::getInterestDetailsByPayid($customer_data['pledge_id'],$customer_data['pi_id']);
+    //$pay_interest_details = PayInterest::getInterestDetails($customer_data['pledge_id'],$customer_data['wavier_days'],$customer_data['pi_id'],$customer_data['paid_on']);
+}else
+{
+    $pay_interest_details = PayInterest::getInterestDetails($customer_data['pledge_id'],0,'',date("Y-m-d"),$type,$module_name);
+}
+  //p_arr($pay_interest_details);
+
+$pledge_id = $pay_interest_details['pledge_id'];
+$pay_id = $uval['pi_id'];
+
+if($customer_data['scheme_type']=='flat'){
+    $principle_unit_payment = $pay_interest_details['principle_payment'];
+    $principle_to_pay = ($pay_interest_details['to_pay_principle']>$principle_unit_payment) ? $pay_interest_details['to_pay_principle'] : $principle_unit_payment;
+    $principle_total_till_today = $pay_interest_details['total_pay_till_today'];
+    $principle_total_paid = $pay_interest_details['total_paid_principle'];
+    $principle_to_add = ($type == "edit") ? $customer_data['principle_amount'] : $principle_to_pay;
+    $principle_loan_amount =  $customer_data['loan_amount'];
+    $principle_remain_amount =  $customer_data['loan_amount'] - floatval($principle_total_paid);
+
+}
+//echo $type;
+?>
+
+<div id="contentarea">
+        <form id="pay_interest_form" name="pay_interest_form" method="post" style="margin: 0px;">
+        <input type="hidden" name="pval[id]" id="pt_id" value="<?php echo htmlentities(stripslashes($customer_data['pi_id']), ENT_QUOTES); ?>">
+        <div id="pop-container">
+         <div class="pop-fields">
+            <!-- Pay Interest Other Details -->
+            <div class="bttns">
+                <ul>
+                    <li><a href="javascript:" onclick="drop_div('loan-details')">Loan details</a></li>
+                    <li><a href="javascript:" onclick="drop_div('pay-interest-details')">Paid Interest Details</a></li>
+                    <li><a href="javascript:" onclick="drop_div('slab-interest-details')">Slab Wise Interest Details</a></li>
+                    <li><a href="javascript:" onclick="view_history('<?php echo $customer_data['customer_id']; ?>')">History</a></li>
+                </ul>
+               <div class="clear clearfix"></div>
+
+
+              </div>
+
+            <div class="clear clearfix"></div>
+
+        <div id="loan-details" class="display_view">
+            <div class="mid-heading">
+            <p>Loan Details</p>
+
+            </div>
+            <div class="cmt-area">
+            <!-- Loan Details -->
+
+            <table class="list-tbl" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr class="headings">
+            <td align=center>Loan ID</td>
+            <td align=left>Loan Date</td>
+            <td align=left>Customer</td>
+            <td align=left>Scheme Name</td>
+            <td align=left>Scheme Type</td>
+            <td align=right>Loan Amount</td>
+            <td align=right>Last Pay Amount</td>
+            </tr>
+            <tr>
+            <td align=center><?php echo htmlentities(stripslashes($customer_data['loan_id']), ENT_QUOTES); ?></td>
+            <td align=left><?php echo htmlentities(stripslashes($customer_data['loan_date']), ENT_QUOTES); ?></td>
+            <td align=left><?php echo $customer_data['customer_name']; ?></td>
+            <td align=left><?php echo $customer_data['scheme_name']; ?></td>
+            <td align=left><?php echo $customer_data['scheme_type']; ?></td>
+            <td align=right><?php echo convertToCurrency(htmlentities(stripslashes($customer_data['loan_amount']), ENT_QUOTES)); ?></td>
+            <td align=right><?php echo convertToCurrency(htmlentities(stripslashes($pay_interest_details['last_paid_amount']), ENT_QUOTES)); ?></td>
+            </tr>
+            </table>
+            </div>
+        </div>
+    <div class="clear clearfix"></div>
+
+        <div class="clear clearfix"></div>
+
+<?php include ADMIN_LAYOUT_PATH . "elements/pay_interest_details.html";   ?>
+
+
+        <!-- Pay interest Form -->
+        <div class="clear clearfix"></div>
+
+        <div class="mid-heading">
+            <p>Pay Interest Details</p>
+
+            </div>
+            <div class="cmt-area">
+
+            <table width="99%" border="0">
+
+               <tr id="disp_time_status" <?php echo ($pay_interest_details['time_status']!='Period End') ? "style='display:none;'" : ""; ?>>
+                <td colspan=4 align=center>
+                    <font color=red size="+2"><b><?php echo 'Period End'; ?></b></font>
+                </td>
+              </tr>
+           <tr>
+            <td width="27%" id="label_loan_id">
+                Loan Id
+            </td>
+            <td width="24%">
+                <strong>
+                    <input type="hidden" name="pval[loan_id]" id="loan_id" value="<?php echo htmlentities(stripslashes($customer_data['pledge_id']), ENT_QUOTES); ?>">
+                    <?php echo htmlentities(stripslashes($customer_data['loan_id']), ENT_QUOTES); ?>
+                </strong>
+            </td>
+
+
+            <td width="22%">
+                Additional Charge
+            </td>
+            <td width="27%">
+                <input type="hidden" id="princ_amt" name="princ_amt" value="<?php echo unitDisplay($principle_to_add,false); ?>">
+                <strong>RS.</strong>
+                <input id="add_amt" class="calc currency" name="pval[additional_charge]" maxlength="40" value="<?php echo ($customer_data['additional_charge']!='' && $type=='edit') ? number_format(stripslashes($customer_data['additional_charge']), 2,'.','') : '0.00'; ?>" type="text" class="pop-textfield" onchange="setTotalAmount()" onfocus="remove_red('location');"/>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td>Loan Date</td>
+            <td><strong>
+                <input type="hidden" name="pval[branch_id]" id="branch_id" value="<?php echo htmlentities(stripslashes($customer_data['pay_branch']), ENT_QUOTES); ?>">
+                <?php echo htmlentities(stripslashes($customer_data['loan_date']), ENT_QUOTES); ?>
+            </strong></td>
+            <td>Due Date</td>
+            <td> <strong>
+                <?php echo $pay_interest_details['due_date']; ?>
+            </strong></td>
+          </tr>
+
+          <?php
+          if($pay_interest_details['penalty_status'] == 'Over Due' ){
+          ?>
+
+<!-
+********************************************************************
+        Commented the overdue intial month calculation
+        on 06-Nov-2011  To activate the initial month Calculation remove the below commented code
+        If you remove this comment you have to remove the comment in following
+                payinterest.class.php method getInterestDetails, forms/payinterest.html,
+                elements/loan_interest_details.html and
+                remove JS script comment form the function_common_module.js pay_wavier_interest();
+**********************************************************************
+-->
+
+
+
+          <!--<tr>
+            <td>NIA (<span id="normal_interest_days_disp"><?php echo $pay_interest_details['normal_interest_days']; ?></span> Days) </td>
+            <td><strong>
+                <span id="normal_interest_amount_disp"><?php echo convertToCurrency($pay_interest_details['normal_interest_amount']); ?></span>
+                ( <span id="normal_interest_rate_disp">
+                <?php echo $pay_interest_details['normal_interest_rate']; ?> %
+                  </span>
+                )
+            </strong></td>
+            <td>PIA (<span id="penalty_interest_days_disp"><?php echo $pay_interest_details['penalty_interest_days']; ?></span> Days) </td>
+            <td><strong>
+                <span id="penalty_interest_amount_disp"><?php echo convertToCurrency($pay_interest_details['penalty_interest_amount']); ?></span>
+                (<span id="penalty_interest_rate_disp">
+                <?php echo $pay_interest_details['penalty_interest_rate']; ?> %
+                </span>
+                )
+            </strong></td>
+          </tr>
+          <tr><td colspan=100%>
+            <span id="mand_note"><b>NIA</b> - Normal Interest Amount</span> &nbsp;&nbsp;&nbsp;
+            <span id="mand_note"><b>PIA</b> - Penalty Interest Amount</span>
+
+          </td></tr>-->
+          <?php
+          }
+          ?>
+
+          <tr>
+
+            <td id="label_interest_days">Interest Days</td>
+            <td> <strong>
+                <?php
+                if($type != 'edit'){
+                    //$no_of_days = $pay_interest_details['no_of_days'];
+                    $no_of_days = $customer_data['total_days'];
+                }
+                else{
+                    $no_of_days = $customer_data['interest_days'];
+                      }
+                ?>
+                <span id="disp_interest_days">
+                <?php
+                echo $no_of_days;
+                ?>
+                </span>
+                <input id="no_of_days" name="pval[interest_days]" maxlength="40" type="hidden" class="pop-textfield" value="<?php echo $no_of_days; ?>" />
+            </strong></td>
+
+            <td>
+                Interest Rate
+            </td>
+            <td>
+            <strong>
+
+            <?php
+            if($type=='edit'){
+                $interest =  $customer_data['interest_amount'];
+                $interest_rate =  $customer_data['interest_rate'];
+            }else{
+                $interest =  $pay_interest_details['interest'];
+                $interest_rate =  $pay_interest_details['interest_rate'];
+            }
+            ?>
+            <span id="disp_interest_rate">
+            <?php
+            echo $interest_rate." % ";
+            ?>
+            </span>
+            </span>
+            <input id="rate_of_interest" name="pval[interest_rate]" maxlength="40" type="hidden" class="pop-textfield" value="<?php echo $interest_rate; ?>" />
+            </strong>
+            </td>
+          </tr>
+           <tr>
+            <td id="label_interest_amount"> Interest Amount  </td>
+            <td><strong>
+            <span id="disp_interest_amount">
+            <?php
+            echo convertToCurrency($interest);
+            ?>
+            </span>
+            </strong>
+            <input class="calc" id="interest_amt" name="pval[interest_amount]" maxlength="40" type="hidden" class="pop-textfield" value="<?php echo unitDisplay($interest,false); ?>" />
+            </td>
+
+            <td id="label_total_paid_amount">Total Amount To Pay</td>
+            <td>
+            <strong>
+                <font color="#A33D98">
+                <?php $tot_amount = ($interest+$principle_to_add)+$customer_data['additional_charge'];   ?>
+               <input type="hidden" id="total_amt" name="pval[total_paid_amount]" value="<?php echo unitDisplay($tot_amount,false); ?>">
+                <span id="disp_total_amount"><?php echo convertToCurrency($tot_amount); ?></span></font>
+            </strong>
+            </td>
+        </tr>
+        <tr>
+
+            <td id="label_paid_on">Date of Interest Pay</td>
+            <?php
+            if($type != "edit"){
+            ?>
+            <td colspan=2>
+            <strong>
+               <input class="calendar pop-textfield" type="text" readonly id="paid_on" name="pval[paid_on]" value="<?php echo ($uval['pi_id']=='') ? date("d-m-Y") : $customer_data['paid_on']; ?>" onfocus="remove_red('paid_on');"/>
+                &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('paid_on', 'calender_trigger', '%d-%m-%Y' )" onclick="jQuery('#paid_on').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+                &nbsp; <a href="javascript:" onclick="remove_red('paid_on');get_interest_details('<?php echo $pledge_id; ?>','<?php echo $pay_id; ?>','<?php echo $module_name; ?>')" title="Click to reset loan details for the selected new loan date"><img src="images/refresh.png" border=0></a>
+
+               <!--<a class="flexi_btn" href="javascript:" onclick="get_interest_details('<?php echo $pledge_id; ?>','<?php echo $pay_id; ?>')">Reset</a>-->
+                </strong>
+            </td>
+            <?php
+            }else{
+            ?>
+            <td>
+            <strong>
+
+               <?php echo date("d-M-Y",strtotime($customer_data['paid_on'])); ?>
+               <input class="pop-textfield" type="hidden" id="paid_on" name="pval[paid_on]" value="<?php echo $customer_data['paid_on']; ?>">
+                </strong>
+            </td>
+            <td></td>
+            <?php
+            }
+            ?>
+
+
+        <td>
+            <?php
+
+        if($_SESSION['session_usertype'] <= 3 && $type != "edit"){
+            ?>
+
+        <a href="javascript:" onclick="drop_div('wavier_detail');" class="button">Wavier</a>
+        <?php
+        }
+        ?>
+
+        </td></tr>
+        </table>
+        </div>
+
+        <div class="clear clearfix"></div>
+
+
+    <?php
+
+    if($_SESSION['session_usertype'] <= 3){
+    ?>
+
+
+<!-- Wavier Form Detail -->
+<div id="wavier_detail" class="display_view">
+       <div class="mid-heading">
+            <p>Enter the wavier Details</p>
+
+        </div>
+        <div class="cmt-area">
+
+        <table width="99%" border="0">
+          <tr>
+            <td width="41%" id="label_wavier_days" height="49">Wavier (No of Days) </td>
+            <td width="9%"></td>
+             <td width="23%">
+                <input id="default_wavier_days" name="default_wavier_days" maxlength="40" type="hidden" class="pop-textfield number" value="<?php echo ($type=='edit') ?  $customer_data['wavier_days'] : $pay_interest_details['default_wavier_days']; ?>" />
+                <input id="default_wavier_amount" name="default_wavier_amount" maxlength="40" type="hidden" class="pop-textfield" value="<?php echo $pay_interest_details['default_wavier_amount']; ?>" />
+                <input id="total_days_of_year" name="total_days_of_year" maxlength="40" type="hidden" class="pop-textfield number" value="<?php echo $pay_interest_details['total_days_of_year']; ?>" />
+                <input id="loan_amount" name="loan_amount" maxlength="40" type="hidden" class="pop-textfield number" value="<?php echo $customer_data['loan_amount']; ?>"  />
+
+                <input id="wavier_days" name="pval[wavier_days]" maxlength="40" type="text" class="pop-textfield number" value="<?php echo ($type=='edit') ?  $customer_data['wavier_days'] : $pay_interest_details['default_wavier_days']; ?>" onchange="reset_pay_interest(this.value,'<?php echo $customer_data['pledge_id']; ?>', '<?php echo $customer_data['pi_id']; ?>','<?php echo $type; ?>','<?php echo $module_name; ?>')" onkeydown="if(event.keyCode == 13){reset_pay_interest(this.value,'<?php echo $customer_data['pledge_id']; ?>', '<?php echo $customer_data['pi_id']; ?>','<?php echo $type; ?>','<?php echo $module_name; ?>');return false;}" />
+
+             </td>
+             <td width="27%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>Wavier Amount</td>
+            <td>&nbsp;</td>
+             <td>
+                <div id="disp_wavier_amount">Rs. 0.00 </div>
+                <input id="wavier_amount" name="pval[wavier_amount]" maxlength="40" type="hidden" class="pop-textfield" value="<?php echo ($type=='edit') ?  $customer_data['wavier_amount'] : $pay_interest_details['default_wavier_amount']; ?>" />
+             </td>
+             <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>Wavier Reason</td>
+            <td>&nbsp;</td>
+             <td>
+
+            <input id="default_wavier_reason" name="default_wavier_reason" maxlength="40" type="hidden" class="pop-textfield" value="<?php echo ($type=='edit') ?  $customer_data['wavier_reason'] : $pay_interest_details['default_wavier_reason']; ?>" />
+            <textarea id="wavier_reason" cols=23 name="pval[wavier_reason]" class="pop-textarea"><?php echo ($type=='edit') ?  $customer_data['wavier_reason'] : $pay_interest_details['default_wavier_reason']; ?></textarea>
+
+             </td>
+             <td>&nbsp;</td>
+          </tr>
+        </table>
+        </div>
+</div>
+        <div class="clear clearfix"></div>
+    <?php
+    }
+    ?>
+
+
+        <div class="clear clearfix"></div>
+
+
+        <?php
+
+        /*********  Principle Payment Form  *************/
+
+
+        if($customer_data['scheme_type']=='flat'){
+        ?>
+          <div class="mid-heading">
+            <p id="principle_closed">Principle Amount Payment Details</p>
+
+        </div>
+        <div class="cmt-area">
+        <?php
+        if(floatval($principle_remain_amount) <= 0) {
+        ?>
+        <p align=center> <font color=red size="+1"> <b>All Principle Amount Paid, Customer can Redeem Their Products </b> </font> </p>
+        <?php
+        }
+        ?>
+        <table width="99%" border="0">
+          <tr height="49" id="principle_closed">
+            <td width="27%">Total Amount to Pay </td>
+            <td width="24%"><?php echo convertToCurrency($principle_loan_amount); ?></td>
+            <td width="22%">
+               Total Paid Amount
+            </td>
+            <td width="27%">
+                <?php echo convertToCurrency($principle_total_paid); ?>
+
+            </td>
+          </tr>
+          <tr id="principle_closed">
+            <td> </td>
+            <td>
+            <?php //echo convertToCurrency($principle_unit_payment); ?>
+
+            </td>
+             <td>
+                 Remaining Amount
+             </td>
+             <td>
+                <?php echo convertToCurrency($principle_remain_amount); ?>
+                <input type="hidden" id="principle_remain" name="principle_remain" value="<?php echo unitDisplay($principle_remain_amount,false); ?>">
+             </td>
+          </tr>
+          <tr id="principle_amount">
+            <td> <!--Amount for a Month-->  </td>
+            <td>
+            <?php //echo convertToCurrency($principle_unit_payment); ?>
+
+            </td>
+             <td valign=top style="padding-right:0px;">
+                 Principle Amount to Pay
+             </td>
+             <td valign=top><?php //echo unitDisplay($principle_to_add,false); ?>
+                <input type="text" class="calc currency" id="principle_amt" name="pval[principle_amount]" value="100" onfocus="remove_red('principle_amount')" onchange="setTotalAmount()">
+                Rs.
+             </td>
+          </tr>
+          <tr><td colspan=4 align=right><span class="disp_calc">*Minimum principle amount is Rs.100.00</span></td></tr>
+          <tr><td colspan=4><?php //echo ($principle_to_add>0) ? "checked" : ""; ?>
+            <input type="checkbox"  name="pay_principle" id="pay_principle" value="1" onclick="setTotalAmount();//setPrinceple(this.checked)" />
+            Include Pay Principle Amount
+          </td></tr>
+        </table>
+        <?php
+        }
+        ?>
+
+<div class="clear clearfix"></div>
+<input name="pval[branch_id]" id="branch_id" type="hidden"  value = "<?php echo $customer_data['pledged_branch'];?>">
+    <input name="pay_id" id="pay_id" value="<?php echo $pay_id; ?>" type=hidden >
+    <input name="acttype" id="acttype" value="<?php echo ($pay_id=='') ? '' : 'edit'; ?>" type=hidden >
+
+    </div>
+        <div class="clear clearfix"></div>
+    </div>
+
+</form>
+</div>
+
+<script>
+
+//Dialog JS Action Variables Setup
+formAct = "";
+formSearch = "<?php echo $search_args; ?>";
+<?php
+if($type=='edit'){
+?>
+formParam = "type=update&<?php echo $search_args; ?>";
+<?php
+}else{
+?>
+formParam = "type=save&<?php echo $search_args; ?>";
+<?php } ?>
+formId = "pay_interest_form";
+formPage = "pay_interest";
+
+jQuery(document).ready(function() {
+     $('#add_amt').focus();
+    setNumberKeyEvent();
+    enable_save_action();
+    $("input").focus(function(event){ remove_red(this.id); });
+    set_date_picker();
+    collapse_all_view();
+    setTotalAmount();
+});
+
+
+function presetNewAmount(){
+
+//    cashin_display('<?php echo $module_name; ?>');
+//    cashout_display('<?php echo $module_name; ?>');
+
+setPrinceple(jQuery("#pay_principle").attr("checked"));
+
+
+}
+</script>

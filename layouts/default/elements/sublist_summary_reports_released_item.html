@@ -1,0 +1,62 @@
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">  
+
+ 
+
+     
+     <tr class="headings">
+      <!--<td align="center" width="4%">PID</td>-->
+      <td width="10%"><strong>Date</strong></td>
+      <td width="15%" align="left" valign="middle"><strong>Branch</strong></td>
+      <td width="10%" align="left" valign="middle"><strong>Loan No</strong></td>
+      <td width="25%" align="left" valign="middle"><strong>Details</strong></td>
+      <td width="15%"  align="right"><strong>Total Weight</strong></td>
+      <td width="10%"  align="right"><strong>Total Items</strong></td>
+      <td width="15%"  align="right"><strong>Total Amount</strong></td>  
+     </tr>
+<?php
+    if(count($data) > 0) {
+    
+    
+    //print_r($data);
+    
+        for($i=0;$i<count($data);$i++){ 
+        
+            //$amount_in = floatval($data[$i]['interest_amount_in']) + floatval($data[$i]['partial_amount_in']) + floatval($data[$i]['redeam_amount_in']);
+            //$amount_out = floatval($data[$i]['loan_amount_out']) + floatval($data[$i]['excess_amount_out']);
+            
+            $weight_in = floatval($data[$i]['released_weight']);
+            
+            
+            $weight_in_gs =  intval($weight_in);
+            $weight_in_mgs =  intval(floatval($weight_in - intval($weight_in)) * 1000);
+            
+        
+?>
+    
+<tr class="row0" id="<?php echo $data[$i]['report_date']; ?>" height="40">
+
+    <td align="left"><?php echo htmlentities(stripslashes($data[$i]['report_date']), ENT_QUOTES); ?> </td>
+    <td align="left"><?php echo htmlentities(stripslashes($data[$i]['branch_name']), ENT_QUOTES); ?></td>
+    <td align="left"><?php echo htmlentities(stripslashes($data[$i]['loan_no']), ENT_QUOTES); ?></td>
+    <td align="left"><?php echo htmlentities(stripslashes($data[$i]['released_detail']), ENT_QUOTES); ?></td>
+    <td align="right"> <?php echo $weight_in_gs. ' G '. $weight_in_mgs . ' Mg'; ?> </td>
+    <td align="right"> <?php echo $data[$i]['released_items']; ?> </td>
+    <td align="right"> <?php echo convertToCurrency($data[$i]['released_amount']); ?> </td>
+
+</tr>  
+       
+<?php
+        }
+
+    } else {
+
+?>
+        <tr class="bg-row">
+        <td colspan="14" align="center" height="50">No records found</td>
+        </tr>
+<?php
+    }
+?>
+
+   </table>
+     

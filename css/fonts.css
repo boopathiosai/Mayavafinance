@@ -1,0 +1,54 @@
+@font-face {
+    font-family: 'HelveticaNeueCondensed';
+    src: url('../font/hlc_____-webfont.eot');
+    src: url('../font/hlc_____-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/hlc_____-webfont.woff') format('woff'),
+         url('../font/hlc_____-webfont.ttf') format('truetype'),
+         url('../font/hlc_____-webfont.svg#HelveticaNeueCondensed') format('svg');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'myriad_applemedium';
+    src: url('../font/myriadam-webfont.eot');
+    src: url('../font/myriadam-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/myriadam-webfont.woff') format('woff'),
+         url('../font/myriadam-webfont.ttf') format('truetype'),
+         url('../font/myriadam-webfont.svg#myriad_applemedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'bebas';
+    src: url('../font/BEBAS___-webfont.eot');
+    src: url('../font/BEBAS___-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/BEBAS___-webfont.woff') format('woff'),
+         url('../font/BEBAS___-webfont.ttf') format('truetype'),
+         url('../font/BEBAS___-webfont.svg#bebas') format('svg');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+h1, h2, h3, h4, h5, h6, {
+	font-family: 'HelveticaNeueCondensed';
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+}
+h1 {font-size: 30px;font-family:'HelveticaNeueCondensed';font-weight: bold;}
+h2 {
+    font-family:'HelveticaNeueCondensed';
+}
+h3 {
+	font-size: 16px;
+	font-family:'HelveticaNeueCondensed';
+	font-weight: normal;
+}
+
+h4 {font-size: 20px;}
+h6 {font-size: 14px;}

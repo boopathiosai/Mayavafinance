@@ -1,0 +1,77 @@
+<div id="print_content">
+<?php  
+    $i=1;
+    
+
+    
+
+         ?>          
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="10" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title) : strtoupper($page_title . " - ".$heading_suffix); ?></td>
+          </tr>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+      <td width="10%"><strong>Date</strong></td>
+      <td width="20%" align="left" valign="middle"><strong>Branch</strong></td>
+	  <td width="20%"  align="right"><strong>Total Paid(<?php echo CURRENCY_SYMBOL;?>)</strong></td>	  
+      <td width="20%"  align="left"><strong>Interest Paid(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="20%" align="left"><strong>Principle Paid(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="10%"  align="left"><strong>Other Charges(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+	  <td width="10%"  align="left"><strong>Wavier Amount(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+	  <td width="10%"  align="left"><strong>Wavier Days</strong></td>
+	  <td width="10%"  align="left"><strong>Cash Opening(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+ 	  <td width="10%"  align="left"><strong>Cash Closing(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+           
+           </tr>
+            
+          <?php
+          $j=1;
+          $i=$i+1;
+          if(count($data) > 0) {
+		  
+          foreach($data as $rows)
+          {
+				
+             ?>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+
+      <td align="left"><?php echo htmlentities(stripslashes($rows['report_date']), ENT_QUOTES); ?> </td>
+      <td align="left"><?php echo htmlentities(stripslashes($rows['branch_name']), ENT_QUOTES); ?></td>
+	  <td align="right"> <?php echo $rows['total_paid']; ?> </td>
+       <td align="right"><?php echo $rows['interest_paid']; ?></td>
+       <td align="right"><?php echo $rows['principle_paid']; ?></td>
+       <td align="right"> <?php echo $rows['other_charges']; ?> </td>
+	   <td align="right"> <?php echo $rows['wavier_amount']; ?> </td>
+	   <td align="right"> <?php echo $rows['wavier_days']; ?> </td>
+	   <td align="right"> <?php echo $rows['cash_opening']; ?> </td>
+	   <td align="right"> <?php echo $rows['cash_closing']; ?> </td>
+       
+
+         </tr> 
+         <?php
+            $i++; 
+            $j++;
+          }
+          }else{
+          ?>
+          <tr><td colspan=10 align="center">No Records Found</td></tr>
+          <?php
+          }
+?>
+       </table>
+       </div>           
+<iframe id="print_frame" name="print_frame"  title="<?php echo ($heading_suffix=="") ? ($page_title) : ($page_title . " - ".$heading_suffix); ?>" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>           
+            
+           
+
+   
+
+
+
+
+
+
+
+
+
+

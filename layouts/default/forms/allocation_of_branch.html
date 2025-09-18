@@ -1,0 +1,129 @@
+<?php  
+    session_start();
+if($customer_data['status'] == "0") { 
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+   if($customer_data['id']!='')
+   {
+        $_SESSION['customer_id'] = $customer_data['id'];
+   }
+   else
+   {
+        $_SESSION['customer_id'] = "temp";
+   }
+  
+    ?>
+
+<div class="clear clearfix"></div>
+     <div id="contentarea">
+     <form name="allocation_of_branch" id="allocation_of_branch" method="post" style="margin: 0px;">
+      <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+ 
+      <tr>
+        <td width="100%"><table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          <tr>
+          <td>
+            Branch From  
+          </td>
+          <td>
+          <?php $data=Allocationofbranch::Get_branch_name($uval['id']);?>
+          <input type="hidden" name="pval[transfer_branch_id]"  id="transfer_branch_id1"  value="<?php echo $data[0]['id'];?>">
+          <?php $data=Allocationofbranch::Shortage_branch_name($uval['id']);?> 
+          <input type="hidden" name="pval[request_branch_id]"  id="request_branch_id1"  value="<?php echo $data[0]['branch_id'];?>">
+        <?php $data=Allocationofbranch::Get_branch_name($uval['id']);?>
+         <?php echo $data[0]['name'];?>
+          </td>
+          </tr>
+          <tr>
+            <td id="id" width="39%">Requested Branch *</td>
+            <td width="61%" align="left">
+              <?php
+               //Get Branch name from branch table
+                $data=Allocationofbranch::Shortage_branch_name($uval['id']);
+                 //$branch_data = get_dropdown_list_with_field('id','name',BRANCH);              
+               ?>
+                <select  id="branch_id1"  name="sel_branch" onfocus="remove_red('request_branch_id');" onchange="allocation_detail(this.value);">
+                <option value="">-- Select Branch --</option>
+                   <?php              
+                   //echo build_select_options($branch_data,$customer_data['branch_id']); 
+                   for($i=0;$i<count($data);$i++)
+                   {
+                    $request_id = ($data[$i]['request_id'] != "") ? '('.$data[$i]['request_id'].')' : '';
+                    echo  "<option value='{id:\"".$data[$i]['id']."\",allocated_branch:\"".Branch::getBranchName($data[$i]['allocated_branch'])."\",req_branch_id:\"".$data[$i]['requested_branch']."\",requested_branch:\"".Branch::getBranchName($data[$i]['requested_branch'])."\",request_id:\"".$data[$i]['request_id']."\",requested_amount:\"".$data[$i]['requested_amount']."\",allocated_amount:\"".$data[$i]['allocated_amount']."\"}'>".$data[$i]['name'].$request_id."</option>";
+                   ?>
+                   <?php
+                    }
+                   ?>
+                </select>   
+            </td>
+          </tr>
+          <tr>
+          <td>Other Details</td>
+          <td><span id="amount_req" class="disp_calc"><?php echo "-";?></span>
+           </td>
+          </tr>
+          <tr>
+            <td id="transfer_amount">Amount to be Transferred*</td>
+            <td align="left">
+                <input name="pval[transfer_amount]" class="currency" id="amount_transf1" maxlength="40" type="text" class="textfield-m"  onfocus="remove_red('transfer_amount');"/>
+                <input name="pval[request_id]" id="request_id" maxlength="40" type="hidden" />
+                <input name="pval[id]" id="trans_id" maxlength="40" type="hidden" />
+            </td>
+          </tr>
+          <tr>
+           </td>
+           <td>&nbsp;</td><td>&nbsp;</td>
+          </tr>
+
+        </table>
+          
+          </form>
+
+<div class="clear clearfix"></div>
+<script type="text/javascript">
+ $(document).ready(function()
+ {  
+        $('#branch_id1').focus();
+        $("input,select,textarea").not( $(":button,:hidden") ).keypress(function (evt) 
+        {
+            if (evt.keyCode == 13) 
+            {
+                iname = $(this).val();
+                if (iname !== 'Submit')
+                {    
+                    var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:radio,input:checkbox,textarea,select');        var index = fields.index( this );
+                    if ( index > -1 && ( index + 1 ) < fields.length) 
+                    {
+                        fields.eq( index + 1 ).focus();
+                    }
+                    else
+                    {                   
+                      //Save Action
+                    }
+                    return false;
+                }
+            }
+        });
+
+        $("#contact_no_input, #postal_code_input").numeric();
+  });
+enable_save_action();
+//Dialog JS Action Variables Setup
+formAct = ""; 
+formParam = "type=save";
+formId = "allocation_of_branch";
+formPage = "allocation_of_branch";
+
+jQuery(document).ready(function() {
+
+    setNumberKeyEvent();
+    
+    $("input").focus(function(event){ remove_red(this.id); });
+    
+    collapse_all_view();
+    setTotalAmount();
+});
+
+</script>

@@ -1,0 +1,172 @@
+ <div id="content_div">
+ <?php
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+    echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+    unset($_SESSION['success_msg']);
+ } 
+//print_r($menu);
+//print_r(can_edit($_SESSION[$app->session_usertype1], $module_name));
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td >&nbsp;Reports &raquo;<a href="<?php echo $module_name; ?>.php"><?php echo $page_title; ?></a></td >
+        <td width=6%>
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+       <!--  <?php
+        if($search_args != "")
+        {
+        $diaply_style ="";
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+        <?php
+        }
+        else{
+        $diaply_style = 'style="display:none;"';
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+        <?php
+        }
+        ?> -->
+        </td>
+      </tr>
+      </table>
+ </div>
+ <div id="contentarea">  
+ <br>
+    
+     <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">   
+     <tr>
+        <td colspan="100%"> 
+        <?php include ADMIN_LAYOUT_PATH . 'elements/log_report_search.html'; ?>
+      </td>
+    </tr>  
+   </table>
+<div>
+       <br>
+     <?php   
+
+     if($search_args == "")  {
+        exit;
+     }
+     
+     //if($search_args!="")   
+     {
+     
+     ?>
+    <form>
+
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">  
+
+ 
+     
+     <tr>
+        <td class="title" colspan="5"><?php echo $page_title; ?></td>
+        <td class="title" colspan="3" align=right>
+        
+            <a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_pdf&<?php echo $search_args; ?>" class="greybtn" id="pdf_report"
+			onclick= "pdf_report('<?php echo $module_name;?>.php?type=export_pdf&<?php echo $search_args;?>');">PDF</a>
+            <a _href="<?php echo $module_name; ?>.php?type=export_xls&<?php echo $search_args; ?>" href="javascript:;" class="greybtn" id="xls_report" 
+			onclick= "xls_report('<?php echo $module_name;?>.php?type=export_xls&<?php echo $search_args;?>');">XLS</a>
+            <a href="javascript:" onclick="print_preview('<?php echo $module_name; ?>','print_dialog','37','<?php echo $search_args; ?>','<?php echo $page_title; ?> - Print Preview',1070,700);" class="greybtn" id="print_report">Print</a>
+        
+        </td>
+     </tr>    
+     <!--tr class="headings">
+      <td width="5%"></td>  
+      <td  width="25%"><strong>Log Date</strong></td>
+      <td  width="20%" align="right" valign="middle"><strong>No of Branch</strong></td>
+      <td  width="20%" align="right" valign="middle"><strong>No of User</strong></td>
+      <td  width="20%" align="right"><strong>No of records</strong></td>
+     </tr-->
+  <tr class="headings">
+      <td  width="15%"><strong>Log Date</strong></td>
+      <td  width="10%" align="left" valign="middle"><strong>Branch</strong></td>
+      <td  width="10%" align="left" valign="middle"><strong>User</strong></td>
+      <td  width="10%" align="center"><strong>User Group</strong></td>
+      <td  width="10%"  align="center"><strong>Module</strong></td>
+      <td  width="17%"  align="left"><strong>Page</strong></td>
+      <td  width="10%"  align="left"><strong>Action</strong></td>
+      <td  width="18%"  align="left"><strong>Details</strong></td>  
+     </tr>
+<?php
+    if(count($data) > 0) {
+    //p_arr($data);
+    //foreach($data as $row){
+	//echo"<pre>";print_r($data);
+    for($i=0;$i<count($data);$i++){     
+        
+?>
+    <!--tr class="groups" id="<?php echo $row['report_date']; ?>">
+          <td align=left>
+          
+          <a href="javascript:" onclick="show_sub_list('<?php echo $module_name; ?>','date','<?php echo date("Y-m-d",strtotime($row['report_date'])); ?>');">
+            <img id="img_drop_<?php echo date("Y-m-d",strtotime($row['report_date'])); ?>" src="./images/plus-sign.jpg" border=0 width="16px">
+          </a>
+          
+          </td>
+
+     
+
+        <td align="left"><?php echo htmlentities(stripslashes(date('d-M-Y',strtotime($row['report_date']))), ENT_QUOTES); ?> </td>
+        <td align="right"><?php echo htmlentities(stripslashes($row['no_of_branch']), ENT_QUOTES); ?></td>
+        <td align="right"><?php echo htmlentities(stripslashes($row['no_of_user']), ENT_QUOTES); ?></td>
+        <td align="right"><?php echo htmlentities(stripslashes($row['no_of_record']), ENT_QUOTES); ?></td>
+        </tr>
+        <td colspan="5">
+         <div id="sublist_<?php echo date("Y-m-d",strtotime($row['report_date'])); ?>" class="display_view"></div>
+         
+         </td>
+    </tr-->
+    
+ <tr class="row0" id="<?php echo $data[$i]['user_id']; ?>" height="40">
+        <td align="left"><?php echo htmlentities(stripslashes($data[$i]['log_date_time']), ENT_QUOTES); ?> </td>
+        <td align="left"><?php echo htmlentities(stripslashes($data[$i]['user_branch']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($data[$i]['user_name']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($data[$i]['user_group']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($data[$i]['module']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($data[$i]['page']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($data[$i]['action']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo $data[$i]['record']; ?></td>
+    </tr>  
+       
+<?php
+        }
+
+    } else {
+
+?>
+        <tr class="bg-row">
+        <td colspan="8" align="center" height="50">No records found</td>
+        </tr>
+<?php
+    }
+?>
+     <tr class="headings">
+     <td colspan=8>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+   </table>
+        <?php
+        }
+        ?>
+</form>
+
+      <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>
+ </div>
+
+<!--For the print option, days less 30 to display the results. Default value 30-->
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>
+
+
+

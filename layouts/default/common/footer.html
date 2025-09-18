@@ -1,0 +1,52 @@
+<div id="footer">
+                <div class="ftr-content">
+                <p>Copyright © 2011 <a href="https://webmail.pair.com" target="_blank">Mayava Finance</a>, All Rights Reserved. Design: <a href="http://www.angleritech.com/" target="_blank">ANGLER Technologiess</a></p></div>
+            
+            </div>
+   
+    
+</div>
+<!-- Dialog Divs : Edited By Moses C Rathina Kumar on 29 Sep 2011 -->
+<div id="print_dialog" title="Print Preview"></div>
+<div id="alert_box" title="Alert Dialog"></div>
+<div id="confirm_box" title="Confirm Dialog"></div>
+<div id="formact_dialog" title="Form Action Dialog"></div>
+<div id="page_loading">
+<?php include ADMIN_LAYOUT_PATH . 'elements/page_loading.html'; ?>
+</div>
+
+<!--main container ends--> 
+</body>
+</html>
+<script type="text/javascript" src="js/tabnavi.js"></script>
+<script>
+//Dialog JS Jquery Configuration
+jQuery(document).ready(
+    function(){
+        
+    jQuery("#calender_trigger").click(function(){
+            jQuery(".calender").click();
+        }); 
+
+        
+    }
+
+);
+
+<?php
+if($_SESSION['notice_info']!=""){
+?>
+
+    jQuery(document).ready(
+        function(){
+            jalert('<?php echo $_SESSION['notice_info']; ?>');
+        }
+    );
+
+
+<?php
+    $_SESSION['notice_info'] = ''; 
+}
+?>
+
+</script>

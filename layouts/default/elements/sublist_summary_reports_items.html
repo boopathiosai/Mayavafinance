@@ -1,0 +1,78 @@
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">  
+     <tr class="headings">
+      <td width="15%" align="left" valign="middle"><strong>Date</strong></td>
+      <td width="10%" align="left"><strong>Loan No</strong></td>
+      <td width="20%" align="left" valign="middle"><strong>Purpose</strong></td>
+      <td width="20%" colspan=2  align="center"><strong>Pledged Weight</strong></td>
+      <td width="20%" colspan=2  align="center"><strong>Released Weight</strong></td>
+      <td width="10%" colspan=2   align="center"><strong>Items</strong></td>
+      <td width="20%" colspan=2   align="center"><strong>Amount(Rs)</strong></td>  
+     </tr>
+     <tr class="subheadings">
+      <td align="left" valign="middle"><strong></strong></td>
+      <td align="left" valign="middle"><strong></strong></td>
+      <td align="left"><strong></strong></td>
+      <td width="10%" align="right"><strong>Gm</strong></td>
+      <td width="10%" align="right"><strong>Mgs.</strong></td>
+      <td width="10%" align="right"><strong>Gm</strong></td>
+      <td width="10%" align="right"><strong>Mgs.</strong></td>
+      <td width="5%"  align="right"><strong>Pld.</strong></td>
+      <td width="5%"  align="right"><strong>Rls</strong></td>
+      <td width="10%" align="right"><strong>Pledged</strong></td>
+      <td width="10%" align="right"><strong>Released</strong></td>
+     </tr>
+
+
+<?php
+    if(count($data) > 0) {
+    
+    
+    //print_r($data);
+    
+        for($i=0;$i<count($data);$i++){ 
+        
+            /*$weight_in = floatval($data[$i]['pledged_weight']);
+            $weight_out = floatval($data[$i]['released_weight']);
+            
+            
+            $weight_in_gs =  intval($weight_in);
+            $weight_in_mgs =  intval(floatval($weight_in - intval($weight_in)) * 1000);
+            
+            $weight_out_gs =  intval($weight_out);
+            $weight_out_mgs =  intval(floatval($weight_out - intval($weight_out)) * 1000);
+            
+            
+            $item_in = intval($data[$i]['pledged_items']);
+            $item_out = intval($data[$i]['released_items']);*/
+?>
+    
+     <tr class="row0" id="<?php echo $data[$i]['report_date']; ?>" height="40">
+      
+     <td align="left"><?php echo htmlentities(stripslashes($data[$i]['report_date']), ENT_QUOTES); ?> </td>
+     <td align="left"><?php echo htmlentities(stripslashes($data[$i]['loan_code']), ENT_QUOTES); ?> </td>
+
+     <td align="left"><?php echo htmlentities(stripslashes($data[$i]['purpose']), ENT_QUOTES); ?></td>
+     <td align="right"> <?php echo $data[$i]['weight_in_gs']; ?> </td>
+     <td align="right"> <?php echo $data[$i]['weight_in_mgs']; ?> </td>
+     <td align="right"> <?php echo $data[$i]['weight_out_gs']; ?> </td>
+     <td align="right"> <?php echo $data[$i]['weight_out_mgs']; ?> </td>
+     <td align="right"> <?php echo $data[$i]['item_in']; ?> </td>
+     <td align="right"> <?php echo $data[$i]['item_out']; ?> </td>
+     <td align="right"> <?php echo convertToCurrency(stripslashes($data[$i]['pledged_amount']),false); ?> </td>
+     <td align="right"> <?php echo convertToCurrency($data[$i]['released_amount'],false); ?> </td>
+
+      </tr>  
+       
+<?php
+        }
+
+    } else {
+
+?>
+        <tr class="bg-row">
+        <td colspan="14" align="center" height="50">No records found</td>
+        </tr>
+<?php
+    }
+?>
+   </table>

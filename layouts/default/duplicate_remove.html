@@ -1,0 +1,84 @@
+ <div id="content_div">
+ <?php
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+?>          
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Masters &raquo; <a href="users.php">Duplicate Remove Master</a></td >
+       <!-- <td align="left" width="6%" >
+        <?php
+        if($search_args != "")
+        {
+        $diaply_style ="";
+        ?>  
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+        <?php
+        }
+        else{
+        $diaply_style = 'style="display:none;"';
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+        <?php
+        }
+        ?>
+        </td > -->
+      </tr>
+      </table>
+  </div>
+ <div id="contentarea"> 
+     <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+        <tr>
+        <td colspan="2">
+         <?php //include ADMIN_LAYOUT_PATH . 'elements/duplicate_remove_search.html'; ?>
+          </td>
+        </tr>   
+       </table>
+       <div>
+       <br>       
+    
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+		  <tr>
+			<td class="title" colspan="3">Duplicate Remove Data</td>
+			<td class="title" colspan="7">
+		   </td>           
+		  </tr>
+        <tr class="bg-row">
+			<td colspan="10" align="center" height="50">
+				<form id="duplicate_search_form" name="search_form">
+					<table class="search-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">   
+						<tr class="row0">
+							<td align="left" width="18%">Search by Loan Id:</td>
+							<td align="left"><input name="key" type="text" id="key"  class="text-field" value="<?php echo $search_key; ?>"/></td>
+							<td><a href="javascript:;"  onclick="search_duplicate_items('<?php echo  $module_name; ?>');" class="button">Remove Duplicate</a></td>
+							<td id="branch_id"></td>
+						</tr>
+					</table>
+				</form>
+			</td>
+        </tr>
+		<tr class="row0">
+			<td align="left" width="18%"></td>
+			<td align="left"><b style="<?php echo ($data=="ok")?'color:green':'color:red' ?>"> <?php echo $data; ?></b></td>
+			<td></td>
+			<td></td>
+		</tr>
+       
+     <tr class="headings">
+     <td colspan=100%>
+     <?php //include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+    </table>
+     
+   <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>   
+ </div>  

@@ -1,0 +1,173 @@
+<div id="search_table" <?php echo $diaply_style; ?>>
+<form id="search_form" name="search_form">
+ <table class="search-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr class="row0">
+          <td align="left" class="title" colspan="3">Report Filter Search</td>        
+          <td align="right" class="title">
+            <a href="<?php echo  $module_name; ?>.php" class="button">RESET</a>
+            <a id="search_btn" href="javascript:;" onclick="date_validation(),all_search_items('<?php echo  $module_name;?>');" class="button">SEARCH</a>
+          </td>
+        </tr>
+        <tr class="row0">
+            <td align="left" width="18%" id="src_sdate">From Date :</td>
+            <td align="left" >
+            <input name="sdate" type="text" id="sdate"   class="calendar text-field" value="<?php echo  $search_sdate; ?>" />
+             &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('sdate', 'calender_trigger', '%d-%m-%Y' )" onclick="jQuery('#sdate').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+            </td>
+
+            <td align="left" width="18%" id="src_edate">To Date :</td>
+            <td align="left">
+            <input name="edate" type="text" id="edate"  class="calendar text-field" value="<?php echo $search_edate;?>" />
+             &nbsp; <a href="javascript:" id="calender_trigger1" _onclick="date_picker('edate', 'calender_trigger1', '%d-%m-%Y' )" onclick="jQuery('#edate').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+            </td>
+            
+
+        </tr>
+
+       <?php
+        if($_SESSION["session_usertype"]==1)
+        {
+       ?>
+       <tr class="row0">
+        <td align="left" width="22%" >Search by Branch :</td>
+        <td align="left">
+       <?php
+                                //Get Branch name from branch table
+                                $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);             
+                                ?>
+                                <select id="branch_id" name="branch_id" onchange="load_sub_Branch(this.value,'sub_branch_id','sub_branches')">
+                                    <option value="">-- Select Branch --</option>
+                                    <?php             
+                                    echo build_select_options($branch_data,$search_branch_id); 
+                                    ?>
+                                </select>
+        </td>
+        
+        <td align="left" width="22%">Search By Sub Branch</td>
+		<!-- <td align="left">
+                                <!--input type=hidden id="branch_id" name="branch_id" value="<?php echo $search_branch_id; ?>"-->                               
+                                 <!---   <ul id="sub_branch_id">                                        
+                                    </ul>
+                            </td> -->
+         <td align="left">
+        <?php
+			
+           // $user_data = get_dropdown_list_with_field('id', 'name', USERS);             
+            $sub_branch_data = get_dropdown_list_with_field_sub_branch('id', 'name', SUB_BRANCH, $search_branch_id);  
+				//echo "<pre>"; print_r($sub_branch_data);
+            ?>
+            <select id="sub_branch_id" name="sub_branch_id">
+            <option value="">-- Select Sub Branch --</option>
+				<?php             
+					echo build_select_options($sub_branch_data,$search_sub_branch_id); 
+				?>
+            </select>
+        </td>
+       </tr>
+	   
+	   <tr class="row0">
+        <td align="left" width="22%" >Search by Type :</td>
+        <td align="left">
+       <?php $type = array(1 => 'Receipt(Redemption)', 2 => 'Payment(Pledged)'); ?>
+            <select id="type" name="type">
+            <option value="">-- Select Type --</option>           
+           <!-- <option value="1"> Receipt(Redemption)</option>           
+            <option value="2"> Payment(Pledged)</option> -->
+			<?php             
+					echo build_select_options($type,$search_type); 
+				?>
+            </select>
+        </td>
+        
+        <td align="left" width="22%"></td>
+        <td align="left"> 
+        
+        </td>
+       </tr>
+	   
+        <?php
+        }
+		//else{
+        ?>
+        <!-- <tr class="row0">
+        <td align="left" width="22%">Search By Sub Branch</td>
+        <td align="left"> 
+            <select id="user_id" name="user_id">
+            <option value="">-- Select Sub Branch --</option>
+            <?php             
+         //  $query = "SELECT id, name FROM ".USER_GROUP." WHERE id >= '".$_SESSION['session_usertype']."'";
+         //  $user_group_data = $app->getrows($query);
+         //  buildDropDownBox($user_group_data,$search_user_group);  
+            ?>
+            </select>
+        </td>
+        <td colspan=3></td>
+       </tr> -->
+        
+        <?php
+       // }
+        ?>
+
+      
+    </table>
+    
+    </form>
+    </div>
+    
+<script>
+jQuery(document).ready(function(){ 
+
+search_enter_action('<?php echo $module_name; ?>');
+
+}
+);
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        form_enter_focus(jQuery('#name_select'),8,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        enable_save_action();
+
+    });
+    function load_sub_Branch(val, div_id, module){
+        
+         $.ajax({
+           type: "GET",
+           url: module + ".php?",
+           data:{
+                type : "load_sub_branch",
+                mod : "Ajax",
+                val: val,
+                dataType: 'json'
+
+           },
+           success: function(response){
+              var data = JSON.parse(response);
+              
+//               console.log(data);
+            if(data != null){
+               $("#"+div_id).empty();
+               var len = data.length;               
+               for( var i = 0; i<len; i++){
+                    var id = data[i]['id'];
+                    var name = data[i]['name'];
+                    var checked = (data[i]['status'] == 1)?'checked':'';
+                    $("#"+div_id).append("<option value='"+id+"'>"+name+"</option>");
+                   // $("#"+div_id).append("<li> <input style='height: 15px; width: 21px;' type='checkbox' name='pval[]' value='"+id+"' "+checked+">"+name+" <input  type='hidden' name='pvalall[]' value='"+id+"'></li>");
+
+                }               
+                }else{
+                   $("#"+div_id).empty();
+                   $("#"+div_id).append("<option>No Sub-Branches</option>"); 
+                }
+            },
+          complete: function(outputData){
+               hide_ajax_status();
+          },
+          beforeSend: function(outputData){
+               show_ajax_status("Loading....",0);
+          }
+
+         });
+    }
+</script>

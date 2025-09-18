@@ -1,0 +1,74 @@
+<div id="print_content">
+<?php  
+    $i=1;
+
+         ?>          
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="8" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title)." - Date:".date("d-m-Y h:i:sa") : strtoupper($page_title . " - ".$heading_suffix)." - Date:".date("d-m-Y h:i:sa"); ?></td>
+            </tr>
+            
+
+            
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+              <td  width="15%"><strong>Log Date</strong></td>
+              <td  width="10%" align="left" valign="middle"><strong>Branch</strong></td>
+              <td  width="10%" align="left" valign="middle"><strong>User</strong></td>
+              <td  width="10%" align=center><strong>User Group</strong></td>
+              <td  width="10%"  align=center><strong>Module</strong></td>
+              <td  width="17%"  align=center><strong>Page</strong></td>
+              <td  width="10%"  align=center><strong>Action</strong></td>
+              <td  width="18%"  align=center><strong>Details</strong></td>  
+          </tr>
+
+            
+          <?php
+          $j=1;
+          $i=$i+1;
+   if(count($data)>0){
+          foreach($data as $rows)
+          {
+             
+
+            
+                  ?>
+ 
+
+ 
+                  
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+        <td align="left"><?php echo htmlentities(stripslashes($rows['log_date_time']), ENT_QUOTES); ?> </td>
+        <td align="left"><?php echo htmlentities(stripslashes($rows['user_branch']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($rows['user_name']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($rows['user_group']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($rows['module']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($rows['page']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($rows['action']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo htmlentities(stripslashes($rows['record']), ENT_QUOTES); ?></td>
+               
+          </tr>
+         <?php
+            $i++; 
+            $j++;
+          }
+          }else{
+          ?>
+          <tr><td colspan=8 align="center">No Records Found</td></tr>
+          
+          <?php
+          }
+?>
+          
+       </table>
+
+
+</div>
+<iframe id="print_frame" name="print_frame"  title="<?php echo ($heading_suffix=="") ? ($page_title) : ($page_title . " - ".$heading_suffix); ?>" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>
+
+
+
+
+
+
+
+

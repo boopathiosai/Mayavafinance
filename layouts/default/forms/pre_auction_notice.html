@@ -1,0 +1,53 @@
+<div id="print_content">
+<?php  
+session_start();
+$categories = $product_data;
+//print_r($product_data);
+
+?>
+ <div id="contentarea">
+     <form name="customer_form" method="post" style="margin: 0px;">
+      <div class="" width="98%" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
+	    
+			<!--<div><strong>Pre Auction Notice Information</strong></div>-->
+
+			<br><br><br><br><br><br><br><br><br><br><br><br>
+
+		<div align=right style="padding-right:100px; margin-bottom:270px; font-size:18px"><?php
+echo date("d/m/Y");?></div>
+    
+
+			<div style="width:100%;">
+			<center>
+				<span valign="top" width="30%" style="float:left; padding-left:120px; font-size:20px">
+					<strong>
+						<?php echo (trim($product_data['loan_id']) == "")? "-":stripslashes($product_data['loan_id']); ?>
+					</strong>
+				</span>
+			<span align="center" valign="top" width="30%" style="font-size:20px">
+				<strong>
+					<?php echo (trim($product_data['loan_date']) == "")? "-":stripslashes($product_data['loan_date']); ?>
+				</strong>
+			</span>
+
+			<span valign="top" width="30%" style="float: right;  padding-right: 95px; font-size:20px"><strong>
+					<?php echo (trim($product_data['loan_amount']) == "")? "-":stripslashes($product_data['loan_amount']); ?>
+				</strong></span>
+					<?php
+						if(count($data) > 0) {
+							for($i=0;$i<count($data);$i++){
+								if($product_data['loan_id'] == $data[$i]['loan_id'] ) {
+									$interest_details = PayInterest::getInterestDetails($data[$i]['id']);
+									$last_pay_on = $interest_details['last_pay_date'];
+									$due_date = ($data[$i]['auction_due_date'] =='') ? "-" : htmlentities(stripslashes($data[$i]['auction_due_date']), ENT_QUOTES);
+								}
+							}
+						}
+					?>
+					</center>
+				</div>
+			
+       </form>   
+</div>         
+</div>             
+<iframe id="print_frame" name="print_frame" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>

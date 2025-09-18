@@ -1,0 +1,219 @@
+<?php
+  $random_sc = date("dmyhis");
+  $random_no = rand(00000,99999);
+  //$pledge_id, $wavier_days=0, $pay_id='', $type='', $module=''
+  $pay_interest_details = PayInterest::getInterestDetails($product_data['pledge_id'],0,'',date("Y-m-d"),$type,$module_name);
+  
+  if($product_data['status'] == "0") {
+      $inactive="checked";
+  }else{
+      $active="checked";
+  }
+  
+  
+  //Principle Amount Calculation for the Redemtion
+  
+  if(strtolower($product_data['interest_type'])=='flat'){
+      $principle_unit_payment = $pay_interest_details['principle_payment'];
+      $principle_to_pay = ($pay_interest_details['to_pay_principle']>$principle_unit_payment) ? $pay_interest_details['to_pay_principle'] : $principle_unit_payment;
+      $principle_total_till_today = $pay_interest_details['total_pay_till_today'];
+      $principle_total_paid = $pay_interest_details['total_paid_principle'];
+      $principle_to_add = $principle_to_pay;
+      $principle_loan_amount =  $product_data['loan_amount'];
+      $principle_remain_amount =  $product_data['loan_amount'] - floatval($principle_total_paid);
+  }else{
+      $principle_remain_amount =  $product_data['loan_amount'];
+  }
+  
+  include "fetch_pledge_product.php";
+  
+  
+  ?>
+<div class="clear clearfix"></div>
+<div class="breadcrumbs">
+  <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr>
+      <td ><a href="javascript:;">Transactions</a> &raquo;<a href="<?php echo $module_name;?>.php">Redeem the pledged product</a></td >
+      <td  width=50% >
+        <span class="btn-rht">
+          <a href="javascript:;"id="save_action_btn" class="greybtn"
+            onclick="return confirmRedeamAction();">REDEEM</a>
+          <a href="javascript:;" class="greybtn"
+            onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a>
+          <!-- <a href="javascript:;" class="greybtn"
+            onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a> -->
+          <button type="button" onClick="return window.location.reload();"  class="greybtn" >BACK</button>
+        </span>
+      </td>
+    </tr>
+  </table>
+</div>
+<div id="contentarea">
+  <div class="sub-hdr">
+  </div>
+  <!--<span class="customer-order"> Please complete the form below. Mandatory fields marked <span class="star">*</span></span>-->
+  <form name="redemtion_form" id="redemtion_form" method="post" style="margin: 0px;">
+    <input type="hidden" name="random_no" id="random_no" value="<?php echo $random_no ?>" >
+    <input type="hidden" name="random_sc" id="random_sc" value="<?php echo $random_sc ?>" >
+    <!--content area starts here-->
+    <div class="lftarea">
+      <!--left area starts here-->
+      <!--Customer Details -->
+      <?php include ADMIN_LAYOUT_PATH . "elements/customer_details.html";   ?>
+    </div>
+    <!--Pleged Product Details -->
+    <?php include ADMIN_LAYOUT_PATH . "elements/pledged_product_details.html";   ?>
+    <!-- Old Loan Details -->
+    <?php include ADMIN_LAYOUT_PATH . "elements/old_loan_detail.html"; ?>
+    <!-- Loan Interest Details -->
+    <?php include ADMIN_LAYOUT_PATH . "elements/loan_interest_detail.html"; ?>
+    <!-- Waver Details -->
+    <?php include ADMIN_LAYOUT_PATH . "elements/wavier_detail.html"; ?>
+    <!-- Cash Flow Details -->
+    <?php include ADMIN_LAYOUT_PATH . "elements/cashflow_detail.html"; ?>
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td  width=50% >
+          <span class="btn-rht">
+            <a href="javascript:;"id="save_action_btn" class="greybtn"
+              onclick="return confirmRedeamAction();">REDEEM</a>
+            <a href="javascript:;" class="greybtn"
+              onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a>
+            <!--  <a href="javascript:;" class="greybtn"
+              onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a> -->
+            <button type="button" onClick="return window.location.reload();"  class="greybtn" >BACK</button>
+          </span>
+        </td>
+      </tr>
+    </table>
+    <input name="pval[branch_id]" id="pledge_branch_id" type="hidden"  value = "<?php echo $product_data['pledged_branch'];?>">
+    <input name="pp_pval[branch_id]" id="branch_id" type="hidden"  value = "<?php echo stripslashes($product_data['branch_id']); ?>">
+    <input name="pp_pval[sub_branch_id]" id="sub_branch_id" type="hidden"  value = "<?php echo stripslashes($product_data['sub_branch_id']); ?>">  <!-- Added 25_DEC_2017 BY DSSK -->
+    <?php if($uval[redeam_id] > 0){
+      ?>
+    <input name="type"  type="hidden"  value = "update">
+    <input name="redeam_id"  type="hidden"  value = "<?php echo $uval[redeam_id];?>">
+    <?php  }else{ ?>
+    <input name="type"  type="hidden"  value = "save">
+    <?php
+      }
+      
+      //echo $product_data['branch_id'];
+      ?>
+  </form>
+</div>
+<!--right area ends here-->
+<div class="clear clearfix"></div>
+<!--
+  <div class="round-lftbutton">
+      <a href="javascript:;">Customer Slip</a>
+  
+      <a href="javascript:;">Customer Receipt</a>  </div>
+  
+    <div class="clear clearfix"></div>
+    -->
+</div><!--contentarea ends here-->
+<div class="clear clearfix"></div>
+<!--
+  </body>
+  </html>
+  -->
+<script>
+  function resetNewAmount(){
+  
+  }
+  
+  function confirmRedeamAction(){
+      confirmYesFunction = "save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');";
+      confirmNoFunction = "welcome='No'";
+  
+      msg = "Have you received the total amount Rs. <b>"+parseFloat(jQuery("#total_amt").val()).toFixed(2)+"</b> from the customer?";
+  
+      jconfirm(msg);
+      return false;
+  }
+  
+  jQuery(document).ready(function() {
+  
+      form_enter_focus(jQuery('#add_amt'),3,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+      enable_save_action();
+  
+      setNumberKeyEvent();
+      $('#add_amt').focus();
+      document.redemtion_form.add_amt.focus();
+      $("input").focus(function(event){ remove_red(this.id); });
+      set_date_picker();
+      collapse_all_view();
+      setTotalAmount();
+  });
+  
+  
+  function presetNewAmount(){
+  
+  }
+  
+  function resetNewAmount(){
+  
+      cashin_display('<?php echo $module_name; ?>');
+      cashout_display('<?php echo $module_name; ?>');
+  }
+  
+  
+  
+  
+  function cashin_display(){
+  
+      if(!isNaN(parseFloat(jQuery("#principle_remain").val())))
+          old_loan_amt = parseFloat(jQuery("#principle_remain").val());
+      else
+          old_loan_amt = 0;
+  
+      if(!isNaN(parseFloat(jQuery("#interest_amt").val())))
+          interest_amt = parseFloat(jQuery("#interest_amt").val());
+      else
+          interest_amt = 0;
+  
+      if(!isNaN(parseFloat(jQuery("#add_amt").val())))
+          add_amt = parseFloat(jQuery("#add_amt").val());
+      else
+          add_amt = 0;
+  
+      /*if(!isNaN(parseFloat(jQuery("#total_amt").val())))
+          cash_in = parseFloat(jQuery("#total_amt").val());
+      else
+          cash_in = 0;*/
+  
+  
+      cash_in = Math.round(  old_loan_amt +   interest_amt + add_amt);
+  
+  
+      jQuery("#cashin_amt").val(cash_in.toFixed(2));
+  
+      disp_cashin = "<table class='disp_calc' width=95% align=center>";
+      disp_cashin += "<tr><td> </td><td class='disp_calc'>Old Loan Amount/ Principle Remain  :</td> <td align=right class='disp_calc'>"+old_loan_amt.toFixed(2)+"</td><td> </td><td> + </td></tr>";
+      disp_cashin += "<tr><td> </td><td class='disp_calc'>Interest Amount  :</td> <td align=right class='disp_calc'>"+interest_amt.toFixed(2)+"</td><td> </td><td> + </td></tr>";
+      disp_cashin += "<tr><td> </td><td class='disp_calc'>Additional Charge:</td> <td align=right class='disp_calc'>"+add_amt.toFixed(2)+"</td><td> </td><td> </td></tr>";
+      disp_cashin += "<tr><td> </td><td>Total Cashin :</td> <td colspan=3 align=right>Rs. "+cash_in.toFixed(2)+"</td></tr>";
+      disp_cashin += "</table>";
+  
+  
+      jQuery("#disp_cash_in_details").html(disp_cashin);
+  
+  }
+  
+  function cashout_display(){
+  
+      cash_out = 0;
+  
+      jQuery("#cashout_amt").val(cash_out.toFixed(2));
+  
+      disp_cashout = "Nil";
+  
+      jQuery("#disp_cash_out_details").html(disp_cashout);
+  
+  
+  }
+  
+  
+  
+</script>

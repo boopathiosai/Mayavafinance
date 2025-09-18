@@ -1,0 +1,14 @@
+/**
+* Picture capture flash event callback functions
+**/
+function picture_saved(str)
+{   
+    hideOverlay(str);
+    //alert(str);
+}
+
+function picture_save_error(str)
+{   
+    //hideOverlay(str);
+    //alert(str);
+}

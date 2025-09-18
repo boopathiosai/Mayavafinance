@@ -1,0 +1,500 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
+<title>Mayava Finance</title>
+<link href="css/reset.css" rel="stylesheet" type="text/css" />
+<link href="css/pop-up.css" rel="stylesheet" type="text/css" />
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/p7exp.css" rel="stylesheet" type="text/css" />
+<link href="css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="css/anylinkmenu.css" />
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.custom.css" />
+
+<!--script src="js/jquery-1.6.2.min.js" type="text/javascript"></script-->  
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+
+
+<script type="text/javascript" src="js/function_common.js"></script>
+<script type="text/javascript" src="js/function_common_modules.js"></script> 
+<script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/jquery.autocomplete.js"></script>
+
+<script type="text/javascript" src="js/anylinkmenu.js"></script>
+<script type="text/javascript" src="js/jquery.validations.js"></script>
+
+
+<!-- calender --> 
+<link type="text/css" rel="stylesheet" href="js/jscal2.css">
+<link type="text/css" rel="stylesheet" href="js/border-radius.css">
+<link id="skin-win2k" title="Win 2K" type="text/css" rel="alternate stylesheet" href="css/win2k.css">
+<script src="js/jscal2.js"></script>
+<script src="js/en.js"></script>
+
+<script type="text/javascript">
+//anylinkmenu.init("menu_anchors_class") //Pass in the CSS class of anchor links (that contain a sub menu)
+//anylinkmenu.init("menuanchorclass");
+</script>
+<style type="text/css"></style></head>
+<body>
+<div id="common-floating-message" align="center" class="header-floating" style="display:none"></div>
+
+<div id="main-container"><!--Header cintainer starts here-->
+    <div id="header">
+            <div class="lftcont"><img src="images/logo.jpg"></div>
+            <div id="rhtcont">
+                <div class="rht-contlft"></div>
+                <div class="rht-contcenter"> <span>Welcome Mayava Admin(&nbsp;<b>Super Admin</b>&nbsp;)</span>|<a href="http://192.168.0.77/mayava/settings.php">Settings </a>|<a href="http://192.168.0.77/mayava/my_account.php">My Account </a>| <a href="http://192.168.0.77/mayava/inbox.php">Messages(0)</a> |<a href="http://192.168.0.77/mayava/privillege.php">Privilege</a>|<a href="http://192.168.0.77/mayava/logout.php">Logout</a> </div>
+              <div class="rht-contrht"></div>                   
+      </div>
+                <div class="clear clearfix"></div>
+                 
+      <div id="menuwrapper">
+            <ul id="p7menubar">
+              <li><a href="http://192.168.0.77/mayava/dashboard.php" class="trigger">Dashboard</a></li>           
+              <li><a href="javascript:" class="trigger">Masters</a><ul><li><a href="http://192.168.0.77/mayava/branches.php">Branch</a></li><li><a href="http://192.168.0.77/mayava/departments.php">Department</a></li><li><a href="http://192.168.0.77/mayava/users.php">User</a></li><li><a href="http://192.168.0.77/mayava/customers.php">Customer</a></li><li><a href="http://192.168.0.77/mayava/categories.php">Category</a></li><li><a href="http://192.168.0.77/mayava/products.php">Product</a></li><li><a href="http://192.168.0.77/mayava/schemes.php">Scheme Management</a></li><li><a href="http://192.168.0.77/mayava/sub_branches.php">Sub Branch</a></li></ul></li><li><a href="javascript:" class="trigger">Transactions</a><ul><li><a href="http://192.168.0.77/mayava/product_pledge.php">Product Pledge</a></li><li><a href="http://192.168.0.77/mayava/pay_interest.php">Pay Interest</a></li><li><a href="http://192.168.0.77/mayava/renewal.php">Renewal</a></li><li><a href="http://192.168.0.77/mayava/redemption.php">Redemption</a></li><li><a href="http://192.168.0.77/mayava/partial_amount_payment.php">Partial Amount Payment</a></li><li><a href="http://192.168.0.77/mayava/pay_excess_amount.php">Excess amount to customer</a></li><li><a href="http://192.168.0.77/mayava/cash_flow_transactions.php">Cash Flow Transactions</a></li><li><a href="http://192.168.0.77/mayava/auction_management.php">Auction Management</a></li><li><a href="http://192.168.0.77/mayava/raise_request.php">Raise Request for Money shortage</a></li><li><a href="http://192.168.0.77/mayava/allocation_of_branch.php">Allocation of Branch</a></li><li><a href="http://192.168.0.77/mayava/amount_transfer.php">Amount Transfer</a></li><li><a href="http://192.168.0.77/mayava/amount_received.php">Amount Received</a></li><li><a href="http://192.168.0.77/mayava/bank_transaction_branch_level.php">Bank Transaction Branch level</a></li></ul></li><li class="active"><a href="javascript:" class="trigger">Reports</a><ul><li><a href="./Mayava Finance_files/Mayava Finance.html">Detailed Ledger Report</a></li><li><a href="http://192.168.0.77/mayava/income_reports.php">Income Reports</a></li><li><a href="http://192.168.0.77/mayava/loan_amount_rate_wise_report.php">Loan Amount &amp; Rate wise report</a></li><li><a href="http://192.168.0.77/mayava/daily_report.php">Daily report</a></li><li><a href="http://192.168.0.77/mayava/customer_pledged_report.php">Customer Product Pledged Report</a></li><li><a href="http://192.168.0.77/mayava/stock_report.php">Stock Report</a></li><li><a href="http://192.168.0.77/mayava/cash_flow_reports.php">Cash flow reports</a></li><li><a href="http://192.168.0.77/mayava/pre_auction_report.php">Pre-Auction Report</a></li><li><a href="http://192.168.0.77/mayava/post_auction_report.php">Post Auction Report</a></li><li><a href="http://192.168.0.77/mayava/log_report.php">Log Report</a></li><li><a href="http://192.168.0.77/mayava/summary_reports.php">Summary Reports</a></li><li><a href="http://192.168.0.77/mayava/category_wise_report.php">Category Wise Report</a></li><li><a href="http://192.168.0.77/mayava/detailed_stock_report.php">Detailed Stock Report</a></li></ul></li><li><a href="javascript:" class="trigger">Prints</a><ul><li><a href="http://192.168.0.77/mayava/customer_slip.php">Customer Slip</a></li><li><a href="http://192.168.0.77/mayava/customer_receipt.php">Customer Receipt</a></li><li><a href="http://192.168.0.77/mayava/notification_letter.php">Reminder Notification Letter</a></li><li><a href="http://192.168.0.77/mayava/customer_id_report.php">Customer ID Print</a></li><li><a href="http://192.168.0.77/mayava/pre_auction_notice.php">Pre Auction Notice</a></li><li><a href="http://192.168.0.77/mayava/auction_final_notice.php">Autcion Final Notice </a></li><li><a href="http://192.168.0.77/mayava/auction_notice.php">Auction Notice</a></li></ul></li>            </ul>
+            <br class="clearit">
+      </div>
+      <div class="clear clearfix"></div>
+
+    </div>
+	<script>
+		$(document).ready(function() {
+			msg_load();
+		});
+
+		function msg_load(){
+
+			setTimeout(function(){
+				jQuery.ajax({
+				type:"POST",
+				url:"message.php",
+				data:{
+					type : "message_alert",
+					mod : "Ajax"
+				},
+				success : function(msg){
+					if(msg != 1) {
+						show_status(msg);
+					}
+					//return false;
+				}
+			});
+				msg_load();
+			},300000);
+		}
+	</script>
+
+	 <div id="content_div">
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tbody><tr>
+         <td>&nbsp;Reports »<a href="./Mayava Finance_files/Mayava Finance.html">Detailed Ledger Report</a></td>
+        <td width="8%">
+                <div id="serach_button_div"><a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+                </td>
+      </tr>
+      </tbody></table>
+ </div>
+ <div id="contentarea">  
+ <br>
+
+     <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">   <tbody><tr>
+        <td colspan="100%"> 
+        <div id="search_table" style="display:none;">
+<form id="search_form" name="search_form">
+ <table class="search-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tbody><tr class="row0">
+          <td align="left" class="title" colspan="3">Report Filter Search</td>        
+          <td align="right" class="title">
+            <a href="./Mayava Finance_files/Mayava Finance.html" class="button">RESET</a>
+            <a id="search_btn" href="javascript:;" onclick="date_validation(),search_items(&#39;detailed_ledger_report&#39;);" class="button">SEARCH</a>
+          </td>
+        </tr>
+        <tr class="row0">
+            <td align="left" width="10%" id="src_sdate">From Date :</td>
+            <td align="left">
+            <input name="sdate" type="text" id="sdate" class="calendar text-field" value="">
+             &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker(&#39;sdate&#39;, &#39;calender_trigger&#39;, &#39;%d-%m-%Y&#39; )" onclick="jQuery(&#39;#sdate&#39;).click();" title="Click to select date"><img src="./Mayava Finance_files/calendar.png" border="0"></a>
+            </td>
+
+            <td align="left" width="18%" id="src_edate">To Date :</td>
+            <td align="left">
+            <input name="edate" type="text" id="edate" class="calendar text-field" value="">
+             &nbsp; <a href="javascript:" id="calender_trigger1" _onclick="date_picker(&#39;edate&#39;, &#39;calender_trigger1&#39;, &#39;%d-%m-%Y&#39; )" onclick="jQuery(&#39;#edate&#39;).click();" title="Click to select date"><img src="./Mayava Finance_files/calendar.png" border="0"></a>
+            </td>
+            
+
+        </tr>
+
+       
+       <tr class="row0">
+	            <td align="left" style="width: 15%;">Search by Branch :</td>
+        <td align="left">
+                    <select id="branch_id" name="branch_id">
+            <option value="">-- Select Branch --</option>
+            <option value="8">asdasdasd</option><option value="9">Coimbatore</option><option value="2">Cuddalore</option><option value="4">Dindugal</option><option value="3">Kancheepuram1</option><option value="11">Salem</option><option value="10">Test</option><option value="1">Thanjavur</option>            </select>
+               
+              
+        </td><td>Search by Loan ID :</td>
+        <td>
+            <input type="text" id="loan_id" name="loan_id" class="text-field" value="">        
+        </td>
+       </tr>
+   </tbody></table>
+</form>
+    </div>
+    
+<script>
+jQuery(document).ready(function(){ 
+
+search_enter_action('detailed_ledger_report');
+
+}
+);
+</script>          </td>
+        </tr>  
+       </tbody></table>
+     <div>
+       <br>
+         <form>
+
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">  
+     <tbody><tr>
+        <td class="title" colspan="5">Detailed Ledger Report</td>
+        <td class="title" colspan="5" align="right">
+            <a href="javascript:;" _href="detailed_ledger_report.php?type=export_pdf&amp;" class="greybtn" id="pdf_report" onclick="pdf_report(&#39;detailed_ledger_report.php?type=export_pdf&amp;&#39;);">PDF</a>
+            <a href="javascript:;" _href="detailed_ledger_report.php?type=export_xls&amp;" class="greybtn" id="xls_report" onclick="xls_report(&#39;detailed_ledger_report.php?type=export_xls&amp;&#39;);">XLS</a>
+            <a href="javascript:" onclick="print_preview(&#39;detailed_ledger_report&#39;,&#39;print_dialog&#39;,&#39;37&#39;,&#39;&#39;,&#39;Detailed Ledger Report - Print Preview&#39;,1070,700);" class="greybtn" id="print_report">Print</a>
+        
+        </td>
+     </tr>      
+          <tr class="headings">
+          <td width="5%"></td>  
+          <td width="8%">Loan Id</td>    
+          <td width="15%">Customer</td>
+          <td>Products</td>
+          <td width="10%">Scheme</td>
+          <td width="15%" align="right">Loan Amount(Rs.)</td>      
+          <td width="10%" align="right">Total Items</td>    
+          <td width="10%" align="right">Total Weight</td>
+          <td width="10%" align="right">Status</td>
+          
+          </tr>
+                 <tr class="groups" id="THAN13">
+
+            <td align="left">
+            <a href="javascript:" onclick="show_sub_list(&#39;detailed_ledger_report&#39;,&#39;loan_id&#39;,&#39;THAN13&#39;);">
+            <img id="img_drop_THAN13" src="./images/plus-sign.jpg" border="0" width="16px">
+            </a>
+            </td>
+            
+            <td align="left">
+                <strong>THAN13</strong>
+            </td>     
+            <td align="left">அஸ்வத் - (Kan55)<br>
+கோவை<br>
+கோவை-784567<br>
+PH:8756745377<br>
+Email:priya@mail.com<br>
+</td>
+            <td align="left">ஆரம் - தங்கம்-ஆரம்-[சிவப்பு,கருப்பு]</td>
+            <td align="left">வட்டி</td>
+            <td align="right">100.00</td>
+            <td align="right">2</td>
+            <td align="right">2 G0 Mg</td> 
+            <td align="right">Open</td>
+         </tr> 
+         <tr>
+            <td colspan="10">
+            <div id="sublist_THAN13" class="display_view" style="display: none;"></div>
+            </td>
+         </tr>
+                     <tr class="groups" id="KOVA5">
+
+            <td align="left">
+            <a href="javascript:" onclick="show_sub_list(&#39;detailed_ledger_report&#39;,&#39;loan_id&#39;,&#39;KOVA5&#39;);">
+            <img id="img_drop_KOVA5" src="./images/plus-sign.jpg" border="0" width="16px">
+            </a>
+            </td>
+            
+            <td align="left">
+                <strong>KOVA5</strong>
+            </td>     
+            <td align="left">கிருஷ்ணகுமார் - (KAN4)<br>
+109, தமிழ் விதி<br>
+சாய்பாபா காலானி-641011<br>
+PH:9361663950<br>
+Email:<br>
+</td>
+            <td align="left">ஆரம் - தங்கம்-க‌ல்-[க‌ல்,க‌ல்]</td>
+            <td align="left">வட்டி</td>
+            <td align="right">2,000.00</td>
+            <td align="right">1</td>
+            <td align="right">1 G0 Mg</td> 
+            <td align="right">Open</td>
+         </tr> 
+         <tr>
+            <td colspan="10">
+            <div id="sublist_KOVA5" class="display_view" style="display: none;"></div>
+            </td>
+         </tr>
+                     <tr class="groups" id="KAN5">
+
+            <td align="left">
+            <a href="javascript:" onclick="show_sub_list(&#39;detailed_ledger_report&#39;,&#39;loan_id&#39;,&#39;KAN5&#39;);">
+            <img id="img_drop_KAN5" src="./images/plus-sign.jpg" border="0" width="16px">
+            </a>
+            </td>
+            
+            <td align="left">
+                <strong>KAN5</strong>
+            </td>     
+            <td align="left">கிருஷ்ணகுமார் - (KAN4)<br>
+109, தமிழ் விதி<br>
+சாய்பாபா காலானி-641011<br>
+PH:9361663950<br>
+Email:<br>
+</td>
+            <td align="left">ஆரம் - தங்கம்-க‌ல்-[க‌ல்,கல்]</td>
+            <td align="left">வட்டி</td>
+            <td align="right">2,000.00</td>
+            <td align="right">1</td>
+            <td align="right">1 G0 Mg</td> 
+            <td align="right">Open</td>
+         </tr> 
+         <tr>
+            <td colspan="10">
+            <div id="sublist_KAN5" class="display_view" style="display: none;"></div>
+            </td>
+         </tr>
+                     <tr class="groups" id="KOVA4">
+
+            <td align="left">
+            <a href="javascript:" onclick="show_sub_list(&#39;detailed_ledger_report&#39;,&#39;loan_id&#39;,&#39;KOVA4&#39;);">
+            <img id="img_drop_KOVA4" src="./images/plus-sign.jpg" border="0" width="16px">
+            </a>
+            </td>
+            
+            <td align="left">
+                <strong>KOVA4</strong>
+            </td>     
+            <td align="left">கிருஷ்ணகுமார் - (KAN4)<br>
+109, தமிழ் விதி<br>
+சாய்பாபா காலானி-641011<br>
+PH:9361663950<br>
+Email:<br>
+</td>
+            <td align="left">ஆரம் - தங்கம்-க‌ல்-[க‌ல்,க‌ல்]</td>
+            <td align="left">வட்டி</td>
+            <td align="right">2,000.00</td>
+            <td align="right">1</td>
+            <td align="right">1 G0 Mg</td> 
+            <td align="right">Open</td>
+         </tr> 
+         <tr>
+            <td colspan="10">
+            <div id="sublist_KOVA4" class="display_view" style="display: none;"></div>
+            </td>
+         </tr>
+                     <tr class="groups" id="SUB0013">
+
+            <td align="left">
+            <a href="javascript:" onclick="show_sub_list(&#39;detailed_ledger_report&#39;,&#39;loan_id&#39;,&#39;SUB0013&#39;);">
+            <img id="img_drop_SUB0013" src="./images/plus-sign.jpg" border="0" width="16px">
+            </a>
+            </td>
+            
+            <td align="left">
+                <strong>SUB0013</strong>
+            </td>     
+            <td align="left">கிருஷ்ணகுமார் - (KAN4)<br>
+109, தமிழ் விதி<br>
+சாய்பாபா காலானி-641011<br>
+PH:9361663950<br>
+Email:<br>
+</td>
+            <td align="left">ஆரம் - தங்கம்-க‌ல்-[க‌ல்,க‌ல்]</td>
+            <td align="left">வட்டி</td>
+            <td align="right">2,000.00</td>
+            <td align="right">1</td>
+            <td align="right">1 G0 Mg</td> 
+            <td align="right">Open</td>
+         </tr> 
+         <tr>
+            <td colspan="10">
+            <div id="sublist_SUB0013" class="display_view" style="display: none;"></div>
+            </td>
+         </tr>
+                 <tr class="headings">
+     <td colspan="10">
+      
+
+<div id="paging">
+<table width="100%" border="0">
+      <tbody><tr>
+        <td width="20%"><strong>
+                  <select name="list_count" id="list_count" onchange="callAjaxRequest(this.value, &#39;type=paging&#39;, &#39;#content_div&#39;, &#39;POST&#39;, &#39;html&#39;, true, true)">
+                    <option value="?&amp;start=0&amp;pcount=5" selected="">
+            5        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=10">
+            10        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=15">
+            15        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=20">
+            20        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=25">
+            25        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=30">
+            30        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=35">
+            35        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=40">
+            40        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=45">
+            45        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=50">
+            50        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=55">
+            55        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=60">
+            60        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=65">
+            65        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=70">
+            70        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=75">
+            75        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=80">
+            80        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=85">
+            85        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=90">
+            90        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=95">
+            95        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=100">
+            100        Rec. Per Page</option>
+                        <option value="?&amp;start=0&amp;pcount=105">
+            105        Rec. Per Page</option>
+                      </select>
+          
+                 </strong></td>
+        
+        <td class="numbercurrent" width="20%">
+                <strong>Go to 
+       
+          <select name="pagelist" id="pagelist" onchange="callAjaxRequest(this.value, &#39;type=paging&#39;, &#39;#content_div&#39;, &#39;POST&#39;, &#39;html&#39;, true, true)">
+                        <option value="?&amp;start=0" selected="">Page
+            1            </option>
+                        <option value="?&amp;start=5">Page
+            2            </option>
+                        <option value="?&amp;start=10">Page
+            3            </option>
+                        <option value="?&amp;start=15">Page
+            4            </option>
+                        <option value="?&amp;start=20">Page
+            5            </option>
+                        <option value="?&amp;start=25">Page
+            6            </option>
+                        <option value="?&amp;start=30">Page
+            7            </option>
+                        <option value="?&amp;start=35">Page
+            8            </option>
+                        <option value="?&amp;start=40">Page
+            9            </option>
+                      </select>
+        </strong>
+                </td>
+        <td align="center">
+                <strong> 
+                    <img src="images/first-arrow-disabled.png" title="First Page" alt="First">
+        
+        &nbsp;&nbsp;&nbsp;
+
+
+                    <img src="images/prev-arrow-disabled.png" title="Previous Page" alt="Previous">
+        
+       
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+                    <a href="javascript:" title="Next Page" onclick="callAjaxRequest(&#39;?&amp;start=5&#39;, &#39;type=paging&#39;, &#39;#content_div&#39;, &#39;POST&#39;, &#39;html&#39;, true, true)">
+                <img src="images/next-arrow.png" alt="Next">
+            </a>         
+                
+        
+        
+        &nbsp;&nbsp;&nbsp;
+        
+       
+                    <a href="javascript:" title="Last Page" onclick="callAjaxRequest(&#39;?&amp;start=40&#39;, &#39;type=paging&#39;, &#39;#content_div&#39;, &#39;POST&#39;, &#39;html&#39;, true, true)">
+                <img src="images/last-arrow.png" alt="Last">
+            </a>        
+               
+        </strong>
+            </td>
+        <td width="25%" align="right"><strong>
+        Records (1 - 5 ) of 41        </strong></td>
+        <td width="20%" align="right"><strong>
+        Page 1 / 9        </strong></td>
+      </tr>
+    </tbody></table>
+ </div>
+         </td>
+     </tr>
+
+   </tbody></table>
+         
+   </form>
+    <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>    
+</div>
+
+<!--For the print option, days less 30 to display the results. Default value 30-->
+<script>
+var max_days = 30;
+</script><div id="footer">
+                <div class="ftr-content">
+                <p>Copyright © 2011 <a href="https://webmail.pair.com/" target="_blank">Mayava Finance</a>, All Rights Reserved. Design: <a href="http://www.angleritech.com/" target="_blank">ANGLER Technologiess</a></p></div>
+            
+            </div>
+   
+    
+</div>
+<!-- Dialog Divs : Edited By Moses C Rathina Kumar on 29 Sep 2011 -->
+
+
+
+
+<div id="page_loading">
+<div id="loading-container">
+<div class="loading">
+<p>Loading.....</p><br>
+</div>
+<div class="clear clearfix"></div>
+</div></div>
+
+<!--main container ends--> 
+
+
+<script type="text/javascript" src="./Mayava Finance_files/tabnavi.js"></script>
+<script>
+//Dialog JS Jquery Configuration
+jQuery(document).ready(
+    function(){
+        
+    jQuery("#calender_trigger").click(function(){
+            jQuery(".calender").click();
+        }); 
+
+        
+    }
+
+);
+
+
+</script><div class="ui-dialog ui-widget ui-widget-content ui-corner-all confirm ui-draggable ui-resizable" tabindex="-1" role="dialog" aria-labelledby="ui-dialog-title-formact_dialog" style="display: none; z-index: 1000; outline: 0px; position: absolute;"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><span class="ui-dialog-title" id="ui-dialog-title-formact_dialog">Form Action Dialog</span><a href="http://192.168.0.77/mayava/detailed_ledger_report.php#" class="ui-dialog-titlebar-close ui-corner-all" role="button"><span class="ui-icon ui-icon-closethick">close</span></a></div><div id="formact_dialog" class="ui-dialog-content ui-widget-content"></div><div class="ui-resizable-handle ui-resizable-n"></div><div class="ui-resizable-handle ui-resizable-e"></div><div class="ui-resizable-handle ui-resizable-s"></div><div class="ui-resizable-handle ui-resizable-w"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se ui-icon-grip-diagonal-se" style="z-index: 1001;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 1002;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 1003;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 1004;"></div><div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix"><div class="ui-dialog-buttonset"><button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">Save</span></button><button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">Cancel</span></button></div></div></div><div class="ui-dialog ui-widget ui-widget-content ui-corner-all confirm ui-draggable ui-resizable" tabindex="-1" role="dialog" aria-labelledby="ui-dialog-title-confirm_box" style="display: none; z-index: 1000; outline: 0px; position: absolute;"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><span class="ui-dialog-title" id="ui-dialog-title-confirm_box">Confirm Dialog</span><a href="http://192.168.0.77/mayava/detailed_ledger_report.php#" class="ui-dialog-titlebar-close ui-corner-all" role="button"><span class="ui-icon ui-icon-closethick">close</span></a></div><div id="confirm_box" class="ui-dialog-content ui-widget-content"></div><div class="ui-resizable-handle ui-resizable-n"></div><div class="ui-resizable-handle ui-resizable-e"></div><div class="ui-resizable-handle ui-resizable-s"></div><div class="ui-resizable-handle ui-resizable-w"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se ui-icon-grip-diagonal-se" style="z-index: 1001;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 1002;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 1003;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 1004;"></div><div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix"><div class="ui-dialog-buttonset"><button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">Yes</span></button><button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">No</span></button></div></div></div><div class="ui-dialog ui-widget ui-widget-content ui-corner-all alert ui-draggable ui-resizable" tabindex="-1" role="dialog" aria-labelledby="ui-dialog-title-alert_box" style="display: none; z-index: 1001; outline: 0px; position: absolute; height: auto; width: 600px; top: 345px; left: 329px;"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><span class="ui-dialog-title" id="ui-dialog-title-alert_box">Alert Dialog</span><a href="http://192.168.0.77/mayava/detailed_ledger_report.php#" class="ui-dialog-titlebar-close ui-corner-all" role="button"><span class="ui-icon ui-icon-closethick">close</span></a></div><div id="alert_box" class="ui-dialog-content ui-widget-content" scrolltop="0" scrollleft="0" style="width: auto; min-height: 44.28px; height: auto;"></div><div class="ui-resizable-handle ui-resizable-n"></div><div class="ui-resizable-handle ui-resizable-e"></div><div class="ui-resizable-handle ui-resizable-s"></div><div class="ui-resizable-handle ui-resizable-w"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se ui-icon-grip-diagonal-se" style="z-index: 1001;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 1002;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 1003;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 1004;"></div><div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix"><div class="ui-dialog-buttonset"><button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">OK</span></button></div></div></div><div class="ui-dialog ui-widget ui-widget-content ui-corner-all confirm ui-draggable ui-resizable" tabindex="-1" role="dialog" aria-labelledby="ui-dialog-title-print_dialog" style="display: none; z-index: 1003; outline: 0px; position: absolute; height: auto; width: 800px; top: 120px; left: 229px;"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><span class="ui-dialog-title" id="ui-dialog-title-print_dialog">Print Preview</span><a href="http://192.168.0.77/mayava/detailed_ledger_report.php#" class="ui-dialog-titlebar-close ui-corner-all" role="button"><span class="ui-icon ui-icon-closethick">close</span></a></div><div id="print_dialog" class="ui-dialog-content ui-widget-content" scrolltop="0" scrollleft="0" style="width: auto; min-height: 0px; height: 494.28px;"></div><div class="ui-resizable-handle ui-resizable-n"></div><div class="ui-resizable-handle ui-resizable-e"></div><div class="ui-resizable-handle ui-resizable-s"></div><div class="ui-resizable-handle ui-resizable-w"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se ui-icon-grip-diagonal-se" style="z-index: 1001;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 1002;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 1003;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 1004;"></div><div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix"><div class="ui-dialog-buttonset"><button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">Print</span></button><button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">Close</span></button></div></div></div></body></html>

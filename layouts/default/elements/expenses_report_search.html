@@ -1,0 +1,153 @@
+<div id="search_table" <?php echo $diaply_style; ?> style="margin-bottom:15px;">
+    <form id="search_form" name="search_form">
+        <table class="search-tbl" width="100%" border="0" cellpadding="15" cellspacing="0" 
+               style="border:1px solid #ccc; border-radius:8px; font-size:15px; background:#fafafa;">
+
+            <!-- Header + Buttons -->
+            <tr style="background:#f3f3f3;">
+                <td colspan="2" style="font-weight:bold; color:#6c2c7c; padding:10px 14px; font-size:16px;">
+                    Report Filter Search
+                </td>
+                <td colspan="2" align="right" style="white-space:nowrap; padding:10px 14px;">
+                    <a id="search_btn" href="javascript:;" 
+                       onclick="search_items('<?php echo  $module_name;?>');" 
+                       class="button">SEARCH</a>
+                    <a href="<?php echo  $module_name; ?>.php" class="button">RESET</a>
+                </td>
+            </tr>
+
+            <!-- Row 1 -->
+            <tr>
+                <td width="15%">From Date :</td>
+                <td width="30%">
+                    <input name="sdate" type="text" id="sdate" class="text-field" 
+                        value="<?php echo  $search_sdate; ?>"
+                        onfocus="date_picker('sdate', 'sdate', '%d-%m-%Y' )" 
+                        style="width:220px; padding:6px;" />
+                </td>
+
+                <td width="15%">To Date :</td>
+                <td width="35%">
+                    <input name="edate" type="text" id="edate" class="text-field"
+                        value="<?php echo $search_edate;?>"
+                        onfocus="date_picker('edate', 'edate', '%d-%m-%Y' )"
+                        style="width:220px; padding:6px;" />
+                </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr>
+                <td>Search by Branch :</td>
+                <td>
+                    <?php $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH); ?>
+                    <select id="branch_id" name="branch_id" onchange="loadSubBranch(this.value)" style="width:230px; padding:6px;">
+                        <option value="">-- Select Branch --</option>
+                        <?php echo build_select_options($branch_data,$search_branch_id); ?>
+                    </select>
+                </td>
+
+                <td>Search by Sub Branch :</td>
+                <td>
+                    <select id="sub_branch_id" name="sub_branch_id" style="width:230px; padding:6px;">
+                        <option value="">-- Select Sub Branch --</option>   
+                        <?php echo build_select_options([], $search_sub_branch_id); ?>
+                    </select>
+                </td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr>
+                <td>Search by Category :</td>
+                <td>
+                    <?php $category_data = get_dropdown_list_with_field('id', 'name', EXPENSES_CATEGORY); ?>
+                    <select id="category_id" name="category_id" onchange="loadSubCategory(this.value, '<?php echo $search_sub_category_id; ?>')" style="width:230px; padding:6px;">
+                        <option value="">-- Select Category --</option>
+                        <?php echo build_select_options($category_data,$search_category_id); ?>
+                    </select>
+                </td>
+
+                <td>Search by Sub Category :</td>
+                <td>
+                    <select id="sub_category_id" name="sub_category_id" style="width:230px; padding:6px;">
+                        <option value="">-- Select Sub Category --</option>
+                        <?php echo build_select_options([], $search_sub_category_id); ?>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+
+
+
+<script>
+    jQuery(document).ready(function () {
+        search_enter_action('<?php echo $module_name; ?>');
+    });
+
+function loadSubBranch(branch_id, selected_id = "") {
+    if (typeof branch_id === "undefined" || branch_id === null) {
+        branch_id = $("#branch_id").val();
+    }
+
+    if (branch_id !== "") {
+        $.ajax({
+            type: "POST",
+            url: "expenses_report_dev.php",
+            data: { action: "get_sub_branches", branch_id: branch_id },
+            success: function (res) {
+                $("#sub_branch_id").html(res);
+
+                if (selected_id !== "") {
+                    $("#sub_branch_id").val(selected_id);
+                }
+            },
+            error: function (xhr, status, err) {
+                console.error('AJAX error:', status, err);
+                console.log(xhr.responseText);
+            }
+        });
+    } else {
+        $("#sub_branch_id").html("<option value=''>-- Select Sub Branch --</option>");
+    }
+}
+function loadSubCategory(category_id, selected_id = "") {
+    if (category_id !== "") {
+        $.ajax({
+            type: "POST",
+            url: "expenses_report_dev.php",
+            data: { action: "get_sub_categories", category_id: category_id },
+            success: function (res) {
+                $("#sub_category_id").html(res);
+
+                if (selected_id !== "") {
+                    $("#sub_category_id").val(selected_id);
+                }
+            },
+            error: function (xhr, status, err) {
+                console.error('AJAX error:', status, err);
+                console.log(xhr.responseText);
+            }
+        });
+    } else {
+        $("#sub_category_id").html("<option value=''>-- Select Sub Category --</option>");
+    }
+}
+
+$(document).ready(function() {
+    var branch_id = "<?php echo $search_branch_id; ?>";
+    var sub_branch_id = "<?php echo $search_sub_branch_id; ?>";
+
+    var category_id = "<?php echo $search_category_id; ?>";
+    var sub_category_id = "<?php echo $search_sub_category_id; ?>";
+
+    if(branch_id !== "") {
+        loadSubBranch(branch_id, sub_branch_id);
+    }
+    if(category_id !== "") {
+        loadSubCategory(category_id, sub_category_id);
+    }
+});
+</script>

@@ -1,0 +1,112 @@
+<?php
+ if(isset($_SESSION['success_msg']))
+ {
+ echo $_SESSION['succes_msg'];
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+?>
+ <div class="clear clearfix"></div>
+<div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td ><a href="javascript:;">Home</a> &raquo;<a href="javascript:;"><a href="javascript:;">My Account</a></td >
+        <td ><span class="btn-rht"><a href="javascript:;" class="greybtn" onclick="return save_action('msg','<?php echo $module_name; ?>','<?php echo $user_data['id'];?>');">SAVE</a>  
+            <a href="javascript:;" class="greybtn" onclick="document.myaccount_form.reset();">RESET</a></span></td>
+      </tr>
+      </table>
+ </div>
+<div id="contentarea">
+<form name="myaccount_form" method="post" style="margin: 0px;" onsubmit="return save_action('msg','<?php echo $module_name; ?>','<?php echo $user_data['id'];?>');">
+
+<!--a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a-->
+
+
+            <?
+echo $_SESSION['success_msg'];
+unset($_SESSION['success_msg']);
+            ?>
+            
+<table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+        <td class="title">My Account</td>
+  </tr>
+   <td width="50%">
+        
+    <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">          
+          <tr>
+            <td id="email"><span class="add"> Email <span class="star">*</span></span></td>
+            <td><input name="pval[email]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('email');" value = "<?php echo stripslashes($user_data['email']); ?>">
+          </tr>
+
+         <tr>
+            <td id="name"><span class="add"> Name <span class="star">*</span></span></td>
+            <td><input name="pval[name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($user_data['name']); ?>"></td>
+          </tr>
+
+        <tr>
+            <td><span class="add"> Contact no </span></td>
+            <td><input name="pval[contact_no]" maxlength="40" type="text" class="textfield-m"  value = "<?php echo stripslashes($user_data['contact_no']); ?>"></td>
+          </tr>
+
+        <tr>
+            <td id="address"><span class="add"> Address </span></td>
+            <td><textarea name="pval[address]" onfocus="remove_red('address');"><?php echo stripslashes($user_data['address']); ?></textarea></td>
+        </tr>       
+
+        <tr>
+            <td id="password"><span class="add"> Old Password</span></td>
+            <td><input name="pval[password]" maxlength="40" type="password" class="textfield-m" onkeypress="remove_red('password');"></td>
+          </tr>
+
+        <tr>
+            <td id="newpassword"><span class="add"> New Password</span></td>
+            <td><input name="pval[newpassword]" maxlength="40" type="password" class="textfield-m" onkeypress="remove_red('newpassword');"></td>
+          </tr>
+        <tr>
+            <td id="confirmnewpassword"><span class="add"> Confirm New Password</span></td>
+            <td><input name="pval[confirmnewpassword]" maxlength="40" type="password" class="textfield-m" onkeypress="remove_red('confirmnewpassword');"></td>
+          </tr>
+
+    </table>
+                </div>
+      
+      <div class="pagination">      
+        <div class="pagi-rht">
+                <div class="no-list"></div>
+        </div>
+    </div>
+            
+      <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $user_data['id'];?>">
+          </td>
+      </tr>
+    </table>
+</form>
+<div class="clear clearfix"></div>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    $(document).ready(function(){   
+        $("input,select").not( $(":button,:hidden") ).keypress(function (evt) {
+            if (evt.keyCode == 13) {
+                iname = $(this).val();
+                if (iname !== 'Submit'){    
+                    var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:radio,input:checkbox,textarea,select,input:password');                    
+                    
+                    var index = fields.index( this );
+                    if ( index > -1 && ( index + 1 ) < fields.length) {
+                        fields.eq( index + 1 ).focus();
+                    }
+                    else
+                    {                   
+                      update_myaccount('msg','<?php echo $user_data['id']; ?>');
+                    }
+                    return false;
+                }
+            }
+        });
+        enable_save_action();
+    });
+</script>

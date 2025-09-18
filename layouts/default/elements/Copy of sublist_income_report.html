@@ -1,0 +1,60 @@
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+
+          <tr class="headings">
+          <td width="6%">Loan Id</td>
+          <td width="7%" align=right>Loan Date</td> 
+		  <td width="10%" align=right>Paid Date</td>
+          <td width="13%" align=right>Loan Amount(<?php echo CURRENCY_SYMBOL; ?>)</td>		            
+          <td width="10%" align=right>Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+		  <td width="15%" align=right>Additional charge(<?php echo CURRENCY_SYMBOL; ?>)</td>
+		  <td width="10%" align=right>Service charge(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <!--td width="10%" align=right>Other (<?php echo CURRENCY_SYMBOL;?>)</td>          
+          <td width="6%" align=right >ROI (%)</td>
+          <td align=center>Period</td>
+          <td width="6%" align=center>Due Date</td>
+          <td width="6%" align=center>Paid Date</td>
+          <td width="10%" align=right>Wavier (<?php echo CURRENCY_SYMBOL; ?>)</td-->
+          <td width="7%" align=center>Status</td>
+
+          </tr>
+            <?php
+              if(count($data) > 0) {
+                for($i=0;$i<count($data);$i++){ 
+                
+                $change_status = ($data[$i]['status'] == 1) ? 0 : 1;
+                
+                $pay_interest_details = unserialize($data[$i]['interest_details']);
+                
+            ?>
+         <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+          <td align="left"><?php echo $data[$i]['loan_id'];?></td>
+		   <td align="right"><?php if($data[$i]['paid_on']=='') echo"-";
+                                 else echo htmlentities(stripslashes($data[$i]['paid_on']), ENT_QUOTES);?>
+          <td align="right"><?php echo htmlentities(stripslashes($data[$i]['loan_date']), ENT_QUOTES); ?></td>     
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['loan_amount']),false); ?></td>
+          <!--td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['principle_amount']),false);?></td--> 
+		  <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['interest_amount']),false);?></td> 
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['additional_charge']),false); ?></td>    
+          <td align="right"><?php echo $data[$i]['service_charge']; ?></td>    
+          <!-- td align="center"><?php echo htmlentities(stripslashes($data[$i]['interest_period'])); ?></td>     
+          
+          <td align="left"><?php echo ($pay_interest_details['due_date']=='') ? '_' : date("d-M-Y",strtotime($pay_interest_details['due_date']));?></td> 
+          <td align="left"><?php if($data[$i]['paid_on']=='') echo"-";
+                                 else echo htmlentities(stripslashes($data[$i]['paid_on']), ENT_QUOTES);?>
+          </td> 
+          <td align="right"><?php echo convertToCurrency($data[$i]['wavier_amount'],false);?></td--> 
+          <td align="center"><?php echo htmlentities(stripslashes($data[$i]['loan_status']), ENT_QUOTES);?></td> 
+
+         </tr> 
+            <?php
+                }
+            } else {
+            ?>
+            <tr class="bg-row">
+            <td colspan="11" align="center" height="50">No records found</td>
+            </tr>
+            <?php
+            }
+            ?>
+   
+   </table>

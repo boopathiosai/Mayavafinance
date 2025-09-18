@@ -1,0 +1,97 @@
+<?php
+$category_data = isset($expenses_category_data) && is_array($expenses_category_data) ? $expenses_category_data : [];
+
+$active   = (isset($category_data['status']) && $category_data['status'] == 1) ? "checked" : "";
+$inactive = (isset($category_data['status']) && $category_data['status'] == 0) ? "checked" : "";
+
+$with    = (isset($category_data['product_with']) && $category_data['product_with'] == 1) ? "checked" : "";
+$without = (isset($category_data['product_with']) && $category_data['product_with'] == 0) ? "checked" : "";
+?>
+
+<script src="js/common.js" type="text/javascript"></script>
+<script src="js/tamil.js" type="text/javascript"></script>
+<div class="clear clearfix"></div>
+<div id="HelpDiv" style="width:825px;margin:auto;"></div> 
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>&nbsp;Masters  &raquo;<a href="categories.php">Expenses &raquo; Category Master</a></td >
+        <td ><span class="btn-rht">
+        <a href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a>  <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+ 
+<div id="contentarea">
+<form name="category_form" method="post" style="margin: 0px;">
+<table style="width: 1003px;"><tbody><tr valign="top"><td><input type="checkbox" id="checkshow" onclick="showMap(this)" name="showmap">Show Keymap<br></tbody></table>
+<table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+ <tr>
+    <td class="title">Expenses &raquo; Category Master</td> 
+  </tr>
+  <tr>
+    <td width="50%"><table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+      
+      <tr>
+        <td id="category" width="12%">Expenses Category name* </td>
+        <td width="61%" align="left"><!--input name="pval[category]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('category');" value = "<?php echo stripslashes($category_data['category']); ?>" id="cat_name"/-->
+		<input name="pval[name]" maxlength="40" type="text" class="textfield-m converters" onfocus="remove_red('name');" value="<?= isset($category_data['name']) ? htmlspecialchars($category_data['name']) : '' ?>"  charset="utf-8" onkeypress="javascript:convertThis(event)" onkeydown="toggleKBMode(event)">
+		</td>
+      </tr>  
+
+      <!-- <tr>
+        <td id="quality" width="12%">Quality </td>
+        <td width="61%" align="left">
+        <input name="pval[quality]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('quality');" value = "<?php echo stripslashes($category_data['quality']); ?>"/>     -->
+        <!--input name="pval[product_with]"  type="radio" class="radio"  onfocus="remove_red('product_with');" value = "1" <?php echo $with; ?> style="width:0px;"/> With Stone
+        <input name="pval[product_with]"  type="radio" class="radio"  onfocus="remove_red('product_with');" value = "0" <?php echo $without; ?> style="width:0px; padding-bottom:10px;"/> <span style="padding-top:-5px;">Without Stone</span-->
+        <!-- </td>
+      </tr>  -->
+      <!--
+      <tr>
+        <td id="product_info" width="12%">Product info* </td>
+        <td width="61%" align="left"><input name="pval[product_info]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('product_info');" value = "<?php echo stripslashes($category_data['product_info']); ?>"/></td>
+      </tr>  
+      -->
+      <tr>
+        <td id="description">Expenses Category description</td>
+        <td align="left"><textarea name="pval[description]" onfocus="remove_red('description');"><?= isset($category_data['description']) ? htmlspecialchars($category_data['description']) : '' ?></textarea></td>
+      </tr>
+      <tr>
+    <td>Status </td>
+    <td><label>
+      <input name="pval[status]" type="radio" class="radio" value="1" <?php echo $active; ?> />
+      Active</label>
+        <label>
+        <input name="pval[status]" type="radio" class="radio" value="0" <?php echo $inactive; ?> />
+      Inactive </label></td>
+    </tr>
+    <tr>
+        <td colspan="2"><span id="mand_note">* indicates mandatory fields</span> </td>
+    </tr> 
+    </table>
+     <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+          
+          <?php }?>
+
+     </form>    
+      </td>
+      </tr>  
+    </table>     
+<div class="clear clearfix"></div>
+</body>
+
+<script type="text/javascript">
+    $(document).ready(function(){   
+       // $('#cat_name').focus(); 
+	   //document.category_form.cat_name.focus();        form_enter_focus(jQuery('input[name=pval[category]]'),4,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        enable_save_action();
+        
+    });
+</script>
+</html>

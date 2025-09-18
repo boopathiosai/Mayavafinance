@@ -1,0 +1,72 @@
+
+       <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+
+          <tr class="headings">
+          <td width="15%">Date</td>
+          <td width="25%">Particulars</td>
+          <td align="right">Cash In(<?php echo CURRENCY_SYMBOL;?>)</td>
+          <td align="right">Cash Out (<?php echo CURRENCY_SYMBOL;?>)</td>
+          </tr>
+            <?php
+              if(count($data) > 0) {
+			  //echo '<pre>';
+
+              //print_r($data);
+			  //exit;
+                //for($i=0;$i<count($data);$i++) {
+                foreach($data as $row) {
+                /*$change_status = ($row['status'] == 1) ? 0 : 1;
+                $service_charge = $service_charge + $row['service_charge'];
+                $additional_charge = $additional_charge + $row['additional_charge'];
+                $interest_amount = $interest_amount + $row['interest_amount'];
+                $cash_in = $cash_in + $row['cash_in'];
+                $cash_out = $cash_out + $row['cash_out'];*/
+
+				$particulars = $row['particulars'] == 'Pay interest' ? 'Interest' : $row['particulars'];
+       // $particulars = $row['particulars'] == 'Additional Charge' ? 'Interest' : $row['particulars'];
+         if(($row['cash_in'])||($row['cash_out'])!=0){
+            ?>
+         <tr class="row0" id="<?php echo $row['id']; ?>">
+
+          <td align="left"><?php echo htmlentities(stripslashes($row['trans_date']), ENT_QUOTES); ?></td>
+          <td align="left" valign="middle"><?php echo htmlentities(stripslashes($particulars), ENT_QUOTES); ?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($row['cash_in']),false); ?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($row['cash_out']),false); ?></td>
+         </tr>
+            <?php
+              }
+                } ?>
+            <!--<tr>
+               <td>&nbsp;</td>
+               <td align="right"><strong>Total</strong></td>
+               <td align="right"><?php echo convertToCurrency($cash_in); ?></td>
+               <td align="right"><?php echo convertToCurrency($cash_out); ?></td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td align="right"><strong>Additional amount</strong></td>
+               <td align="right"><?php echo convertToCurrency($additional_charge); ?></td>
+               <td align="right">&nbsp;</td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td align="right"><strong>Service charge</strong></td>
+               <td align="right"><?php echo convertToCurrency($service_charge); ?></td>
+               <td align="right">&nbsp;</td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td align="right"><strong>Interest amount</strong></td>
+               <td align="right"><?php echo convertToCurrency($interest_amount); ?></td>
+               <td align="right">&nbsp;</td>
+            </tr>-->
+            <?php } else {
+            ?>
+            <tr class="bg-row">
+            <td colspan="4" align="center" height="50">No records found</td>
+            </tr>
+            <?php
+            }
+            ?>
+
+        </table>

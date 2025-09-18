@@ -1,0 +1,164 @@
+ <div id="content_div">
+ <?php
+ unset($_SESSION['start']);
+ unset($_SESSION['pcount']);
+
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+//print_r($menu);
+//print_r(can_edit($_SESSION[$app->session_usertype1], $module_name));
+?>
+ <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td>&nbsp;Transactions&raquo;<a href="<?php echo $module_name;?>.php">Raise Request for Money Shortage</a></td >
+        <td >
+        <span class="btn-rht">
+        <?php 
+        if(can_add($_SESSION['session_usertype'], $module_name))
+        {       
+        ?>
+        <a href="javascript:;" onclick = "return create_function('content_div', '<?php echo $module_name; ?>','<?php echo $search_args; ?>');" class="greybtn">ADD NEW</a>
+        <?php
+        }
+        if(can_delete($_SESSION['session_usertype'], $module_name))
+        {
+        ?>
+        <a href="javascript:;" onclick = "delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $data[$i][id]; ?>');" class="greybtn">DELETE</a>      
+        <?php
+        }
+        ?>
+        </span>
+        </td>
+      </tr>
+      </table>
+ </div>
+ <div id="contentarea">  
+ <br>
+    <form>
+     <table class="list-tbl" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">     
+     <tr>
+        <td class="title" colspan="11">Raise Request for Money Shortage</td>
+     </tr>    
+     <tr class="headings">
+      <td align="center" width="4%"><input type="checkbox" name="selall" id="selall" onclick="chk_all(),highlight_all();"/></td>
+      <td width="20%"><strong>Branch Name</strong></td>
+      <td width="20%" align="center"><strong>Amount Needed(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="15%" align="center"><strong>Date</strong></td>
+      <td width="18%" align="left" colspan="5"><strong>Status</strong></td>
+      <td colspan="2"  width="18%" align="left"><strong>Action</strong></td>
+     </tr>
+        <?php
+                if(count($data) > 0) 
+                {
+                    for($i=0;$i<count($data);$i++)
+                    { 
+                        
+                    ?>
+                      <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+                     
+                      <td align="center" >
+                      <?php
+                      if($data[$i]['editable']!='0')
+                        {?>
+                        <input type="checkbox" name="list[]" id="list[]" onclick="chkselcount('list[]'),highlight(this);" value='<?php echo $data[$i]['id']; ?>'/>
+                        <?php
+                        }else{
+                        ?>
+                        -
+                        <?php
+                        }?>
+                      </td>
+                      <td align="left">
+                            <?php 
+                                echo $data[$i]['branch_name']; 
+                            ?> 
+                      </td>
+                      <td align="center">
+                            <?php echo convertToCurrency(stripslashes($data[$i]['amount_need']),false); ?>
+                      </td> 
+                    <td align="center">
+                            <?php echo htmlentities(stripslashes(date("d M Y",strtotime($data[$i]['date']))), ENT_QUOTES); 
+                            ?>
+                      </td> 
+
+                      <td align="left" colspan="5">
+                       <?php 
+                       if($data[$i]['editable']=='0')
+                           {
+                                echo AMOUNT_ALLOTED;
+                           }
+                       
+                       else
+                                echo AMOUNT_NOT_ALLOTED;
+                       ?>
+                        </td>                  
+                                <td width="3%" valign="middle">
+                                  <?php 
+                                    if($data[$i]['editable']!='0' && can_edit($_SESSION['session_usertype'], $module_name))
+                                    {
+                                  ?>
+                                  <a href="javascript:;" onclick="edit_function('content_div','<?php echo $module_name; ?>','<?php echo $data[$i][id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');" title="Edit"><img src="images/edit.jpg" /></a>
+                                  <?php }
+                                  else
+                                    echo "<a href='javascript:;'  onclick='jalert(this.title)'  title='".NO_EDIT_PRIVILEGE."'><img src='images/edit_gray.jpg'/></a>";
+                                  ?>
+                                  </td>
+                                  
+                                    
+                                   
+                                  <td width="5%" valign="middle">
+                                  <?php
+                                  if($data[$i]['editable']!='0'  && can_delete($_SESSION['session_usertype'], $module_name))
+                                    {?>
+                                  <a href="javascript:;" onclick="delete_selected('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $data[$i][id]; ?>');" title="Delete"><img src="images/delete.jpg" border="0"/></a></td>
+                                  <?php
+                                  }
+                                  else
+                                    echo "<a href='javascript:;' onclick='jalert(this.title)' title='". NO_DELETE_PRIVILEGE."'><img src='images/delete_gray.jpg' /></a>";
+                                  ?>
+
+                                  </td>
+                                  
+         </tr>   
+           <?php
+         
+         }// end of for loop
+                } else {
+                ?>
+                <tr class="bg-row">
+                <td colspan="11" align="center" height="50">No records found</td>
+                </tr>
+                <?php
+                }
+                ?>  
+        </form>
+         <tr class="headings">
+     <td colspan=100%>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+    </table>
+      <!--div class="pagination">       
+        <div class="pagi-rht">
+            <div class="no-list">
+            <?php
+            if ($count > ROWS_PER_PAGE) { 
+             include ADMIN_LAYOUT_PATH . 'common/paging.html'; 
+            }
+            ?>
+            </div>
+       </div>
+     </div--> 
+    
+     <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>
+
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>

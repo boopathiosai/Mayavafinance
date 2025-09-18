@@ -1,0 +1,130 @@
+
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+
+
+
+
+     <tr class="headings">
+              <td><strong>Date</strong></td>
+              <td width="15%" align="left" valign="middle"><strong>Branch</strong></td>               
+              <!--<td width="15%"  align="right"><strong>Opening(<?php echo CURRENCY_SYMBOL;?>)</strong></td>   -->
+             <td width="20%"  align="center"><strong>Cash In Purpose</strong></td>
+              <td width="10%"  align="center"><strong>Cash In(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+              <td width="20%"  align="center"><strong>Cash Out Purpose</strong></td>          
+              <td width="10%"  align="center"><strong>Cash Out(<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+              <!--<td width="15%"  align="right"><strong>Closing(<?php echo CURRENCY_SYMBOL;?>)</strong></td> -->
+
+<?php
+    if(count($data) > 0) {
+
+
+  //  print_r($data);
+
+        for($i=0;$i<count($data);$i++){
+
+            //$amount_in = floatval($data[$i]['interest_amount_in']) + floatval($data[$i]['partial_amount_in']) + floatval($data[$i]['redeam_amount_in']);
+            //$amount_out = floatval($data[$i]['loan_amount_out']) + floatval($data[$i]['excess_amount_out']);
+
+            /*$opening_amount = floatval($data[$i]['opening_balance']);
+            $closing_amount = floatval($data[$i]['closing_balance']);
+
+            $cash_in = floatval($data[$i]['cash_in']);
+            $cash_out = floatval($data[$i]['cash_out']);
+
+            $cashin_purpose = $data[$i]['cashin_purpose'];
+            $cashout_purpose = $data[$i]['cashout_purpose'];
+            $purpose = $data[$i]['purpose'];
+
+
+            $cash_purpose = '';
+
+            
+            $loan_id = 0;
+            $pquery = "SELECT id FROM ".PLEDGE." WHERE cash_flow_id = ".$data[$i]['cash_flow_id'];
+            $pcid = $app->getrow($pquery);
+            if((int)$pcid[0] > 0){
+              $cash_purpose = CASHFLOW_PURPOSE_PLEDGED;
+              $loan_id = (int)$pcid[0];  
+            }else{
+            
+                $rquery = "SELECT loan_id FROM ".REDEMPTION." WHERE cash_flow_id =  ".$data[$i]['cash_flow_id'];
+                $rcid = $app->getrow($rquery);
+                if((int)$rcid[0] > 0){
+                  $cash_purpose = CASHFLOW_PURPOSE_REDEEMED;
+                  $loan_id = (int)$rcid[0];  
+                }else{
+                
+                    $apquery = "SELECT loan_id FROM ".PRODUCT_AUCTION." WHERE cash_in_id =  ".$data[$i]['cash_flow_id'];
+                    $apcid = $app->getrow($apquery);
+                    if((int)$apcid[0] > 0){
+                      $cash_purpose = AUCTION_AMOUNT;
+                      $loan_id = (int)$apcid[0];  
+                    }else{
+                    
+                        $alquery = "SELECT loan_id FROM ".PRODUCT_AUCTION." WHERE cash_out_id = ".$data[$i]['cash_flow_id'];
+                        $alcid = $app->getrow($alquery);
+                        if((int)$alcid[0] > 0){
+                          $cash_purpose = AUCTION_AMOUNT_LOSS;
+                          $loan_id = (int)$alcid[0];  
+                        }else{
+                            
+                            //
+                            $piquery = "SELECT loan_id FROM ".PRODUCT_INTERESTS." WHERE cash_flow_id = ".$data[$i]['cash_flow_id'];
+                            $picid = $app->getrow($piquery);
+                            if((int)$picid[0] > 0){
+                              $cash_purpose = PAY_INTEREST;
+                              $loan_id = (int)$picid[0];  
+                            }
+                        }
+                    
+                    }
+                }
+            }
+            
+            if((int)$loan_id > 0){
+                $pcquery = "SELECT loan_id FROM mf_pledge WHERE id = ".(int)$loan_id;
+                $pcode = $app->getrow($pcquery);
+                $loan_code = $pcode[0];
+            }
+            if($cash_purpose != '' && (int)$loan_id > 0 && (int)$cash_in > 0)
+                $cashin_purpose = $cash_purpose." - (Loan ID : ".$loan_code.")";
+                
+            if($cash_purpose != '' && (int)$loan_id > 0 && (int)$cash_out > 0)    
+                $cashout_purpose = $cash_purpose." - (Loan ID : ".$loan_code.")";
+*/
+				$cashin_purpose = $data[$i]['cashin_purpose'] == 'Pay Interest' ? 'Interest' : $data[$i]['cashin_purpose'];
+?>
+
+     <tr class="row0" id="<?php echo $data[$i]['report_date']; ?>" height="40">
+
+              <td   align="left"><?php echo htmlentities(stripslashes($data[$i]['report_date']), ENT_QUOTES); ?> </td>
+
+              <td   align="left"><?php echo htmlentities(stripslashes($data[$i]['branch_name']), ENT_QUOTES); ?></td>
+
+
+              <!-- <td   align="right"> <?php echo convertToCurrency(stripslashes($data[$i]['opening_amount']),false); ?> </td>-->
+
+               <td   align="center"> <?php echo $cashin_purpose; ?> </td>
+               <td   align="center"> <?php echo convertToCurrency(stripslashes($data[$i]['cash_in']),false); ?> </td>
+
+               <td   align="center"> <?php echo $data[$i]['cashout_purpose']; ?> </td>
+               <td   align="center"> <?php echo convertToCurrency(stripslashes($data[$i]['cash_out']),false); ?> </td>
+
+
+               <!--<td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['closing_amount']),false); ?> </td>-->
+
+      </tr>
+
+<?php
+        }
+
+    } else {
+
+?>
+        <tr class="bg-row">
+        <td colspan="6" align="center" height="50">No records found (Note: You may deleted the related pledge details)</td>
+        </tr>
+<?php
+    }
+?>
+   </table>

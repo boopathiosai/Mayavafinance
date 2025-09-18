@@ -1,0 +1,130 @@
+<?php  if($user_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+    //echo"<PRE>";
+    //print_r($data);
+    //exit; 
+    ?>
+<div class="clear clearfix"></div>
+<div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td ><a href="javascript:;">Settings</a> &raquo;<a href="javascript:;">Privilege Management</a></td >
+        <td >
+        <!--<span class="btn-rht"><a href="javascript:;" class="greybtn" onclick="return save_privilege('content_div','<?php echo $uval[id]; ?>');">SAVE</a>  -->
+            <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+            <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a> 
+            <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div> 
+<div id="contentarea">
+<div id="msg"></div>
+<form name="main_form" id="main_form">
+<input name="id" maxlength="40" type="hidden" class="textfield-m" value = "<?php echo stripslashes($uval['id']); ?>"/>
+<table class="list-tbl" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+            <td id="branch_id" align="center"><span class="add"><strong>Branch Name*</strong></span></td>
+            <td>
+            
+            <?php                   
+            if($uval["id"] == ''){
+            
+               $user_branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);
+            ?>
+            <select name="pval[branch_id]" id="branch_id1" onchange="fileter_group(this.value);remove_red('branch_id');">
+            <option value="">--Select Branch --</option>
+               <?php              
+                   echo build_select_options($user_branch_data,$data1[0]['branch_id']); 
+               ?>
+            </select>
+            <?php 
+            }else {
+                echo Branch::getBranchName($data1[0]['branch_id']);
+                ?>
+                <input name="pval[branch_id]" maxlength="40" type="hidden" class="textfield-m" value = "<?php echo stripslashes($data1[0]['branch_id']); ?>"/>
+            <?php
+            }
+            ?>
+        </td>
+        </tr>
+        <tr>
+        <td id="user_group_id" align="center"><strong>User Group * </strong></td>
+        <td>
+        <?php  
+        if($uval["id"] == ''){
+        
+               $user_group_data = get_dropdown_list_with_field_user_group('id', 'name', USER_GROUP);
+                   if($data1[0]['user_group_id'] == '1'){
+                   $user_group_data =array($data1[0]['user_group_id'] => 'Super Admin'); 
+                } 
+            ?>
+            <select name="pval[user_group_id]" id="user_group_id1" onchange="remove_red('user_group_id');">
+            <option value="">-- Select Group --</option>
+               <?php
+                  echo build_select_options($user_group_data,$data1[0]['user_group_id']);
+               ?>
+            </select>
+        
+        <?php
+        }else{
+        
+        echo User::getUserGroup($data1[0]['user_group_id']);
+        
+        ?>
+            <input name="pval[user_group_id]" maxlength="40" type="hidden" class="textfield-m" value = "<?php echo stripslashes($data1[0]['user_group_id']); ?>"/>
+        <?php
+        
+        }
+        
+        ?>
+       
+        <input name="user_group_id" maxlength="40" type="hidden" class="textfield-m" value = "<?php echo stripslashes($data1[0]['user_group_id']); ?>"/>
+         </td>   
+       </tr>
+        <?php             
+            echo build_privillege_list($data,$uval['id'],$uval['branch_id']);
+            //print_r($data['module_id']);
+            //exit;
+        ?>     
+</table>
+        </form>    
+      <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+          
+          <?php }?>
+    </form>
+<div class="clear clearfix"></div>
+
+</div>
+</body>
+
+<script type="text/javascript">
+    $(document).ready(function(){  
+        enable_save_action();
+        $("input,select,textarea").not( $(":button,:hidden") ).keypress(function (evt) {
+            if (evt.keyCode == 13) {
+                iname = $(this).val();
+                if (iname !== 'Submit'){    
+                    var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:radio,input:checkbox,textarea,select');                   
+                    
+                    var index = fields.index( this );
+                    if ( index > -1 && ( index + 1 ) < fields.length) {
+                        fields.eq( index + 1 ).focus();
+                    }
+                    else
+                    {                   
+                      save_privilege('content_div','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');
+                    }
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,148 @@
+<div id="content_div">
+ <?php
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+?>
+    <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td><a href="javascript:;">Reports</a> &raquo;<a href="javascript:;"><?php echo $page_title?></a></td >
+        <td align="left" width="10%" >
+        <?php
+        if($search_args != "")
+        {
+        $diaply_style ="";
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+        <?php
+        }
+        else{
+        $diaply_style = 'style="display:none;"';
+        ?>
+        <div id="serach_button_div">
+        <a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+        <?php
+        }
+        ?>
+        </td>
+      </tr>
+      </table>
+  </div>
+  <!--Modified by karthik-->
+     <div id="contentarea">
+            <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td colspan="2">
+                    <?php include ADMIN_LAYOUT_PATH . 'elements/customer_report_search.html'; ?>
+                    </td>
+                </tr>
+            </table>
+      <div>
+      <br>
+       <form>
+       <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+          <tr>
+            <td class="title" colspan="6"><?php echo $page_title; ?></td>
+            <td class="title" colspan="6" align=right>
+            <a href="<?php echo $module_name; ?>.php?type=export_pdf&<?php echo $search_args; ?>" class="greybtn" id="pdf_report">PDF</a>
+            <a href="<?php echo $module_name; ?>.php?type=export_xls&<?php echo $search_args; ?>" class="greybtn" id="xls_report">XLS</a>
+            <a href="javascript:" onclick="print_preview('<?php echo $module_name; ?>','print_dialog','37','<?php echo $search_args; ?>','<?php echo $page_title; ?> - Print Preview',1090,700);" class="greybtn" id="print_report">Print</a>
+            </td>
+     </tr>      
+          <tr class="headings">
+          <td width="5%"></td>
+          <td>Customer</td>
+          <td width="12%" align="right">Pledged (<?php echo CURRENCY_SYMBOL;?>)</td>
+          <td width="12%" align="right">Interest(<?php echo CURRENCY_SYMBOL;?>)</td>      
+          <td width="12%" align="right">Redeem(<?php echo CURRENCY_SYMBOL;?>)</td>  
+          <td width="12%" align="right">Partial(<?php echo CURRENCY_SYMBOL;?>)</td>      
+          <td width="12%" align="right">Excess(<?php echo CURRENCY_SYMBOL;?>)</td>      
+          <td width="12%" align="right">Auction(<?php echo CURRENCY_SYMBOL;?>)</td> 
+          </tr>
+            <?php
+              if(count($data) > 0) {
+                for($i=0;$i<count($data);$i++){ 
+
+            ?>
+         <tr class="groups">
+          <td align=left>
+          
+          <a href="javascript:" onclick="show_sub_list('<?php echo $module_name; ?>','customer_id','<?php echo $data[$i]['id']; ?>');">
+            <img id="img_drop_<?php echo $data[$i]['id']; ?>" src="./images/plus-sign.jpg" border=0 width="16px">
+          </a>
+          
+          </td>
+          <td align="left"><?php echo $data[$i]['customer_name'];?></td>
+             
+            
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['total_pledged']),false); ?></td>   
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['total_interest']),false);?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['total_redeem']),false); ?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['total_partial']),false); ?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['total_excess']),false); ?></td>
+          <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['total_auction']),false); ?></td>
+          
+          
+         </tr> 
+         <tr><td colspan=11>
+         <div id="sublist_<?php echo $data[$i]['id']; ?>" class="display_view"></div>
+         
+         </td></tr> 
+            <?php
+                }
+            } else {
+            ?>
+            <tr class="bg-row">
+            <td colspan="11" align="center" height="50">No records found</td>
+            </tr>
+            <?php
+            }
+            ?>
+     <tr class="headings">
+     <td colspan=100%>
+     <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+     </td>
+     </tr>
+        </table>
+        
+   </form>
+    <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>          
+ </div>           
+<script>
+$(document).ready(function(){
+$('#cus_id').focus();
+$("input").not( $(":button,:hidden") ).keypress(function (evt) {
+            if (evt.keyCode == 13) {
+                iname = $(this).val();
+                if (iname !== 'Submit'){    
+                    var fields = $(this).parents('form:eq(0),body').find('input:text');                 
+                    
+                    var index = fields.index( this );
+                    if ( index > -1 && ( index + 1 ) < fields.length) {
+                        fields.eq( index + 1 ).focus();
+                    }
+                    else
+                    {                   
+                      search_customer();
+                    }
+                    return false;
+                }
+            }
+        });
+
+});
+
+/*function search_customer(){
+alert("fdsf");
+    var key = document.getElementById("keyword").value;
+    var cus_id = document.getElementById("cus_id").value;
+    var key_fhw = document.getElementById("keyword_fhw").value;
+    var key_location = document.getElementById("keyword_location").value;
+    document.location= 'customers.php?search_key='+key+'&search_cus_id='+cus_id+'&search_fhw='+key_fhw+'&search_key_location='+key_location;
+}*/
+</script>

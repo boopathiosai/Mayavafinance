@@ -1,0 +1,156 @@
+ <?php
+
+ if(isset($_SESSION['success_msg']))
+ {
+ echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+ unset($_SESSION['success_msg']);
+ } 
+if($_POST['type_value']!="Pledge Details" && $_POST['type_value']!="Total Item Details" && $_POST['type_value']!="Interest Paid Details" && $_POST['type_value']!="Cash-In Details" && $_POST['type_value']!="Cash-Out Details" && $_POST['type_value']!="Stock Details")
+{
+?>
+<div class="breadcrumbs">  
+    <table width="98%" border="0" align="center" cellpadding="1" cellspacing="1">
+      <tr>
+        <td>&nbsp;Reports &raquo;Branch Wise Summary Reports</a></td>
+         <td align="left" width="10%" >
+        <?php
+        if($search_args != "")
+        {
+        $diaply_style ="";
+        ?>
+        <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search();return false;">Close</a></div>
+        <?php
+        }
+        else{
+        $diaply_style = 'style="display:none;"';
+        ?>
+        <div id="serach_button_div">
+        <a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search();return false;">Search</a></div>
+        <?php
+        }
+        ?>
+        </td>
+      </tr>
+    </table>
+            <!--select onchange="details(this.value);">
+            <option value="">Select</option>
+            <option value="1">Branch Wise Pledge Details</option>
+            <option value="2">Branch Wise Interest Paid Details</option>
+            <option value="3">Branch Wise Cash-In Details</option>
+            <option value="4">Branch Wise Cash-Out Details</option>
+        
+        </select-->
+            
+</div>
+ <div id="contentarea">
+            <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td colspan="2">
+                    <?php include ADMIN_LAYOUT_PATH . 'elements/report_search.html'; ?>
+                    </td>
+                </tr>
+            </table>
+      <div>
+  <!--Modified by karthik-->
+     <div id="contentarea">
+<br/>
+
+             <table width="98%" border="0" align="center" cellpadding="1" cellspacing="1">
+      <tr>
+            <td width="10%" align="center">
+            <input type="button" name="Pledge Details" value="Pledge Details" onclick="details(this.value);">
+            </td>
+
+            <td width="10%" align="center">
+            <input type="button" name="Total Item Details" value="Total Item Details"  onclick="details(this.value);">
+            </td>
+
+            <td width="10%" align="center">
+            <input type="button" name="Interest Paid Details"  value="Interest Paid Details"  onclick="details(this.value);">
+            </td>
+
+            <td width="10%" align="center">
+            <input type="button" name="Cash-In Details" value="Cash-In Details"  onclick="details(this.value);">
+            </td>
+
+            <td width="10%" align="center">
+            <input type="button" name="Cash-Out Details"  value="Cash-Out Details"  onclick="details(this.value);">
+            </td>
+            
+            <td width="10%" align="center">
+            <input type="button" name="Stock Details"  value="Stock Details"  onclick="details(this.value);">
+            </td>
+       </tr>
+   </table>
+      <div>
+      <br>
+  <?php
+  }
+?>
+                      <div id="income">
+                            <?php 
+                            
+								if($_SESSION['type_value']=='')
+								{
+								include ADMIN_LAYOUT_PATH . 'branch_wise_summary_report.html'; 
+								}
+
+								if(strtolower(trim($_SESSION['type_value']))=='pledge details')
+								{
+								  include ADMIN_LAYOUT_PATH . 'branch_wise_summary_report.html'; 
+								}
+								if(strtolower(trim($_SESSION['type_value']))=='total item details')
+								{
+									include ADMIN_LAYOUT_PATH . 'total_item_details_report.html'; 
+								}
+								if(strtolower(trim($_SESSION['type_value']))=='interest paid details')
+								{ 
+								include ADMIN_LAYOUT_PATH . 'interest_paid_details_report.html'; 
+								}
+								else if(strtolower(trim($_SESSION['type_value']))=='cash-in details')
+								{
+								include ADMIN_LAYOUT_PATH . 'cash_in_details_report.html'; 
+								}
+								else if(strtolower(trim($_SESSION['type_value']))=='cash-out details')
+								{
+								include ADMIN_LAYOUT_PATH . 'cash_out_details_report.html'; 
+								}
+								else if(strtolower(trim($_SESSION['type_value']))=='stock details')
+								{
+								include ADMIN_LAYOUT_PATH . 'stock_report.html'; 
+								}
+                            ?>
+                        </div>
+
+    <div class="clear clearfix"></div><!--contentarea ends here-->  
+    </div>
+  </div>    
+
+<script>
+
+function details(id)
+{
+alert(id);
+jQuery.ajax({
+                              
+            type: "POST",
+            url: "summary_report.php?type_value="+id+"&type=view",
+            data:{
+                  type_value : id,
+                 },
+            success: function(msg)
+           {    
+             //alert(msg);
+              $("#income").html(msg); 
+            }
+       });
+        return false;
+}
+
+</script>
+
+<!--For the print option, days less 30 to display the results. Default value 30-->
+<script>
+<?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ?>
+var max_days = <?php echo $maximum_days;?>;
+</script>

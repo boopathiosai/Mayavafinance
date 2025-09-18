@@ -1,0 +1,120 @@
+<div id="search_table" <?php echo $diaply_style; ?>>
+   <div id="HelpDiv" style="width:825px;margin:auto;"></div> 
+<form id="search_form" name="search_form">
+<?php if($module_name == "detailed_ledger_report"){ ?>
+<table style="width: 1003px;"><tbody><tr valign="top"><td><input type="checkbox" id="checkshow"  onclick="showMap(this)" name="showmap">Show Keymap<br></tbody></table>
+<?php } ?>
+ <table class="search-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr class="row0">
+          <td align="left" class="title" colspan="3">Report Filter Search</td>        
+          <td align="right" class="title">
+            <a href="<?php echo  $module_name; ?>.php" class="button">RESET</a>
+            <a id="search_btn" href="javascript:;" onclick="date_validation(),search_items('<?php echo  $module_name;?>');" class="button">SEARCH</a>
+          </td>
+        </tr>
+        <tr class="row0">
+            <td align="left" width="10%" id="src_sdate">From Date :</td>
+            <td align="left" >
+            <input name="sdate" type="text" id="sdate"   class="calendar text-field" value="<?php echo  $search_sdate; ?>" />
+             &nbsp; <a href="javascript:" id="calender_trigger" _onclick="date_picker('sdate', 'calender_trigger', '%d-%m-%Y')" onclick="jQuery('#sdate').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+            </td>
+
+            <td align="left" width="18%" id="src_edate">To Date :</td>
+            <td align="left">
+            <input name="edate" type="text" id="edate"  class="calendar text-field" value="<?php echo $search_edate;?>" />
+             &nbsp; <a href="javascript:" id="calender_trigger1" _onclick="date_picker('edate', 'calender_trigger1', '%d-%m-%Y' )" onclick="jQuery('#edate').click();" title="Click to select date"><img src="images/calendar.png" border=0></a>
+            </td>
+            
+
+        </tr>
+		<?php if($module_name == "detailed_ledger_report"){ ?>
+        <tr class="row0">
+          <td align="left" width="22%">Search by Customer Name</td>
+            <td align="left"><input name="key" type="text" id="key" class="text-field" onkeypress='javascript:convertThis(event)' value="<?php echo $search_key; ?>"/></td>   
+             <td align="left" width="22%" >Search by Customer Location</td>
+            <td align="left"><input name="key_location" type="text" id="key_location" onkeypress='javascript:convertThis(event)' class="text-field"value="<?php echo $search_key_location; ?>"/></td>
+        </tr>
+        <?php } ?>
+       
+       <tr class="row0">
+	    <?php
+        if($_SESSION["session_usertype"]==1 || $_SESSION["session_usertype"] == 2)
+        {
+       ?>
+        <td align="left" style="width: 15%;">Search by Branch :</td>
+        <td align="left">
+        <?php
+        
+        
+            //Get Branch name from branch table
+            $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);             
+            ?>
+            <select id="branch_id" name="branch_id">
+            <option value="">-- Select Branch --</option>
+            <?php             
+            echo build_select_options($branch_data,$search_branch_id); 
+            ?>
+            </select>
+               
+       <?php
+       }else{
+       ?>
+        <td align="left" style="width: 15%;">Search by Sub Branch :</td>
+		<td align="left">
+        <!--input type=hidden id="branch_id" name="branch_id" value="<?php echo $search_branch_id; ?>"-->
+		<?php
+        //echo '<pre>';
+        //print_r($_SESSION);
+		$sess_branch_id = $_SESSION["session_user_branch_id"];
+        
+            //Get Sub Branch name from sub branch table
+			$query_sub_branch_data = "SELECT id,name FROM mf_sub_branch WHERE branch_id = $sess_branch_id";
+			$data_sub_name = $app->getrows($query_sub_branch_data);
+            //$sub_branch_data = get_dropdown_list_with_field('id', 'name', SUB_BRANCH); 
+			$dropdown_list_count = count($data_sub_name);
+            ?>
+            <!--<select id="sub_branch_id" name="sub_branch_id">-->
+            <select id="sub_branch_id" name="sub_branch_id" > <!-- DSSK changed  05_SEP_2017 -->
+            <option value="">-- Select Sub Branch --</option>
+            <?php     
+
+	for($i=0; $i<$dropdown_list_count;$i++)
+	{
+	
+	?>
+		<option value= <?php echo $data_sub_name[$i]['id']; ?> <?php echo ($search_sub_branch_id == $data_sub_name[$i]['id']) ? "selected" : ""; ?>> <?php echo $data_sub_name[$i]['name'] ?> </option>
+		<?php
+	}
+             
+            ?>
+            </select>
+		</td>
+       <?php
+       }
+      
+       if($module_name == "summary_reports"){
+       ?>
+        <input type=hidden id="wise" name="wise" value="<?php echo $search_wise; ?>">
+       <?php
+           
+       }
+       ?>
+       
+        <td>Search by Loan ID :</td>
+        <td>
+            <input type=text id="loan_id" name="loan_id" class="text-field" value="<?php echo $search_loan_id; ?>">        
+        </td>
+       </tr>
+   </table>
+</form>
+    </div>
+     <script src="js/common.js" type="text/javascript"></script>
+ <script src="js/tamil.js" type="text/javascript"></script>  
+<script>
+jQuery(document).ready(function(){ 
+
+search_enter_action('<?php echo $module_name; ?>');
+
+}
+);
+</script>

@@ -1,0 +1,50 @@
+<form>
+     <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+      <tr>
+        <td class="title" colspan="2">Pay Interest</td>
+        <td class="title" colspan="6"></td>         
+      </tr> 
+      <tr class="headings">
+      
+      <td align="center">Loan Id</td>
+      <td align="center">Customer Name</td> 
+      <td align="center">Loan Amount</td>
+      <td align="center">Pledge Date</td>   
+     <td align="center">Action</td>
+      
+    </tr>
+      <?php if(count($data) > 0) {
+   
+        for($i=0;$i<count($data);$i++){ 
+            $created_by = $data[$i]['loandate'];
+           
+      ?>        
+      <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+      <td align="center"><?php echo htmlentities(stripslashes($data[$i]['loan_id']), ENT_QUOTES); ?></td>
+      <td align="center"><?php echo $data[$i]['name']; ?></td>   
+      <td align="center"><?php echo convertToCurrency($data[$i]['loan_amount']); ?></td>     
+      <td align="center"><?php echo $created_by; ?> </td> 
+      <td align="center"><span class="btn-rht">
+      <a href="javascript:;" onclick="return payinterest_view('content_div','<?php echo $data[$i]['id']; ?>');" title="Print Preview" class="greybtn">Pay Interest</a>
+      </span>   
+      </td>
+      </tr> 
+      <?php } } else {  ?>
+        <tr class="bg-row">
+        <td colspan="10" align="center" height="50">No records found</td>
+        </tr>
+        <?php } ?>
+    </table>
+   
+      <div class="pagination">      
+        <div class="pagi-rht">
+            <div class="no-list">
+            <?php   
+            if ($count > ROWS_PER_PAGE) { 
+             include ADMIN_LAYOUT_PATH . 'common/paging.html'; 
+            }
+            ?>
+            </div>
+        </div>
+    </div>
+    </form>   

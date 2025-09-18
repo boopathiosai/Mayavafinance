@@ -1,0 +1,148 @@
+/*body {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	line-height: 20px;
+	color: #039;
+}
+h1 {
+	font-size: 25px !important;
+	line-height: 16px;
+	color: #039;
+}
+h2 {
+	font-size: 18px !important;
+	line-height: 30px;
+	color: #039;
+	border-top-width: 2px;
+	border-top-style: solid;
+	border-top-color: #039;
+	padding-top: 20px;
+	padding-bottom: 0px;
+	margin-top: 20px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+}
+p {
+	font-size: 13px;
+	line-height: 30px;
+}
+.main-content {
+	text-align: justify;
+}
+input {
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #FFF;
+	border-right-color: #FFF;
+	border-bottom-color: #316AC5;
+	border-left-color: #FFF;
+	width: 100%;
+}
+#tab1 tr td {
+	border: 1px solid #CCC;
+	text-align: center !important;
+}
+#tab1 input {
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+}
+.cen {
+	text-align: center !important;
+}
+.cen1 {
+	text-align: center !important;
+	width: 150px;
+	margin: 0px;
+	padding: 0px;
+} */
+
+
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px !important;
+	color: #039;
+}
+h1 {
+	font-size: 25px !important;
+	color: #039;
+}
+h2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 17px !important;
+	line-height: 30px;
+	color: #039;
+	border-top-width: 2px;
+	border-top-style: solid;
+	border-top-color: #039;
+	padding-top: 20px;
+	padding-bottom: 0px;
+	margin-top: 20px;
+	margin-right: 0px;
+	margin-bottom: 0px !important;
+	margin-left: 0px;
+	font-weight: bold;
+}
+
+h3 {
+	font-size: 14px !important;
+	font-family: Arial, Helvetica, sans-serif !important;
+	font-weight: Bold !important;
+}
+
+p {
+	font-size: 10px !important;	
+	line-height: 10px;
+	margin: 0px;
+	padding: 0px;
+}
+.main-content {
+	text-align: justify;
+}
+input {
+	/*width: 100%;*/
+	font-family: Arial, Helvetica, sans-serif;
+	border: 1px solid #FFF;
+	font-size: 10px !important;
+}
+#tab1 tr td {
+	border: 1px solid #CCC;
+	text-align: center !important;
+}
+#tab1 input {
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+}
+.cen {
+	text-align: center !important;
+}
+.cen1 {
+	text-align: center !important;
+	width: 150px;
+	margin: 0px;
+	padding: 0px;
+}
+.tab-head {
+	color: #FFF;
+	background-color: #333;
+	font-weight: bold;
+}
+.ui-widget {
+	font-family: Arial, Helvetica, sans-serif !important ;
+	font-size: 10px !important;
+}

@@ -1,0 +1,440 @@
+    <?php
+
+$pa_id = $uval['pa_id'];
+if($pa_id==''){
+    $pay_interest_details = PayInterest::getInterestDetails($product_data['pledge_id']);
+}else{
+    $pay_interest_details = PayInterest::getInterestDetails($product_data['pledge_id'],'','',$product_data['auction_date']);
+}
+    if($product_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+
+
+//Principle Amount Calculation for the Redemtion
+
+    if(strtolower($product_data['interest_type'])=='flat'){
+        $principle_unit_payment = $pay_interest_details['principle_payment'];
+        $principle_to_pay = ($pay_interest_details['to_pay_principle']>$principle_unit_payment) ? $pay_interest_details['to_pay_principle'] : $principle_unit_payment;
+        $principle_total_till_today = $pay_interest_details['total_pay_till_today'];
+        $principle_total_paid = $pay_interest_details['total_paid_principle'];
+        $principle_to_add = $principle_to_pay;
+        $principle_loan_amount =  $product_data['loan_amount'];
+        $principle_remain_amount =  $product_data['loan_amount'] - floatval($principle_total_paid);
+    }else{
+        $principle_remain_amount =  $product_data['loan_amount'];
+    }
+
+
+
+include "fetch_pledge_product.php";
+
+
+    ?>
+
+
+<div class="clear clearfix"></div>
+
+  <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td >&nbsp;Transactions&raquo;<a href="<?php echo $module_name;?>.php">Auction Management</a></td >
+        <td  width="50%"><span class="btn-rht">
+                <a href="javascript:" id="save_action_btn" class="greybtn"
+                    onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[pa_id]; ?>');">BID</a>
+                <a href="javascript:" class="greybtn"
+                    onclick="return reset_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>&pa_id=<?php echo $uval[pa_id]; ?>&');">RESET</a>
+                <a href="javascript:" class="greybtn"
+                    onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a>
+            </span>
+        </td>
+      </tr>
+      </table>
+ </div>
+<div id="contentarea">
+    <div class="sub-hdr">
+    </div>
+<!--<span class="customer-order"> Please complete the form below. Mandatory fields marked <span class="star">*</span></span>-->
+
+<form name="auction_form" id="auction_form" method="post" style="margin: 0px;">
+   <!--content area starts here-->
+            <div class="lftarea"><!--left area starts here-->
+<!--Customer Details -->
+
+    <?php include ADMIN_LAYOUT_PATH . "elements/customer_details.html";   ?>
+
+      </div>
+      <div id="rhtarea" > <!--rightarea strats here-->
+
+<!--Pleged Product Details -->
+
+    <?php include ADMIN_LAYOUT_PATH . "elements/pledged_product_details.html";   ?>
+
+<!-- Loan Details -->
+
+<?php include ADMIN_LAYOUT_PATH . "elements/auction_loan_detail.html"; ?>
+
+
+<!-- Loan Interest Details -->
+
+<?php include ADMIN_LAYOUT_PATH . "elements/loan_interest_detail.html"; ?>
+
+
+<!-- Auction Bidding Form -->
+
+<?php include ADMIN_LAYOUT_PATH . "elements/auction_bidding_form.html"; ?>
+
+<!-- Cash Flow Details -->
+
+<?php include ADMIN_LAYOUT_PATH . "elements/cashflow_detail.html"; ?>
+
+
+ <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td >
+        <span class="btn-rht">
+        <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[pa_id]; ?>');">BID</a>
+        <a href="javascript:;" class="greybtn"
+            onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">
+                RESET
+        </a>
+        <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">
+            BACK
+        </a>
+        </span>
+        </td>
+      </tr>
+      </table>
+
+
+<input name="pp_pval[branch_id]" id="pledge_branch_id" type="hidden"  value = "<?php echo $product_data['branch_id'];?>">
+      <input name="pval[branch_id]" id="branch_id" type="hidden"  value = "<?php echo stripslashes($product_data['branch_id']); ?>">
+
+
+    <input name="pa_id" id="pa_id" value="<?php echo $pa_id; ?>" type=hidden >
+    <input name="acttype" id="acttype" value="<?php echo ($pa_id=='') ? '' : 'edit'; ?>" type=hidden >
+
+
+          </form>
+
+      </div><!--right area ends here-->
+  <div class="clear clearfix"></div>
+  <!--
+  <div class="round-lftbutton">
+      <a href="javascript:;">Customer Slip</a>
+
+      <a href="javascript:;">Customer Receipt</a>  </div>
+
+    <div class="clear clearfix"></div>
+    -->
+</div><!--contentarea ends here-->
+
+
+
+
+
+<div class="clear clearfix"></div>
+<!--
+</body>
+</html>
+-->
+
+
+
+<script>
+
+
+jQuery(document).ready(function() {
+
+    form_enter_focus(jQuery('#auction_charge_0'),16,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+    enable_save_action();
+    setNumberKeyEvent();
+
+    $("input").focus(function(event){ remove_red(this.id); });
+    set_date_picker();
+    collapse_all_view();
+    setTotalAmount();
+
+});
+
+
+
+
+
+function presetNewAmount(){
+
+    var aitem = 0;
+    var agross = 0;
+    var anet = 0;
+    var achr = 0;
+    var aamt = 0;
+    //alert(agross+" ,  "+anet+" ,  "+aitem+" ,  "+achr+" ,  "+aamt);
+    jQuery('[name="plist[]"]').each(
+
+        function(i){
+            sid = jQuery(this).attr("id").replace("pid_","");
+            if(!isNaN(parseInt(sid)))
+                id = parseInt(sid);
+            else
+                id = 0;
+
+            //if(jQuery(this).attr("checked")==true){
+                aitem++;
+
+                /*if(!isNaN(parseInt(jQuery("#gross_weight_"+id).val())))
+                    agross+= parseFloat(jQuery("#gross_weight_"+id).val());
+
+                if(!isNaN(parseInt(jQuery("#net_weight_"+id).val())))
+                    anet+= parseFloat(jQuery("#net_weight_"+id).val());*/
+
+                if(!isNaN(parseInt(jQuery("#auction_charge_"+id).val())))
+                    achr+= parseFloat(jQuery("#auction_charge_"+id).val());
+
+                if(!isNaN(parseInt(jQuery("#auction_amount_"+id).val())))
+                    aamt+= parseFloat(jQuery("#auction_amount_"+id).val());
+
+            /*}else{
+
+                jQuery("#auction_charge_"+id).val('0.00');
+                jQuery("#auction_amount_"+id).val('0.00');
+
+            }*/
+        }
+    );
+    //alert(agross+" ,  "+anet+" ,  "+aitem+" ,  "+achr+" ,  "+aamt);
+
+    remove_red('auction_charge');
+    remove_red('auction_amount');
+
+    /*jQuery("#item_count").val(aitem);
+    jQuery("#gross_wt").val(agross.toFixed(2));
+    jQuery("#net_wt").val(anet.toFixed(2));*/
+    jQuery("#auction_cha").val(achr.toFixed(2));
+    jQuery("#auction_amt").val(aamt.toFixed(2));
+
+
+    //setTotalAmount();
+
+
+    setAmountDifference();
+
+    display_auction_status();
+
+
+}
+
+
+function setAmountDifference(){
+
+    if(!isNaN(parseFloat(jQuery("#auction_cha").val())))
+        auction_cha = parseFloat(jQuery("#auction_cha").val());
+    else
+        auction_cha = 0;
+
+    if(!isNaN(parseFloat(jQuery("#auction_amt").val())))
+        auction_amt = parseFloat(jQuery("#auction_amt").val());
+    else
+        auction_amt = 0;
+
+
+    cash_in =  auction_amt;
+
+
+    if(!isNaN(parseFloat(jQuery("#interest_amt").val())))
+        interest_amt = parseFloat(jQuery("#interest_amt").val());
+    else
+        interest_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#loan_amt").val())))
+        loan_amt = parseFloat(jQuery("#loan_amt").val());
+    else
+        loan_amt = 0;
+
+     cust_amt =    loan_amt + interest_amt + auction_cha;
+
+
+    amt_diff = cash_in - cust_amt;
+    //alert(amt_diff);
+    jQuery("#amount_diff").val(amt_diff.toFixed(2));
+
+
+}
+
+
+function resetNewAmount(){
+
+
+    cashin_display('<?php echo $module_name; ?>');
+    cashout_display('<?php echo $module_name; ?>');
+}
+
+
+
+
+function cashin_display(){
+
+    if(!isNaN(parseFloat(jQuery("#auction_cha").val())))
+        auction_cha = parseFloat(jQuery("#auction_cha").val());
+    else
+        auction_cha = 0;
+
+    if(!isNaN(parseFloat(jQuery("#auction_amt").val())))
+        auction_amt = parseFloat(jQuery("#auction_amt").val());
+    else
+        auction_amt = 0;
+
+
+    cash_in =  auction_amt;
+
+
+    jQuery("#cashin_amt").val(cash_in.toFixed(2));
+
+    disp_cashin = "<table class='disp_calc' width=95% align=center>";
+    disp_cashin += "<tr><td> </td><td class='disp_calc'>Auction Amount:</td> <td align=right class='disp_calc'>"+auction_amt.toFixed(2)+"</td><td>  </td><td> </td></tr>";
+    disp_cashin += "<tr><td> </td><td>Cash In Amount :</td> <td colspan=3 align=right>Rs. "+cash_in.toFixed(2)+"</td></tr>";
+    disp_cashin += "</table>";
+
+    jQuery("#disp_cash_in_details").html(disp_cashin);
+
+}
+
+function cashout_display(){
+
+
+
+
+    if(!isNaN(parseFloat(jQuery("#auction_cha").val())))
+        auction_cha = parseFloat(jQuery("#auction_cha").val());
+    else
+        auction_cha = 0;
+
+    if(!isNaN(parseFloat(jQuery("#auction_amt").val())))
+        auction_amt = parseFloat(jQuery("#auction_amt").val());
+    else
+        auction_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#amount_diff").val())))
+        amount_diff = parseFloat(jQuery("#amount_diff").val());
+    else
+        amount_diff = 0;
+
+    if(!isNaN(parseFloat(jQuery("#interest_amt").val())))
+        interest_amt = parseFloat(jQuery("#interest_amt").val());
+    else
+        interest_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#loan_amt").val())))
+        loan_amt = parseFloat(jQuery("#loan_amt").val());
+    else
+        loan_amt = 0;
+
+
+
+
+
+    if(amount_diff < 0){
+
+        pay_amt = loan_amt + interest_amt + auction_cha;
+        cash_out = pay_amt - (auction_amt );
+
+        disp_cashout = "<table class='disp_calc' width=95% align=center>";
+        
+        disp_cashout += "<tr><td> </td><td class='disp_calc'>Auction Amount:</td> <td align=right class='disp_calc'>"+auction_amt.toFixed(2)+"</td><td> </td><td> - </td></tr>";
+        disp_cashout += "<tr><td> [</td><td class='disp_calc'>Loan Amount:</td> <td align=right class='disp_calc'>"+loan_amt.toFixed(2)+"</td><td> </td><td>+ </td></tr>";
+        disp_cashout += "<tr><td> </td><td class='disp_calc'>Interest Amount:</td> <td align=right class='disp_calc'>"+interest_amt.toFixed(2)+"</td><td> </td><td>+ </td></tr>";
+        disp_cashout += "<tr><td> </td><td class='disp_calc'>Auction Service Charge:</td> <td align=right class='disp_calc'>"+auction_cha.toFixed(2)+"</td><td>] </td><td> </td></tr>";
+        disp_cashout += "<tr><td> </td><td>Cash out amount :</td> <td colspan=3 align=right>Rs. "+cash_out.toFixed(2)+"</td></tr>";
+        disp_cashout += "</table>";
+
+    }else{
+
+        cash_out = 0;
+        disp_cashout = "Nil";
+
+    }
+
+
+    jQuery("#cashout_amt").val(cash_out.toFixed(2));
+    jQuery("#disp_cash_out_details").html(disp_cashout);
+
+
+}
+
+
+function display_auction_status(){
+
+
+
+    if(!isNaN(parseFloat(jQuery("#auction_cha").val())))
+        auction_cha = parseFloat(jQuery("#auction_cha").val());
+    else
+        auction_cha = 0;
+
+    if(!isNaN(parseFloat(jQuery("#auction_amt").val())))
+        auction_amt = parseFloat(jQuery("#auction_amt").val());
+    else
+        auction_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#amount_diff").val())))
+        amount_diff = parseFloat(jQuery("#amount_diff").val());
+    else
+        amount_diff = 0;
+
+    if(!isNaN(parseFloat(jQuery("#interest_amt").val())))
+        interest_amt = parseFloat(jQuery("#interest_amt").val());
+    else
+        interest_amt = 0;
+
+    if(!isNaN(parseFloat(jQuery("#loan_amt").val())))
+        loan_amt = parseFloat(jQuery("#loan_amt").val());
+    else
+        loan_amt = 0;
+
+
+
+
+
+    if(amount_diff < 0){
+
+        disp_status = "<font color=#A33D98>Loss</font>";
+        status = -1;
+        profit = 0;
+        loss = -1 * amount_diff;
+
+    }else if(amount_diff > 0){
+
+        disp_status = "<font color=green>Profit</font>";
+        status = 1;
+        profit = amount_diff;
+        loss = 0;
+
+    }else if(amount_diff == 0){
+
+        disp_status = "Nil";
+        status = 0;
+        profit = 0;
+        loss = 0;
+
+    }
+
+
+    disp_auction = "<table class='disp_calc' width=95% align=center>";
+    disp_auction += "<tr><td> </td><td class='disp_calc'>Auction Amount:</td> <td align=right class='disp_calc'>"+auction_amt.toFixed(2)+"</td><td> </td><td> - </td></tr>";
+    disp_auction += "<tr><td> [</td><td class='disp_calc'>Old Loan Amount/ Principle Remain  :</td> <td align=right class='disp_calc'>"+loan_amt.toFixed(2)+"</td><td> </td><td> + </td></tr>";
+    disp_auction += "<tr><td> </td><td class='disp_calc'>Interest Amount  :</td> <td align=right class='disp_calc'>"+interest_amt.toFixed(2)+"</td><td> </td><td> + </td></tr>";
+    disp_auction += "<tr><td> </td><td class='disp_calc'>Auction Service Charge:</td> <td align=right class='disp_calc'>"+auction_cha.toFixed(2)+"</td><td>] </td><td> </td></tr>";
+    
+    disp_auction += "<tr><td> </td><td>Total Profit :</td> <td colspan=3 align=right>Rs. "+profit.toFixed(2)+"</td></tr>";
+    disp_auction += "<tr><td> </td><td>Total Loss :</td> <td colspan=3 align=right>Rs. "+loss.toFixed(2)+"</td></tr>";
+    disp_auction += "<tr><td> </td><td>Status :</td> <td colspan=3 align=right> "+disp_status+"</td></tr>";
+    disp_auction += "</table>";
+
+
+    jQuery("#auction_status").html(disp_auction);
+    jQuery("#profit_sts").val(status);
+}
+
+
+</script>

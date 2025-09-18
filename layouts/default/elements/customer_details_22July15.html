@@ -1,0 +1,443 @@
+<?php
+if($module_name == 'product_pledge'){
+?>
+                <div id="customer" class="box-hd-bg" style="width:310px;height:551px;">
+                    <h3>Customer</h3>
+                    
+                    <table>
+                    <tr><td align="right" colspan=2>
+                    <?php
+                    //if($product_data["customer_branch"] == $_SESSION['session_user_branch_id'] || is_superadmin($_SESSION['session_usergroupname']))
+                    if(can_add($_SESSION['session_usertype'], "customers"))
+                    {
+                    ?>
+                    <a href="javascript:" class="button" onclick="return create_function('content_div', 'customers','from_module=<?php echo $module_name; ?>&from_type=<?php echo ($product_data['id'] != '')? 'edit' : 'create'; ?>&pledge_id=<?php echo $product_data['id']; ?>') ">Add</a>
+                    <?php
+                    }
+                    ?>
+                    </td></tr>
+
+                    <tr>
+                    <td>                 
+                    <div>
+					<?php if(($product_data['status'] != 0) || ($product_data['status'] == "")) { ?>
+					<span id="customer_id">Sub Branch Name *</span>
+					<br/>
+					<?php 
+                    $sub_branch_data = get_dropdown_list_with_field('id', 'name', SUB_BRANCH); ?>
+                    <select name="pval[sub_branch_id]" onchange="remove_red('sub_branch_id');" style="width:250px;margin-left:13px;">
+                    <option value="">-- Select Sub Branch --</option>
+                    <?php              
+                    echo build_select_options($sub_branch_data,$product_data['sub_branch_id']); 
+                    ?>
+                    </select>
+                    </div>
+					</tr>
+					<tr>
+					<td>
+					<div>
+				    <span id="customer_id">Customer ID *</span>
+                    <input name="customer_id" type="text" id="src_cust_id" style="width:250px"  maxlength="30" class="textfield"  onfocus="remove_red('customer_id');" onchange="reset_cust(this.value);" value="<?php echo $product_data[customer_code];?>" <?php echo ($product_data['customer_id'])? "Disabled":"";?>  />
+					<?php } 
+					else { ?>
+					<br />&nbsp;&nbsp;&nbsp;&nbsp;
+					<label name="cus_id"><strong><?php echo $product_data[customer_code];?><strong></label>
+					<?php } ?>
+                    </td> </div>
+                    <td></td>
+                    <td></td>
+                    </tr>
+
+                    <tr>
+                    <td>
+					<div>
+                     <?php if(($product_data['status'] != 0) || ($product_data['status'] == "")) { ?>
+					 <span id="customer_id">Name *</span>
+                    <input name="customer_name" type="text" id="cust_name" style="width:250px"  maxlength="30" autocomplete="off" class="textfield" value="<?php echo $product_data[customer_name];?>" <?php echo ($product_data[customer_name])? "Disabled":"";?>  onfocus="remove_red('customer_id');" onchange="//cust_validate();" />
+					<?php } 
+					else { ?>	
+					<br />&nbsp;&nbsp;&nbsp;&nbsp;
+					<label name="cus_id"><strong><?php echo $product_data[customer_name];?><strong></label>
+					<?php } ?>
+                    </td>
+                    <td valign=bottom>
+					<?php if(($product_data['status'] != 0) || ($product_data['status'] == "")) { ?>
+                    <div id="cust_edit" style="float:top" ><?php echo $edit_cust; ?></div>
+					<?php } ?>
+                    </div>
+                    </td>
+                    </tr>
+                    <tr>
+                    <td colspan="2">
+                    <input name="pval[customer_id]" type="hidden" id="cust_id"  maxlength="30" value="<?php echo $product_data[customer_id];?>"/>
+                    <input name="for_reset" type="hidden" id="for_reset"  maxlength="30" value="<?php echo $product_data[customer_id];?>"/>
+                    <img src="<?php echo $product_data["customer_photo"]; ?>" id="cust_img" width="100px" height="90px" onerror="this.src='customer/images/no_photo.jpg'" />
+
+                    <span id="cust_details" style="width:150px; word-wrap:break-word;position:relative; margin-left:130px; height:100px;">
+					 <div  style="width:140px; word-wrap:break-word;position:relative; padding-left:10px;">
+                    <?php 
+
+	                    if($product_data[customer_id]!='' && ($product_data["customer_branch"] == $_SESSION['session_user_branch_id']  || is_superadmin($_SESSION['session_usergroupname']))){
+                      echo $product_data[customer_street]."<br>";
+                      echo $product_data[customer_location]."<br>";
+                      echo $product_data[customer_postal_code]."<br>";
+                      echo $product_data[customer_contact_no]."<br>";
+
+                    ?>                    
+                    <?php
+                    }
+                    ?>
+					</div>
+                    </span>
+
+                    </td></tr>
+                    <tr>
+                    <td colspan=2>
+                    
+                    <img src="<?php echo $product_data["customer_sign"]; ?>" id="cust_sign" width="100px" height="90px" onerror="this.src='customer/images/no_sign.jpg'" />
+                    <span id="cust_history">
+                <?php
+                    if($product_data["customer_branch"] == $_SESSION['session_user_branch_id'] || is_superadmin($_SESSION['session_usergroupname'])){
+                ?>
+                    <br><a href="javascript:" class="button" onclick="view_history('<?php echo $product_data[customer_id]; ?>')">History</a>
+                    <?php
+                    }
+                    ?>
+                    </span>
+                    </td>
+                    </tr>
+                    </table>
+                </div>
+
+				<?php if(($instead_customer_data['instead_photo'] != '') || ($instead_customer_data['instead_sign'] != '' )) { ?>
+				 <div id="gurantee" class="box-hd-bg" style="width:310px" >
+                   <h3>Instead Customer</h3> 
+					 <table border=0 align="center" class="" style="width:310px" >	
+					    <tr>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<?php ($instead_customer_data['instead_photo']) !='' ? $style = "width:135px; height:100px;" : $style=""; 
+								  ($instead_customer_data['instead_sign']) !='' ? $style1 = "width:135px; height:100px;" : $style1=""; ?>
+							<td style="padding-left:12px;" width="51%">
+								<img name="photo_img" id="photo_img" src="<?php echo stripslashes($instead_customer_data['instead_photo']) != ''  ? stripslashes($instead_customer_data['instead_photo']).'?'.time() : CUSTOMER_IMAGE_PATH.'no_photo.jpg';?>"  onerror="this.src='customer/images/no_photo.jpg'" style="<?php echo $style; ?>" ></img>
+							</td>
+							<td valign="top" style="font-weight: bold;">
+								 <?php echo $product_data[reference_name]."<br>";
+									  echo $product_data[reference_address]."<br>";
+								?>
+							</td>					
+						</tr>    
+						<tr>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td style="padding-left:12px;">
+							<img name="sign_img" id="sign_img" src="<?php echo stripslashes($instead_customer_data['instead_sign']) != ''  ? stripslashes($instead_customer_data['instead_sign']).'?'.time() : CUSTOMER_IMAGE_PATH.'no_sign.jpg';?>"  onerror="this.src='customer/images/no_sign.jpg'" style="<?php echo $style1; ?>" ></img>
+							</td>
+						</tr>    
+
+				</table></div><div class="clear clearfix"></div>
+				<?php } ?>
+
+								<div id="overlay" align="center">
+					<div align="center" id="image_capture">
+						<div><a href="javascript:;" onclick="hideOverlay();" style="padding-left:650px;" title="close"><img src="images/close.png"/></a>
+						</div>
+						<div id="flashArea" style="height:100%;">
+							<p align="center">This content requires the Adobe Flash Player.<br /><a href="http://www.adobe.com/go/getflashplayer">
+							<img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" /><br/>
+							<a href="http://www.macromedia.com/go/getflash"/>Get Flash</a>
+							</p>
+						</div>
+					</div>
+				</div>
+
+                <div id="gurantee" class="box-hd-bg" style="width:310px">
+                    <h3>Reference</h3>
+                    
+					<?php if($product_data['status'] != "0") {  ?>
+					<span id="reference_name">Name </span>
+                    <input name="pval[reference_name]" id="ref_name" maxlength="40" type="text" style="width:250px" class="textfield" onfocus="remove_red('reference_name');" value ="<?php echo $product_data['reference_name']; ?>" onfocus="remove_red('reference_name');" ><br />
+					<?php }
+					else { ?>
+					<br />&nbsp;&nbsp;&nbsp;&nbsp;
+					<label name="name"><strong><?php echo $product_data['reference_name']; ?></strong></label>
+                    <?php } ?>
+                  
+					<?php if($product_data['status'] != "0") {  ?>
+					  <span id="reference_address">Address </span>
+                    <textarea name="pval[reference_address]" id="ref_add"  style="width:250px" cols="" onfocus="remove_red('reference_address');" rows=""><?php echo stripslashes($product_data['reference_address']); ?></textarea>
+					<?php }
+					else { ?>
+					<br />&nbsp;&nbsp;&nbsp;&nbsp;
+					<label name="name"><strong><?php echo $product_data['reference_address']; ?><strong></label>
+                    <?php } ?>
+					
+					<div class="clear clearfix"></div>
+
+<?php
+}else{
+?>
+
+                <div id="customer" class="box-hd-bg" style="width:310px">
+                <h3>Customer</h3>
+                <table>
+                <tr>
+                <td>
+                <div>
+                <span style="width:250px" ><?php echo $product_data[customer_code]; ?> </span>
+                <span style="width:250px" ><?php echo $product_data[customer_name]; ?> </span>
+                <input name="customer_name" type="hidden" id="cust_name" style="width:250px"  maxlength="30" autocomplete="off" class="textfield" value="<?php echo $product_data[customer_name];?>" <?php echo ($product_data[customer_name])? "Disabled":"";?>  onfocus="remove_red('customer_id');" onchange="cust_validate();" />
+                </td>
+                <td>
+
+                </div>
+                </td>
+                </tr>
+                <tr>
+                <td colspan="2">
+                <input name="pp_pval[customer_id]" type="hidden" id="cust_id"  maxlength="30" value="<?php echo $product_data[customer_id];?>"/>
+                <input name="for_reset" type="hidden" id="for_reset"  maxlength="30" value="<?php echo $product_data[customer_id];?>"/>
+                <?php if($product_data[customer_photo] == ""){
+                ?>
+                <img src="customer/images/no_photo.jpg" id="cust_img" width="100px" height="90px"/>
+                <?php
+                }
+                elseif(file_exists($product_data[customer_photo]) && $product_data[customer_photo]!=''){
+                ?>
+                <img src="<?php echo $product_data[customer_photo]; ?>" id="cust_img" width="100px" height="90px"/>
+                <?php
+                }else{
+                ?>
+                <img src="customer/images/no_photo.jpg" id="cust_img" width="100px" height="90px"/>
+                <?php
+                }
+                ?>
+                <?php
+                if($product_data["customer_branch"] == $_SESSION['session_user_branch_id'] || is_superadmin($_SESSION['session_usergroupname'])){
+                ?>
+
+                      <span id="cust_details" style="width:150px; word-wrap:break-word;position:relative; margin-left:130px; height:100px;">
+					 <div  style="width:140px; word-wrap:break-word;position:relative; padding-left:10px;">
+                    <?php echo $product_data[customer_street]."<br>";
+                          echo $product_data[customer_location]."<br>";
+                          echo $product_data[customer_postal_code]."<br>";
+                          echo $product_data[customer_contact_no]."<br>";
+                    ?>    
+					</div>
+                    </span>
+                    <?php
+                    }
+                    ?>
+                   </td></tr>
+                    <tr>
+                    <td colspan=2>
+                    
+                    <img src="<?php echo $product_data["customer_sign"]; ?>" id="cust_sign" width="100px" height="90px" onerror="this.src='customer/images/no_sign.jpg'" />
+                    <?php
+                    if($product_data["customer_branch"] == $_SESSION['session_user_branch_id'] || is_superadmin($_SESSION['session_usergroupname'])){
+                    ?>
+                    <span id="cust_history">
+                    <br><a href="javascript:" class="button" onclick="view_history('<?php echo $product_data[customer_id]; ?>')">History</a>
+                    </span>
+                    <?php
+                    }
+                    ?>
+                    </td>
+                    </tr>
+                        </table>
+                </div>
+				<div id="overlay" align="center">
+					<div align="center" id="image_capture">
+						<div><a href="javascript:;" onclick="hideOverlay();" style="padding-left:650px;" title="close"><img src="images/close.png"/></a>
+						</div>
+						<div id="flashArea" style="height:100%;">
+							<p align="center">This content requires the Adobe Flash Player.<br /><a href="http://www.adobe.com/go/getflashplayer">
+							<img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" /><br/>
+							<a href="http://www.macromedia.com/go/getflash"/>Get Flash</a>
+							</p>
+						</div>
+					</div>
+				</div>
+
+			<?php if($module_name == 'redemption'){ ?>
+				 <div id="gurantee" class="box-hd-bg" style="width:310px" >
+                   <h3>Instead Customer</h3> 
+					 <table border=0 align="center" class="frm-tbl" style="width:310px" >
+            <tr>
+                <td width="25%" valign="top" align="left" id="photo">Customer photo* </td>
+            </tr>
+            <tr>
+                <td align="center" valign="top">
+                <input name="pval[photo]"  id="photo_url" maxlength="40" type="hidden" class="textfield-m" onchange="remove_red('photo');" value = "<?php echo stripslashes($product_data['photo']); ?>"/>
+                <img name="photo_img" id="photo_img" src="<?php echo stripslashes($product_data['photo']) != ''  ? stripslashes($product_data['photo']).'?'.time() : CUSTOMER_IMAGE_PATH.'no_photo.jpg';?>"  onerror="this.src='customer/images/no_photo.jpg'" ></img>
+                </td>
+            </tr>    
+            <tr>
+                <td align="center" valign="top">
+                <a href="javascript:;" class="flexi_btn"  onclick="create_picture_capture()" style="marging-left: -5px;">Capture Photo</a>
+                </td>
+            </tr>
+            <tr>
+                <td width="25%" valign="top" align="left" id="photo">Customer Signature *</td>
+            </tr>
+            <tr>
+                <td align="center" valign="top">
+                <input name="pval[sign]"  id="sign_url" maxlength="40" type="hidden" class="textfield-m" onchange="//remove_red('sign');" value = "<?php echo stripslashes($product_data['sign']); ?>"/>
+                <img name="sign_img" id="sign_img" src="<?php echo stripslashes($product_data['sign']) != ''  ? stripslashes($product_data['sign']).'?'.time() : CUSTOMER_IMAGE_PATH.'no_sign.jpg';?>"  onerror="this.src='customer/images/no_sign.jpg'" ></img>
+                </td>
+            </tr>    
+            <tr>
+                <td align="center" valign="top">
+                <a href="javascript:;" class="flexi_btn"  onclick="create_signature_capture()" style="">Capture Sign</a>
+                </td>
+            </tr>
+
+            </table></div><div class="clear clearfix"></div>
+			<?php } ?>
+                <div id="gurantee" class="box-hd-bg" style="width:310px">
+                    <h3>Reference</h3>
+                    <span id="reference_name"> <br>
+                    <?php echo $product_data['reference_name']; ?>
+                    <input name="pp_pval[reference_name]" maxlength="40" type="hidden" style="width:250px" class="textfield" onfocus="remove_red('reference_name');" value ="<?php echo stripslashes($product_data['reference_name']); ?>" onfocus="remove_red('reference_name');"><br />
+                    </span>
+                     <span id="reference_address"> <br>
+                        
+                     <?php echo stripslashes(nl2br($product_data['reference_address'])); ?>
+                     <input name="pp_pval[reference_address]" maxlength="40" type="hidden" style="width:250px" class="textfield" onfocus="remove_red('reference_name');" value ="<?php echo stripslashes($product_data['reference_name']); ?>" onfocus="remove_red('reference_name');">
+                     </span>                        
+
+                </div>
+
+<?php
+}
+?>
+<input type="hidden" name="pledge_branch" id="pledge_branch" value="<?php echo $_SESSION['session_user_branch_id']; ?>">
+<script src="js/swfobject.js" language="javascript"></script>
+<script src="photo_capture/flash_callback.js" language="javascript"></script>
+<script type="text/javascript">
+var capture_type = '';
+var d, randomnumber;
+
+jQuery(document).ready(function(){
+     $('#src_cust_id').focus();
+    <?php if($customerid!=""){ ?>
+    customer_details('<?php echo $customerid; ?>');
+    <?php } ?>
+
+});
+
+function create_picture_capture()
+{
+    capture_type = "photo";
+    // temp name for the picture auto generated..   
+    randomnumber = Math.floor(Math.random()*90000) + 10000;
+    var mainswf = new SWFObject("photo_capture/take_picture.swf", "main", "700", "400", "9", "#ffffff");
+    mainswf.addParam("scale", "noscale");
+    mainswf.addParam("wmode", "window");
+    mainswf.addParam("allowFullScreen", "true");
+    mainswf.addVariable("id",randomnumber); // pass temp name for the picture to flash
+    mainswf.write("flashArea"); 
+    showOverlay();  
+}
+
+function create_signature_capture()
+{
+    capture_type = 'sign';
+    // temp name for the picture auto generated..   
+    randomnumber = Math.floor(Math.random()*90000) + 10000;
+    var signswf = new SWFObject("photo_capture/take_picture.swf", "main", "700", "400", "9", "#ffffff");
+    signswf.addParam("scale", "noscale");
+    signswf.addParam("wmode", "window");
+    signswf.addParam("allowFullScreen", "true");
+    signswf.addVariable("id",randomnumber); // pass temp name for the picture to flash
+    signswf.write("flashArea"); 
+    showOverlay();  
+}
+
+function showOverlay() 
+{
+    //alert(capture_type);
+
+    var o = document.getElementById('overlay');
+    o.style.visibility = 'visible';
+}
+
+function hideOverlay(str) 
+{
+    //alert("photo_capture/recapture.php?type="+capture_type+"&temp="+str);
+        if(str=='') str  = 'tempimage';
+        jQuery.ajax({
+           type: "GET",
+           url: "photo_capture/recapture.php?type="+capture_type+"&temp="+str,
+           dataType : "json",
+           success: function(obj)
+           {            
+                //alert(obj.type+"  "+obj.file);
+                $("#"+capture_type+"_img").attr("src",obj.file+"?"+d.getTime());
+				$("#"+capture_type+"_img").width("230px");
+                $("#"+capture_type+"_url").attr("value",obj.file);
+           },
+           error: function(obj){
+            //alert("Ajax Failed: ERRROR");
+           }
+        });
+
+    var o = document.getElementById('overlay');
+    o.style.visibility = 'hidden';  
+    closed(str);
+}
+
+function closed(str)
+{   
+    
+    d=new Date();
+    rstr = randomnumber; 
+
+    //alert(str+"here");
+	var customer_id = 0;
+    if(customer_id != undefined)
+    {       //alert("cid");
+        if(capture_type=="photo")   
+            fname = customer_id+".jpg";
+        else
+            fname = customer_id+"_sign.jpg";
+        $("#"+capture_type+"_url").attr("value","customer/images/"+customer_id+"/"+fname);          
+    }
+    if(str != undefined)
+    {
+        //alert(str);
+                    
+    }
+}
+
+$("#"+capture_type+"_img").load(function()
+{  
+    //alert($(this).attr("src"));
+    $("#"+capture_type+"_url").attr("value","");
+    //console.log($(this).attr("src"));
+    // console.log($("#"+capture_type+"_url").val());
+   // if(($(this).attr("src") != "http://wwa.mayavafinance.com/customer/images/no_"+capture_type+".jpg") ||  ($(this).attr("src") != "customer/images/no_"+capture_type+".jpg" ))
+
+    
+    if(capture_type=="photo") chk = ($(this).attr("src").search(/no_photo.jpg/i) )
+    else chk = ($(this).attr("src").search(/no_sign.jpg/i) )
+    //alert("check = "+chk)
+    if(chk == -1)
+    {
+    //  alert( $("#"+capture_type+"_url").attr("value"));
+    var str_src = $(this).attr("src");
+    var split_name=str_src.split("?");
+    //alert(split_name[0]);
+      $("#"+capture_type+"_url").attr("value",split_name[0]);
+      //if(capture_type=="photo") remove_red("photo");
+    }    
+    //alert($("#"+capture_type+"_url").attr("value"));
+ });
+
+ $("#"+capture_type+"_img").error(function () {
+  d=new Date();
+  $(this).attr("src", "customer/images/no_"+capture_type+".jpg?"+d.getTime());
+});
+</script>

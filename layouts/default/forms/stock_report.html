@@ -1,0 +1,133 @@
+<div id="print_content">
+<?php  
+    $i=1;
+
+         ?>          
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="18" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title)." - Date:".date("d-m-Y h:i:sa") : strtoupper($page_title . " - ".$heading_suffix)." - Date:".date("d-m-Y h:i:sa"); ?></td>
+            </tr>
+            
+
+            
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+              <td rowspan=2 width="10%"><strong>Date</strong></td>
+              <td rowspan=2 width="20%" align="left" valign="middle"><strong>Detail</strong></td>
+
+              <!--<td colspan=2 width="20%" align=center><strong>Balance</strong></td>-->
+              <td colspan=2 width="10%"  align=center><strong>Weight In</strong></td>
+              <td colspan=2 width="10%"  align=center><strong>Weight Out</strong></td>
+			  <td colspan=2 width="10%"  align=center><strong>Opening Stock</strong></td>
+			  <td colspan=2 width="10%"  align=center><strong>Closing Stock</strong></td>
+              <td colspan=4 width="15%"  align=center><strong>Pledged/Released count</strong></td>
+              <td colspan=6 width="20%"  align=center><strong>Stock Value</strong></td> 
+          </tr>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+            <!--<td align="right"> Opening(<?php echo CURRENCY_SYMBOL;?>)</td>
+            <td align="right"> Closing(<?php echo CURRENCY_SYMBOL;?>)</td>-->
+            <td align="center"> G</td>
+            <td align="center"> Mg</td>
+            <td align="center"> G</td>
+            <td align="center"> Mg</td>
+			 <td align="center"> G</td>
+            <td align="center"> Mg</td>
+			 <td align="center"> G</td>
+            <td align="center"> Mg</td>
+            <td align="center"> In</td>
+            <td align="center"> Out</td>
+			<td align="center"> Opening</td>
+            <td align="center"> Closing</td>
+            <td align="right"> In(<?php echo CURRENCY_SYMBOL;?>)</td>
+            <td align="right"> Out(<?php echo CURRENCY_SYMBOL;?>)</td>
+			<td align="right"> Opening(<?php echo CURRENCY_SYMBOL;?>)</td>
+            <td align="right"> Closing(<?php echo CURRENCY_SYMBOL;?>)</td>
+
+          </tr>
+
+            
+          <?php
+          $j=1;
+          $i=$i+1;
+		  //echo '<pre>';
+		  //print_r($stock_report);
+
+          if(count($stock_report)>0){
+          foreach($stock_report as $rows)
+          {
+             
+            //$amount_in = floatval($rows['interest_amount_in']) + floatval($rows['partial_amount_in']) + floatval($rows['redeam_amount_in']);
+            //$amount_out = floatval($rows['loan_amount_out']) + floatval($rows['excess_amount_out']);
+            
+            /*$amount_in = floatval(htmlentities(stripslashes($rows['amount_in']), ENT_QUOTES));
+            $amount_out = floatval(htmlentities(stripslashes($rows['amount_out']), ENT_QUOTES));
+            
+            $weight_in = floatval(htmlentities(stripslashes($rows['weight_in']), ENT_QUOTES));
+            $weight_out = floatval(htmlentities(stripslashes($rows['weight_out']), ENT_QUOTES));
+            
+            $weight_in_gs =  intval($weight_in);
+            $weight_in_mgs =  intval(floatval($weight_in - intval($weight_in)) * 1000);
+            $weight_out_gs =  intval($weight_out);
+            $weight_out_mgs =  intval(floatval($weight_out - intval($weight_out)) * 1000);
+            
+            
+         //   $item_in = floatval(htmlentities(stripslashes($rows['item_in']), ENT_QUOTES));
+       //    $item_out = floatval(htmlentities(stripslashes($rows['item_out']), ENT_QUOTES));
+            
+            $opening_amount = floatval(htmlentities(stripslashes($rows['opening_balance']), ENT_QUOTES));
+            $closing_amount = floatval(htmlentities(stripslashes($rows['closing_balance']), ENT_QUOTES));*/
+            
+                  ?>
+ 
+
+ 
+                  
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+              <td class="disp-light"  align="left"><?php echo htmlentities(stripslashes($rows['trans_date']), ENT_QUOTES); ?> </td>
+              <td class="disp-light"  align="left"><?php echo htmlentities(stripslashes($rows['process_type']), ENT_QUOTES); ?></td>
+
+               <!--<td class="disp-light"  align="right"> <?php echo convertToCurrency(stripslashes($opening_amount),false); ?> </td>
+               <td class="disp-light"  align="right"> <?php echo convertToCurrency(stripslashes($closing_amount),false); ?> </td>-->
+               <td class="disp-light"  align="center"> <?php echo $rows['weight_in_gs']; ?> </td>
+               <td class="disp-light"  align="center"> <?php echo $rows['weight_in_mgs']; ?> </td>
+               <td class="disp-light"  align="center"> <?php echo $rows['weight_out_gs']; ?> </td>
+               <td class="disp-light"  align="center"> <?php echo $rows['weight_out_mgs']; ?> </td>
+			   <td class="disp-light"  align="center"> <?php echo $rows['opening_weight_gs']; ?> </td>
+               <td class="disp-light"  align="center"> <?php echo $rows['opening_weight_mgs']; ?> </td>
+			   <td class="disp-light"  align="center"> <?php echo $rows['closing_weight_gs']; ?> </td>
+               <td class="disp-light"  align="center"> <?php echo $rows['closing_weight_mgs']; ?> </td>
+               <td class="disp-light"  align="center"> <?php echo $rows['item_in']; ?> </td>
+               <td class="disp-light"  align="center"> <?php echo $rows['item_out']; ?> </td>
+			   <td class="disp-light"  align="center"> <?php echo $rows['opening_item']; ?> </td>
+               <td class="disp-light"  align="center"> <?php echo $rows['closing_item']; ?> </td>
+               <td class="disp-light"  align="right"> <?php echo convertToCurrency(stripslashes($rows['amount_in']),false); ?> </td>
+               <td class="disp-light"  align="right"> <?php echo convertToCurrency(stripslashes($rows['amount_out']),false); ?> </td>
+			   <td class="disp-light"  align="right"> <?php echo convertToCurrency(stripslashes($rows['opening_amount']),false); ?> </td>
+               <td class="disp-light"  align="right"> <?php echo convertToCurrency(stripslashes($rows['closing_amount']),false); ?> </td>
+               
+          </tr>
+         <?php
+            $i++; 
+            $j++;
+          }
+          }else{
+          ?>
+          
+          <tr><td colspan=16 align="center">No Records Found</td></tr>
+          <?php
+          }
+?>
+          
+       </table>
+
+   
+
+</div>
+<iframe id="print_frame" name="print_frame" title="<?php echo ($heading_suffix=="") ? ($page_title) : ($page_title . " - ".$heading_suffix); ?>" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>
+
+
+
+
+
+
+
+

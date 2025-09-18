@@ -1,0 +1,58 @@
+<div id="other-detail" class="box-hd-bg">
+    <h3>Old Loan Details</h3>
+<table class="frm-tbl" border="0" cellpadding="0" cellspacing="0" width="98%">
+
+  <tr>
+    <td id="old_loan_id" width="30%">Old Loan Id</td>
+    <td><?php
+            $loan_id = $product_data['loan_id'];
+            echo $loan_id;
+         ?>
+         <input name="pval[old_loan_id]"  type="hidden"  value = "<?php echo $uval[id];?>">
+         <input name="old_loan_code"  type="hidden"  value = "<?php echo $loan_id;?>">
+         <input name="pval[loan_id]"  type="hidden"  value = "<?php echo $uval[id];?>">
+     </td>
+  </tr>
+  <tr>
+    <td>Old Loan Date</td>
+    <td><?php
+    // if($pay_interest_details['redeem_status']==1){
+  echo $loan_date;
+// }
+// elseif($pay_interest_details['redeem_status']==0){
+//   echo $pay_interest_details['due_date'];
+// } ?></td>
+  <input type="hidden" name="pp_pval[old_redemption_loan_date]" value="<?php echo $pay_interest_details['due_date'];?>">
+  </tr>
+   <tr>
+    <td>Old Scheme Name</td>
+    <td width="170px"><span id="sch_type"><?php echo ($product_data['scheme_name'] =="")? "-":$product_data['scheme_name']; ?></span></td>
+  </tr>
+   <tr>
+    <td>Old Scheme Interest Type</td>
+    <td width="170px">
+    <span id="sch_type">
+    <?php echo ($product_data['interest_type'] =="")? "-":stripslashes($product_data['interest_type']); ?>
+    </span>
+    <input type="hidden" name="scheme_type" id="scheme_type" value="<?php echo $product_data['interest_type']; ?>">
+    </td>
+  </tr>
+  <tr>
+    <td id="description">Scheme Description </td>
+    <td align="left"><span id="sch_desc"><?php echo (trim($product_data['description']) == "")? "-":$product_data['description']; ?></span></td>
+  </tr>
+  <!--<tr>
+    <td><span class="add">Total Amount given </span> <input type="hidden" name="pp_pval[total_amount_given]" id="total_amt_given_hidden" value="<?php echo stripslashes($product_data['total_amount_given']); ?>"></td>
+    <td><span id="total_amt_given"><?php echo ($product_data['total_amount_given'] =="")? "-": number_format($product_data['total_amount_given'], 2,'.',''); ?></span></td>
+    </td>
+  </tr>-->
+  <tr>
+    <td id="loan_amount" width="40%"><span class="add">Old Loan Amount <span class="star">*</span></span></td>
+    <td>
+        <font color=#A33D98><?php echo convertToCurrency($product_data['loan_amount']); ?></font>
+
+        <input name="old_loan_amount" maxlength="40" type="hidden" class="textfield-m" id="old_loan_amt" onfocus="remove_red('loan_amount');" value ="<?php if($product_data['loan_amount'] != ''){ echo number_format(stripslashes($product_data['loan_amount']), 2,'.','');} ?>" onkeypress="return decimalformat(event,this,10,2);">
+    </td>
+  </tr>
+
+</table></div>

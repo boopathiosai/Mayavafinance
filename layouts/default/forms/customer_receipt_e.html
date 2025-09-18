@@ -1,0 +1,321 @@
+<div id="print_content">
+<?php  
+
+    $product_data = $customer_data;
+    $categories = $customer_data;
+    $customer_data = $customer_data[0];
+	
+	$weight_net = floatval($customer_data['total_net_weight']);
+	$weight_net_gs =  intval($weight_net);
+	$weight_net_mgs =  intval(floatval($weight_net - intval($weight_net)) * 1000);
+	$customer_data['total_net_weight'] = $weight_net_gs . " Gm ".$weight_net_mgs." Ms";
+
+	$weight_gross = floatval($customer_data['total_gross_weight']);
+	$weight_gross_gs =  intval($weight_gross);
+	$weight_gross_mgs =  intval(floatval($weight_gross - intval($weight_gross)) * 1000);
+	$customer_data['total_gross_weight'] = $weight_gross_gs . " Gm ".$weight_gross_mgs." Ms";
+    
+?>
+ <div id="contentarea">
+<form name="customer_form" method="post" style="margin: 0px;">
+      <table class="frm-cntr" width="95%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
+
+      <tr>
+        <td width="100%">
+          <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          <tr class="bg1">
+            <td colspan="2" class="name-head"><strong>THE LOANEE INFORMATION</strong></td>
+            </tr>
+
+            <tr class="bg">
+              <td width="39%"></td>
+              <td width="61%" align="left" class="name-disp">
+                  <strong><?php echo (trim($customer_data['customer_id']) == "")? "-":stripslashes($customer_data['customer_id']);; ?></strong>
+              </td>
+            </tr>
+
+            <tr class="bg1">
+              <td>Customer Name</td>
+              <td align="left" class="name-disp">
+                  <strong><?php echo (trim($customer_data['customer_name']) == "")? "-":stripslashes($customer_data['customer_name']); ?></strong>
+              </td>
+            </tr>
+
+            <tr class="bg">
+              <td>Customer Address </td>
+              <td align="left" class="disp-light">
+                  <span id="customer_street"><?php echo (trim($customer_data['customer_street']) == "")? "-":stripslashes($customer_data['customer_street']); ?></span><br>
+                  <span id="customer_location"><?php echo (trim($customer_data['customer_location']) == "")? "-":stripslashes($customer_data['customer_location']); ?></span>
+              </td>
+            </tr>
+
+            <tr class="bg1">
+              <td>Pin Code</td>
+              <td class="disp-light">
+                  <span id="customer_postal_code">
+                      <?php echo (trim($customer_data['customer_postal_code']) == "")? "-":stripslashes($customer_data['customer_postal_code']); ?>
+                  </span>    
+              </td>
+            </tr>
+
+            <tr class="bg">
+              <td>Phone / mob</td>
+              <td class="disp-light">
+                  <?php echo (trim($customer_data['contact_no']) == "")? "-":stripslashes($customer_data['contact_no']); ?>
+              </td>
+            </tr>
+
+            <tr class="bg1">
+              <td>E-mail</td>
+              <td class="disp-light">
+                 <?php echo (trim($customer_data['email']) == "")? "-":stripslashes($customer_data['email']); ?>     
+              </td>
+            </tr>
+
+            <!--<tr class="bg">
+              <td>Religion</td>
+              <td class="disp-light">
+              <?php echo (trim($customer_data['religion']) == "")? "-":stripslashes($customer_data['religion']); ?>
+              </td>
+            </tr>
+
+            <tr class="bg1">
+              <td>Category</td>
+              <td class="disp-light">
+              <?php echo (trim($customer_data['religion_category']) == "")? "-":stripslashes($customer_data['religion_category']); ?>
+              </td>
+            </tr>
+
+             <tr class="bg">
+              <td>Land Holding</td>
+              <td class="disp-light">
+              <?php echo (trim($customer_data['land_holding']) == "")? "-":stripslashes($customer_data['land_holding']); ?>
+              </td>
+            </tr>-->
+
+            <tr class="bg">
+              <td>Signature</td>
+              <td class="disp-light" valign="bootom">
+
+
+              </td>
+            </tr> 
+            </table>
+
+            <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr class="bg1">
+              <td colspan="2" class="name-head">THE APPRAISER FORM</td>
+              </tr>
+            <tr class="bg">
+              <td width="39%">Loan ID</td>
+              <td class="disp-light">
+              <?php echo (trim($customer_data['loan_id']) == "")? "-":stripslashes($customer_data['loan_id']); ?>
+              </td>
+            </tr>            
+            <tr class="bg1">
+              <td width="39%">Total gross Weight</td>
+              <td class="disp-light">
+              <?php echo (trim($customer_data['total_gross_weight']) == "")? "-":stripslashes($customer_data['total_gross_weight']); ?>
+              </td>
+            </tr>
+            <tr class="bg">
+              <td width="39%">Total Net Weight</td>
+              <td class="disp-light">
+              <?php echo (trim($customer_data['total_net_weight']) == "")? "-":stripslashes($customer_data['total_net_weight']); ?>
+              </td>
+            </tr>
+            <tr class="bg1">
+              <td width="39%">Total Item</td>
+              <td class="disp-light">
+              <?php echo (trim($customer_data['item_count']) == "")? "0":stripslashes($customer_data['item_count']); ?>  Items
+              </td>
+            </tr>
+           
+            <tr class="bg">
+              <td>Gram Rate</td>
+              <td class="disp-light">
+                  <?php echo (trim($customer_data['loan_rate']) == "")? "-":convertToCurrency(stripslashes($customer_data['loan_rate'])); ?>
+              </td>
+            </tr>
+
+            <tr class="bg1">
+              <td>Loan Amount</td>
+              <td class="disp-light">
+                  <?php echo (trim($customer_data['loan_amount']) == "")? "-":convertToCurrency(stripslashes($customer_data['loan_amount'])); ?>
+              </td>
+            </tr>
+
+            <tr class="bg">
+            <td>Loan Date</td>
+            <td class="disp-light">
+                <?php echo (trim($customer_data['loan_date']) == "")? "-":stripslashes($customer_data['loan_date']); ?>
+            </td>
+            </tr>
+            </table>
+          <?php
+            $i=1;
+            if(count($categories)>0){
+         ?>   
+          <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          <tr class="bg1">
+            <td colspan="100%" class="name-head">PRODUCT ITEMS</td>
+            </tr>
+          <tr class="bg">
+              <td> S.NO </td>  
+              <td> CATEGORY </td>
+              <td> PRODUCT </td>
+              <td> WITH </td>
+              <td> WITHOUT </td>
+              <!--<td> GROSS WT </td>
+              <td> NET WT </td>-->
+              <td> ITEMS </td>
+          </tr>  
+        <?php            
+            foreach($categories as $category){
+            
+
+            
+          ?>  
+          <tr class="<?php echo (($i % 2) == 1) ? 'bg1' : 'bg'; ?>">
+              <td> <?php echo $i; ?> </td>
+              <td class="disp-light"> <?php echo (trim($category["category_name"])=='') ? "-" : $category["category_name"]; ?> </td>
+              <td class="disp-light"> <?php echo (trim($category["product_name"])=='') ? "-" : $category["product_name"]; ?> </td>
+              <td class="disp-light"> <?php echo  (trim($category["product_with"])=='') ? "-" : $category["product_with"]; ?>  </td>
+              <td class="disp-light"> <?php echo  (trim($category["product_without"])=='') ? "-" : $category["product_without"] ; ?>  </td>
+              <!--<td class="disp-light"> <?php echo  (trim($category["gross_weight"])=='') ? "-" : $category["gross_weight"]; ?>  </td>
+              <td class="disp-light"> <?php echo  (trim($category["net_weight"])=='') ? "-" : $category["net_weight"] ; ?>  </td>-->
+              <td class="disp-light"> <?php echo  (trim($category["product_items"])=='') ? "-" : $category["product_items"] ; ?>  </td>
+          </tr>
+
+          <?php
+          $i++;
+          }
+          ?>
+          <tr>
+          <!--<tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td class="disp-light" colspan=5 align=right>TOTAL ITEM</td>
+            <td class="disp-light"><?php echo  (trim($category["item_count"])=='') ? "-" : $category["item_count"] ; ?> </td>
+          </tr>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td class="disp-light" colspan=5 align=right>TOTAL WEIGHT</td>
+            <td class="disp-light"><?php echo  $weight_in_gs." Gm ".$weight_in_mgs." Mg"; ?> </td>
+          </tr>-->
+
+          </table> 
+          <?php
+          }
+          ?>
+          
+         
+       
+       <?php
+        //if($customer_data['interest_type'] == "Floating"){
+          $schemeInterest = Scheme::SchemeInterestDetail($customer_data['scheme_id'],$customer_data['date_of_loan'], $customer_data['loan_amount']);
+          //print_r($schemeInterest);
+          
+         ?>          
+<table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr class="<?php echo (($i % 2) == 1) ? 'bg1' : 'bg'; $i++; ?>">
+    <td colspan="2" class="name-head">SCHEME SLAB INTEREST DETAILS</td>
+    </tr>
+
+    <tr class="<?php echo (($i % 2) == 1) ? 'bg1' : 'bg'; $i++; ?>">
+      <td>Scheme Name</td>
+      <td class="disp-light">
+          <?php echo (trim($customer_data['scheme_name']) == "")? "-":stripslashes($customer_data['scheme_name']); ?>
+      </td>
+    </tr>
+    <tr class="<?php echo (($i % 2) == 1) ? 'bg1' : 'bg'; $i++; ?>">
+      <td>Scheme Type</td>
+      <td class="disp-light">
+          <?php echo (trim($customer_data['interest_type']) == "")? "-":stripslashes($customer_data['interest_type']); ?>
+      </td>
+    </tr>
+    <tr class="<?php echo (($i % 2) == 1) ? 'bg1' : 'bg'; $i++; ?>">
+      <td>Scheme Loan Rate</td>
+      <td class="disp-light">
+          <?php echo (trim($customer_data['loan_rate']) == "")? "-":convertToCurrency($customer_data['loan_rate']); ?>
+      </td>
+    </tr>
+</table>
+
+<table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+<tr class="<?php echo (($i % 2) == 1) ? 'bg1' : 'bg'; $i++; ?>">
+<td width="5%"> S.NO </td>  
+<td width="15%"> STARTING </td>
+<td width="15%"> ENDING </td>
+<td width="15%"> MONTHLY </td>
+<td width="50%" colspan=3 align=center> INTEREST DETAILS </td>
+</tr>
+<tr class="<?php echo (($i % 2) == 1) ? 'bg1' : 'bg'; $i++; ?>">
+<td></td>  
+<td></td>
+<td></td>
+<td></td>
+<td align=right> Days </td>
+<td align=right> ROI </td>
+<td align=right> Amount </td>
+</tr>
+
+<?php
+$j=1;
+$initialRate = 0;
+if(count($schemeInterest)>0){
+foreach($schemeInterest as $scheme)
+{
+$div_days = $scheme['div_days'];
+$start_date = ($scheme['start_date']);
+$end_date = $scheme['end_date'];
+
+$slab_days = floatval($scheme['slab_days']);
+$no_days = floatval($scheme['no_days']);
+
+$loan_amount = floatval($scheme['loan_amount']);
+
+if($j==1){
+$initial_rate = floatval($scheme['rate_of_interest']);
+}
+
+$calc_interest_rate = (strtolower($scheme['scheme_type'])=='flat') ? ($initial_rate) : floatval($scheme['rate_of_interest']);
+
+//$i = (strtolower($scheme_details[0]['scheme_type'])=='flat') ? ($i * 12) : $i;
+
+$normal_amount = ((floatval($loan_amount/100) * $initial_rate ) / $div_days) *  $slab_days;
+$penalty_amount = ((floatval($loan_amount/100) * $calc_interest_rate ) / $div_days) *  $no_days;   
+$monthly_amount = ($penalty_amount /  $no_days) * 30;
+
+
+?>
+<tr class="<?php echo (($i % 2) == 1) ? 'bg1' : 'bg'; ?>"><td> <?php echo $j; ?>) </td>
+<td class="disp-light"> <?php echo (trim($scheme['start'])=='') ? "-" : $scheme['start']; ?> </td>
+<td class="disp-light"> <?php echo (trim($scheme['end'])=='') ? "-" : $scheme['end']; ?> </td>
+<!--<td class="disp-light" align="right"> <?php echo (trim($slab_days)=='') ? "0" : $slab_days; ?> </td>
+<td class="disp-light" align="right"> <?php echo (trim($initial_rate)=='') ? "0" : $initial_rate; ?> % </td>
+<td class="disp-light" align="right"> <?php echo (trim($normal_amount)=='') ? "0" : convertToCurrency($normal_amount); ?> </td>-->
+<td class="disp-light" align="right"> <?php echo (trim($monthly_amount)=='') ? "0" : convertToCurrency($monthly_amount); ?> </td>
+<td class="disp-light" align="right"> <?php echo (trim($no_days)=='') ? "0" : $no_days; ?> </td>
+<td class="disp-light" align="right"> <?php echo (trim($calc_interest_rate)=='') ? "0" : $calc_interest_rate; ?> % </td>
+<td class="disp-light" align="right"> <?php echo (trim($penalty_amount)=='') ? "0" : convertToCurrency($penalty_amount); ?> </td></tr>
+
+<?php
+$i++; 
+$j++;
+//if($j>3) break;
+}
+}else{
+?>
+<tr class="<?php echo (($i % 2) == 1) ? 'bg' : 'bg1'; ?>">
+<td colspan=7> <?php echo $j; ?>) </td>
+</tr>
+<?php
+}
+?>
+
+</table>
+</td></tr></table>
+
+</form>
+
+</div>
+</div>   
+<iframe id="print_frame" name="print_frame" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>

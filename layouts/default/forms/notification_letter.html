@@ -1,0 +1,34 @@
+
+<div id="print_content">
+<?php  
+$categories = $product_data;
+//print_r($product_data);
+?>
+
+ <div id="contentarea">
+     <form name="customer_form" method="post" style="margin: 0px;">
+
+
+<?php
+if($_GET['status'] == 'data_value') {
+    
+    include ADMIN_LAYOUT_PATH . '/elements/letter_loan_print.html';
+    
+}
+else if($_GET['status'] == 'auction_notice') {
+
+echo "Auction Notice" . $_GET['status'];
+  
+}
+else {  
+    
+    
+    include ADMIN_LAYOUT_PATH . '/elements/letter_address_print.html';
+}
+?>
+
+			
+       </form>   
+</div>         
+</div>             
+<iframe id="print_frame" name="print_frame" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>

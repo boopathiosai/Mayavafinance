@@ -1,0 +1,43 @@
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">  
+  <tr class="headings">
+      <td width="23%"><strong>Date</strong></td>
+      <td width="7%" align="left"><strong>Loan Nos</strong></td>
+      <td width="27%"  align="right"><strong>Total Weight</strong></td>
+      <td width="22%"  align="right"><strong>Total Items</strong></td>
+      <td width="20%"  align="right"><strong>Total Amount(Rs)</strong></td>
+  </tr>
+     <?php
+      if(count($data) > 0) {
+        for($i=0;$i<count($data);$i++){ 
+
+           //$amount_in = floatval($data[$i]['interest_amount_in']) + floatval($data[$i]['partial_amount_in']) + floatval($data[$i]['redeam_amount_in']);
+            //$amount_out = floatval($data[$i]['loan_amount_out']) + floatval($data[$i]['excess_amount_out']);
+            
+            $weight_in = floatval($data[$i]['pledged_weight']);
+            
+            
+            $weight_in_gs =  intval($weight_in);
+            $weight_in_mgs =  intval(floatval($weight_in - intval($weight_in)) * 1000);
+    ?>
+   <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+			<td align="left"><?php echo htmlentities(stripslashes($data[$i]['report_date']), ENT_QUOTES); ?> </td>
+			<td align="left"><?php echo htmlentities(stripslashes($data[$i]['loan_no_range']), ENT_QUOTES);?>
+			</td>
+			<td align="right"><?php echo $weight_in_gs. ' Gms '. $weight_in_mgs . ' Mgms';?></td>
+			<td align="right"><?php echo convertToCurrency($data[$i]['pledged_items']);?></td>
+			<td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['pledged_amount']),false); ?>
+			</td>
+			<td></td>
+   </tr>
+    <?php
+        }
+    } 
+    else {
+    ?>
+    <tr class="bg-row">
+    <td colspan="13" align="center" height="50">No records found</td>
+    </tr>
+    <?php
+    }
+    ?>
+   </table>

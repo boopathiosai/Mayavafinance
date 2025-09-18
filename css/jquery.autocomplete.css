@@ -1,0 +1,101 @@
+.ac_results {
+	padding: 0px;
+	background-color: white;
+	overflow: hidden;
+	z-index: 99999;
+}
+
+.ac_results ul {
+	width: 270px;	
+	list-style-position: outside;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.ac_results li {
+	margin: 0px;
+	padding: 2px 5px;
+	cursor: default;
+	display: block;
+	/* 
+	if width will be 100% horizontal scrollbar will apear 
+	when scroll mode will be used
+	*/
+	/*width: 100%;*/
+	font: 10px Verdana, Arial, Helvetica, sans-serif;
+	color: #333333;
+	/* 
+	it is very important, if line-height not setted or setted 
+	in relative units scroll will be broken in firefox
+	*/
+	line-height: 16px;
+	overflow: hidden;
+}
+.ac_options {
+	position:relative;
+	margin: 0px;
+	padding: 2px;
+	text-align:right;
+	display: block;	
+	font: 10px Verdana, Arial, Helvetica, sans-serif;
+	line-height: 16px;
+	overflow: hidden;
+}
+.ac_options a {
+	margin: 0px;
+	padding: 2px;
+	font: 10px Verdana, Arial, Helvetica, sans-serif;
+	color: #333333;
+	overflow: hidden;
+	text-decoration:none;
+}
+.ac_options a:hover{
+	margin: 0px;
+	padding: 2px;
+	font: 10px Verdana, Arial, Helvetica, sans-serif;
+	color: #333333;
+	overflow: hidden
+	text-decoration:underline;
+}
+.ac_loading {
+	background: white url('indicator.gif') right center no-repeat;
+}
+
+.ac_odd {
+	background-color: #FFF;
+}
+
+.ac_over {
+	background-color: #F2F2F2;
+	color:#000;
+}
+#panel {
+	position:relative;
+	background: #FFF;
+	height: 120px;
+	width: 270px;	
+	display: none;
+	z-index : 3;
+	border: 1px solid #F2F2F2;
+	overflow: hidden;
+}
+.slide {
+	margin-top: 30px;
+	padding: 0;	
+	border-top: solid 4px #422410;
+}
+.btn-slide {
+	background: url(../images/wlip_closed.png) no-repeat;
+	width: 265px;
+	float:right;
+	display:block;
+	cursor:pointer;
+	padding-top:30px;
+	padding-left:10px;
+	z-index:4;
+}
+.active {
+	background: url(../images/wlip_open.png) no-repeat;
+}
+

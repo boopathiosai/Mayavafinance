@@ -1,0 +1,93 @@
+<div id="print_content">
+<?php  
+    $i=1;
+
+         ?>          
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="8" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title)." - Date:".date("d-m-Y h:i:sa") : strtoupper($page_title . " - ".$heading_suffix)." - Date:".date("d-m-Y h:i:sa"); ?></td>
+            </tr>
+            
+
+            
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+              <td><strong>Date</strong></td>              
+			  <td width="15%"><strong>Branch</strong></td>
+			  <td width="25%"><strong>Purpose</strong></td>
+			  <td width="12%" align="right"><strong>Amount (<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+			  <td width="12%"  align="right"><strong>Cash In (<?php echo CURRENCY_SYMBOL;?>)</strong></td>   
+			  <td width="12%"  align="right"><strong>Cash Out (<?php echo CURRENCY_SYMBOL;?>)</strong></td> 
+			  <td width="12%"  align="right"><strong>Opening (<?php echo CURRENCY_SYMBOL;?>)</strong></td>   
+			  <td width="12%"  align="right"><strong>Closing (<?php echo CURRENCY_SYMBOL;?>)</strong></td> 
+			 
+             
+          </tr>
+            
+          <?php
+
+			  $j=1;
+			  $i=$i+1;
+			  $initialRate = 0;
+			  if(count($stock_report)>0){
+			  
+			  foreach($stock_report as $rows)
+			  {
+
+				$cash_purpose = preg_replace("/Loan/","",$rows['cash_purpose']);
+				
+					//assigning loan id in cash purpose
+					if($rows['module_type'] == 2 && $rows['loan_id'] =='') {
+						$purpose_id = $rows['purpose_id'];
+						$cf_id_query = "SELECT P.loan_id FROM ".PLEDGE." AS P INNER JOIN ".REDEMPTION." AS R ON P.id=R.loan_id  WHERE R.cash_flow_id IN (".$purpose_id.")";
+						$cf_data = $app->getexport($cf_id_query);
+						$rows['loan_id'] = $cf_data[0]['loan_id'];
+					}
+				
+				if($rows['profit_status'] == 1 && $cash_purpose == 'Auction') 
+					$auction_pr = ' - Profit';
+				elseif($cash_purpose == 'Auction')
+					$auction_pr = ' - Loss';
+				
+				if($rows['module_type'] == 1 || $rows['module_type'] == 2) 
+					$cash_purpose = $cash_purpose."(Loan ID :".$rows['loan_id'].")";
+			
+				$cash_purpose = $cash_purpose.$auction_pr;
+
+            
+           ?>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+				<td align="left"><?php echo htmlentities(stripslashes($rows['trans_date']), ENT_QUOTES); ?> </td>
+				<td align="left"><?php echo htmlentities(stripslashes($rows['branch_name']), ENT_QUOTES); ?> </td>
+				<td align="left"> <?php echo htmlentities(stripslashes($cash_purpose),false); ?> </td>
+				<td align="right"> <?php echo convertToCurrency(stripslashes($rows['loan_amount']),false); ?> </td>
+				<td align="right"> <?php echo convertToCurrency(stripslashes($rows['cash_in']),false); ?> </td>
+				<td align="right"><?php echo convertToCurrency(stripslashes($rows['cash_out']),false); ?> </td>
+				<td align="right"> <?php echo convertToCurrency(stripslashes($rows['opening_balance']),false); ?> </td>
+				<td align="right"><?php echo convertToCurrency(stripslashes($rows['closing_balance']),false); ?> </td>
+
+               
+          </tr>
+        <?php
+           $i++; 
+           $j++;
+          }
+          }else{
+          ?>
+          <tr><td colspan=8 align="center">No Records Found</td></tr>
+          <?php
+          }
+          ?>
+          
+       </table>
+
+
+</div>
+<iframe id="print_frame" name="print_frame" title="<?php echo ($heading_suffix=="") ? ($page_title) : ($page_title . " - ".$heading_suffix); ?>" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>
+
+
+
+
+
+
+
+

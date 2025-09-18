@@ -1,0 +1,48 @@
+
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">  
+
+     
+     <tr class="headings">
+      <td width="10%"><strong>Date</strong></td>
+      
+      <td align="left" valign="middle"><strong>Purpose</strong></td>
+      <td width="15%" align="left"><strong>Principle (<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="10%"  align="left"><strong>Interest (<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="10%"  align="left"><strong>Wavier (<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="10%"  align="right"><strong>Other (<?php echo CURRENCY_SYMBOL;?>)</strong></td>
+      <td width="15%"  align="right"><strong>Total (<?php echo CURRENCY_SYMBOL;?>)</strong></td>  
+     </tr>
+<?php
+    if(count($data) > 0) {
+    
+    
+    //print_r($data);
+    
+        for($i=0;$i<count($data);$i++){ 
+     
+?>
+    
+    <tr class="row0" id="<?php echo $data[$i]['report_date']; ?>" height="40">
+        <td align="left"><?php echo htmlentities(stripslashes($data[$i]['report_date']), ENT_QUOTES); ?> </td>
+        
+        <td align="left"><?php echo htmlentities(stripslashes($data[$i]['purpose']), ENT_QUOTES); ?></td>
+        <td align="left"><?php echo $data[$i]['principle_paid']; ?></td>
+        <td align="left"><?php echo $data[$i]['interest_paid'] ?></td>
+        <td align="left"><?php echo $data[$i]['wavier_amount']; ?></td>
+        <td align="right"> <?php echo $data[$i]['other_charges']; ?></td>
+        <td align="right"> <?php echo $data[$i]['total_paid']; ?></td>
+    </tr>  
+       
+<?php
+        }
+
+    } else {
+
+?>
+        <tr class="bg-row">
+        <td colspan="14" align="center" height="50">No records found</td>
+        </tr>
+<?php
+    }
+?>
+   </table>

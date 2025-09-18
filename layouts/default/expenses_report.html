@@ -1,0 +1,192 @@
+ <div id="content_div">
+    <?php
+    unset($_SESSION['start']);
+    unset($_SESSION['pcount']);
+
+    if(isset($_SESSION['success_msg']))
+    {
+    echo "<script type='text/javascript'>show_status('".$_SESSION['success_msg']."')</script>";
+    unset($_SESSION['success_msg']);
+    } 
+    ?>
+    <div class="breadcrumbs">
+        <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+                <td><a href="javascript:;">Reports</a>&raquo;<a href="javascript:;"><?php echo $page_title?></a></td>
+                <td align="left" width="10%" >
+                    <?php
+                    if($search_args != "") 
+                    {
+                    $diaply_style ="";
+                    ?>
+                    <div id="serach_button_div"><a href="javascript:;" id="serach_button_show" class="greybtn" onclick="hide_search(); return false;">Close</a></div>
+                    <?php
+                    }
+                    else{
+                    $diaply_style = 'style="display:none;"';
+                    ?>
+                    <div id="serach_button_div">
+                        <a href="javascript:;" class="greybtn" id="serach_button_show" onclick="show_search(); return false;">Search</a></div>
+                    <?php
+                    }
+                    ?>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!--Modified by karthik-->
+    <div id="contentarea">
+        <table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+                <td colspan="2">
+                    <?php include ADMIN_LAYOUT_PATH . 'elements/report_search.html'; ?>
+                </td>
+            </tr>
+        </table>
+        <div>
+            <br>
+            <form>
+                <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+                    <tr>
+                        <td class="title" colspan="4"><?php echo $page_title; ?></td>
+                        <td class="title" colspan="4" align=right>
+                            <a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_pdf&<?php echo $search_args; ?>" class="greybtn" id="pdf_report" onclick= "pdf_report('<?php echo $module_name;?>.php?type=export_pdf&<?php echo $search_args;?>');">PDF</a>
+                            <a href="javascript:;" _href="<?php echo $module_name; ?>.php?type=export_xls&<?php echo $search_args; ?>" class="greybtn" id="xls_report" onclick= "xls_report('<?php echo $module_name;?>.php?type=export_xls&<?php echo $search_args;?>');">XLS</a>
+                            <!--<a href="<?php echo $module_name; ?>.php?type=export_tally&<?php echo $search_args; ?>" class="greybtn" id="tally_report">TALLY</a>-->
+                            <a href="javascript:" onclick="print_preview('<?php echo $module_name; ?>', 'print_dialog', '37', '<?php echo $search_args; ?>', '<?php echo $page_title; ?> - Print Preview', 1070, 700);" class="greybtn" id="print_report">Print</a>
+                        </td>
+                    </tr>      
+
+                    <tr class="headings">
+                        <td width="5%"></td>    
+                        <td width="7%">Date</td>
+                        <td width="10%">sub_branch_code</td>    
+                        <td width="15%" align="right">Branch</td>  
+                        <td width="15%" align="right">Opening (<?php echo CURRENCY_SYMBOL;?>)</td>  
+                        <td width="15%" align="right">Closing (<?php echo CURRENCY_SYMBOL;?>)</td>      
+                        <td width="15%" align="right">Cash In (<?php echo CURRENCY_SYMBOL;?>)</td>
+                        <td width="15%" align="right">Cash Out (<?php echo CURRENCY_SYMBOL;?>)</td>
+                    </tr>
+                    <?php
+                    if(isset($_POST['searchOption']))
+                    {
+                    $search_only=$_POST['searchOption'];
+                    }
+
+                    if(count($data) > 0) {
+                    for($i=0;$i<count($data);$i++){ 
+
+                    /*
+
+                    (
+
+                    ) AS opening_balance,
+
+                    (
+
+                    ) AS closing_balance,
+
+                    (
+
+                    ) AS cashin,
+
+                    (
+
+                    ) AS cashout 
+
+                    */
+                    if($data[$i]['branch_id'] != ''){         
+
+                    $ob_query = "SELECT sCF.opening_balance 
+                    FROM mf_cash_flow_transactions AS sCF 
+                    WHERE sCF.branch_id = ".$data[$i]['branch_id']." 
+                    AND sCF.date_transaction = DATE_FORMAT('".$data[$i]['report_date']."','%Y-%m-%d')
+                    ORDER BY sCF.date_transaction ASC, sCF.id ASC
+                    LIMIT 0,1";
+                    $cb_query = "SELECT sCF.closing_balance 
+                    FROM mf_cash_flow_transactions AS sCF 
+                    WHERE sCF.branch_id = ".$data[$i]['branch_id']."
+                    AND  sCF.date_transaction = DATE_FORMAT('".$data[$i]['report_date']."','%Y-%m-%d')
+                    ORDER BY sCF.date_transaction DESC, sCF.id DESC
+                    LIMIT 0,1";
+                    $ci_query = "SELECT SUM(sCF.amount) 
+                    FROM mf_cash_flow_transactions AS sCF 
+                    WHERE 
+                    sCF.branch_id = ".$data[$i]['branch_id']." 
+                    AND sCF.date_transaction = DATE_FORMAT('".$data[$i]['report_date']."','%Y-%m-%d')
+                    AND sCF.transaction_type = 'cashin'
+                    GROUP BY sCF.date_transaction
+                    LIMIT 0,1";
+                    $co_query = "SELECT SUM(sCF.amount) 
+                    FROM mf_cash_flow_transactions AS sCF 
+                    WHERE 
+                    sCF.branch_id = ".$data[$i]['branch_id']."
+                    AND sCF.date_transaction = DATE_FORMAT('".$data[$i]['report_date']."','%Y-%m-%d')
+                    AND sCF.transaction_type = 'cashout'
+                    GROUP BY sCF.date_transaction
+                    LIMIT 0,1";
+
+                    $ob_row = $app->getrow($ob_query);
+                    $cb_row = $app->getrow($cb_query);
+                    $ci_row = $app->getrow($ci_query);
+                    $co_row = $app->getrow($co_query);
+
+                    $opening_balance = $ob_row[0];
+                    $closing_balance = $cb_row[0];
+                    $cashin = $ci_row[0];
+                    $cashout = $co_row[0];
+
+                    $data[$i]['opening_balance'] = $opening_balance;
+                    $data[$i]['closing_balance'] = $closing_balance;
+                    $data[$i]['cashin'] = $cashin;
+                    $data[$i]['cashout'] = $cashout;  
+                    }    
+                    ?>
+                    <tr class="groups" id="<?php echo $data[$i]['id']; ?>">
+                        <td align=left>
+
+                            <a href="javascript:" onclick="show_sub_list_by_query('<?php echo $module_name; ?>', '&search_sdate=<?php echo $data[$i]['report_date']; ?>&search_edate=<?php echo $data[$i]['report_date']; ?>&search_branch_id=<?php echo $data[$i]['branch_id']; ?>', '<?php echo $data[$i]['id']; ?>', '&multiple_search=<?php echo $search_only;?>');">
+                                <img id="img_drop_<?php echo $data[$i]['id']; ?>" src="./images/plus-sign.jpg" border=0 width="16px">
+                            </a>
+
+                        </td>
+                        <td align="left"><strong><?php echo htmlentities(stripslashes($data[$i]['trans_date']), ENT_QUOTES); ?></strong></td>
+                        <td align="left"><?php echo nl2br($data[$i]['sub_details']); ?></td>     
+                        <td align="right"><?php echo stripslashes($data[$i]['branch_name']); ?></td>
+                        <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['opening_balance']),false); ?></td>
+                        <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['closing_balance']),false); ?></td>
+                        <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['cashin']),false); ?></td>
+                        <td align="right"><?php echo convertToCurrency(stripslashes($data[$i]['cashout']),false); ?></td>
+                    </tr> 
+                    <tr><td colspan=8>
+                            <div id="sublist_<?php echo $data[$i]['id']; ?>" class="display_view"></div>
+
+                        </td></tr> 
+                    <?php
+                    }
+                    } else {
+                    ?>
+                    <tr class="bg-row">
+                        <td colspan="8" align="center" height="50">No records found</td>
+                    </tr>
+                    <?php
+                    }
+                    ?>
+                    <tr class="headings">
+                        <td colspan=8>
+                            <?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?>
+                        </td>
+                    </tr>
+                </table>
+
+            </form>
+            <div class="clear clearfix"></div><!--contentarea ends here-->  
+        </div>
+    </div>          
+</div>           
+
+<!--For the print option, days less 30 to display the results. Default value 30-->
+<script>
+            < ?php $maximum_days = MAX_SEARCH_REPORT_DAYS ? MAX_SEARCH_REPORT_DAYS : 30; ? >
+            var max_days = < ?php echo $maximum_days; ? > ;
+</script>

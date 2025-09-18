@@ -1,0 +1,64 @@
+<div id="print_content">
+<?php  
+    $i=1;
+
+         ?>          
+          <table class="frm-tbl"  width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg1' : 'bg'; ?>">
+            <td colspan="9" class="name-head"><?php echo ($heading_suffix=="") ? strtoupper($page_title)." - Date:".date("d-m-Y h:i:sa") : strtoupper($page_title . " - ".$heading_suffix)." - Date:".date("d-m-Y h:i:sa"); ?></td>
+          </tr>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+          <td width="10%" align="left">Loan Date</td>
+          <td width="7%" align="left">Loan Id</td>
+          <td width="7%" align="left" >Customer Id</td>    
+          <td width="15%" align="center">Customer Name</td>            
+          <td width="15%" align="right">Total Weight</td>    
+          <td width="8%" align="right">Loan Count</td>   
+          <td width="12%" align="right">Loan Amount(<?php echo CURRENCY_SYMBOL;?>)</td>
+          <!-- <td width="15%" align="center">Scheme Name</td> -->
+          <td width="10%" align="">Loan Rate(<?php echo CURRENCY_SYMBOL;?>)</td>
+          </tr>
+            
+          <?php
+          $j=1;
+          $i=$i+1;
+    if(count($loan_amt_rate_report)>0) {
+          foreach($loan_amt_rate_report as $rows)
+          {
+            
+                $weight_in = floatval($rows['pledged_weight']);
+                $weight_in_gs =  intval($weight_in);
+                $weight_in_mgs =  intval(floatval($weight_in - intval($weight_in)) * 1000);
+				$loan_rate = $rows['loan_amount']/$rows['pledged_weight'];
+
+             ?>
+          <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
+            <td align="left"><?php echo htmlentities(stripslashes($rows['loan_date']), ENT_QUOTES); ?></td>
+          <td align="left"><?php echo $rows['loan_id'];?></td>     
+          <td align="left"><?php echo htmlentities(stripslashes($rows['customer_id']), ENT_QUOTES); ?></td>     
+          <td align="center"><?php echo $rows['customer_name']; ?></td>     
+          <td align="right"><?php echo $weight_in_gs. ' G '. $weight_in_mgs . ' Mg'; ?> </td>
+          <td align="center"><?php echo htmlentities(stripslashes($rows['no_of_loans']), ENT_QUOTES); ?></td>    
+          <td align="right"><?php echo convertToCurrency(stripslashes($rows['loan_amount']),false); ?></td>
+          <!-- <td align="center"><?php echo $rows['scheme_name']; ?></td> -->
+          <!--<td align="right"><?php echo convertToCurrency($rows['loan_rate'],false); ?></td>-->
+		  <td align="right"><?php echo convertToCurrency($loan_rate,false); ?></td>
+
+
+         </tr> 
+         <?php
+            $i++; 
+            $j++;
+          }
+          }else{
+          ?>
+           <tr><td colspan=9 align="center">No Records Found</td></tr>
+          <?php
+          }
+?>
+       </table>
+
+</div>           
+
+<iframe id="print_frame" name="print_frame" title="<?php echo ($heading_suffix=="") ? ($page_title) : ($page_title . " - ".$heading_suffix); ?>" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe>           
+            

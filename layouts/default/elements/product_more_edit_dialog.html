@@ -1,0 +1,60 @@
+<div id="product_more_edit" >
+<table bgcolor="#e5e5e5" style="border: 0px solid rgb(230, 230, 230);" width="100%">
+<tbody>
+    <tr width='100%' class='bg' height="30" valign="middle">
+    <th id="product_with" align="center"><strong>With</strong> </th>
+    <th id="product_without" align="center"><strong>Without</strong> </th>
+    </tr>
+    <tr width='100%' class="bg1" height="30" valign="middle">
+    <td width="50%"align="center"><input type="text"  name="product_more_with" id ="product_more_with" class="textfield-m" value = ""/></td>
+    <td width="50%"align="center"><input type="text"  name="product_more_without" id ="product_more_without" class="textfield-m" value = ""/></td>
+    </tr>
+</tbody>
+</table>
+</div>     
+
+<script>
+jQuery(document).ready(
+    function(){
+
+        //Form Action Box
+        jQuery("#product_more_edit").dialog( { 
+                dialogClass: 'alert',
+                buttons: {
+                    "Add": function() { 
+                        product_more_save();
+                        
+                    },
+                    
+         
+                    "Cancel": function() { 
+                        jQuery(this).dialog("close"); 
+                    }
+                }, 
+                autoOpen: false,
+                resizable: true,
+                modal: true,
+                width:'455px',
+                create: function(){
+                    jQuery(this).dialog("close");
+                },
+                open: function(){
+                    if(!jQuery("#product_more_with").attr("readonly") && !jQuery("#product_more_with").attr("disabled")){
+                        //alert("inside");
+                        jQuery("#product_more_with").focus();
+                    }
+                },
+
+                focus: function(){
+                    if(!jQuery("#product_more_with").attr("readonly") && !jQuery("#product_more_with").attr("disabled")){
+                        //alert("inside");
+                        jQuery("#product_more_with").focus();
+                    }
+                }
+        });
+        jQuery("#product_more_edit").dialog("close");
+
+        
+        //alert(pledgeProductCount);
+    });
+</script>

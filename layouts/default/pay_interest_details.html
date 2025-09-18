@@ -1,0 +1,153 @@
+    <div id="pay-interest-details" class="display_view">
+    <div class="mid-heading">
+    <p>Pay Interest Detail</p>
+
+    </div>
+    <div class="cmt-area">
+    <!-- Loan Details -->
+
+
+    <!-- Pay Interest Details -->
+    <?php
+    if(count($paid_interest_details)>0){
+    ?>
+    <table class="list-tbl" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr class="headings">
+    <td align=center width=10%>Pay ID</td>
+    <td align=right width=15%>Pay on</td>
+    <td align=right width=15%>Principle</td>
+    <td align=right width=15%>Interest</td>
+    <td align=right width=15%>Additional</td>
+    <td align=right width=15%>Total Pay</td>
+    <td align=center width=15%>Action</td>
+    </tr>
+    <?php
+
+
+    foreach($paid_interest_details as $paid_interest){
+
+    ?>
+    <tr>
+    <td valign=top><?php echo $paid_interest['pi_id'] ; ?></td>
+
+    <td align=left><?php echo htmlentities(stripslashes($paid_interest['paid_on']), ENT_QUOTES); ?></td>
+    <td align=right><?php echo convertToCurrency(htmlentities(stripslashes($paid_interest['principle_amount']), ENT_QUOTES)); ?>
+    </td>
+    <td align=right><?php echo convertToCurrency(htmlentities(stripslashes($paid_interest['interest_amount']), ENT_QUOTES)); ?>
+    </td>
+    <td align=right><?php echo convertToCurrency(htmlentities(stripslashes($paid_interest['additional_charge']), ENT_QUOTES)); ?>
+    </td>
+    <td align=right><?php echo convertToCurrency(htmlentities(stripslashes($paid_interest['total_amount']), ENT_QUOTES)); ?></td>
+
+    <td align=center>
+    <?php
+
+    if(($paid_interest["pi_id"]!="" && $paid_interest['paid_on']==date("d-F-y")) || $_SESSION['session_usergroupname'] == 'Super Admin' ){
+    if(can_edit($_SESSION['session_usertype'], $module_name)){
+    ?>
+    <a href="javascript:;" onclick="from_actions('pay_interest','formact_dialog','<?php echo $paid_interest['pledge_id']; ?>','edit','pi_id=<?php echo $paid_interest["pi_id"]; ?>&<?php echo $search_args; ?>','Edit Paid Interest',850,400);" title="Edit Paid Interest">
+    <img src='images/edit.jpg' style="border:0px;" ></a> 
+    <?php
+    }
+    if(can_delete($_SESSION['session_usertype'], $module_name)){
+    ?>
+    <a href="javascript:;" onclick="from_actions('pay_interest','formact_dialog','<?php echo $paid_interest['pledge_id']; ?>','delete-confirm','pi_id=<?php echo $paid_interest["pi_id"]; ?>&<?php echo $search_args; ?>','Delete Paid Interest',850,400,'Delete');" title="Delete Paid Interest">
+    <img src='images/delete.jpg' style="border:0px;" ></a>
+    <?php
+    }
+    }
+    ?>
+    </td> 
+    </tr>
+    <?php
+    $slab ++;
+    }
+    ?>
+    </table>
+
+    <?php
+    }else{
+    ?>
+
+    <table class="list-tbl" width="95%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr class="headings">
+    <td align=center>No Interest Paid till Today</td>
+    </tr></table>
+    <?php
+
+    }
+
+    ?>
+
+
+    </div>
+    </div>
+    <div class="clear clearfix"></div>
+
+    <div id="slab-interest-details" class="display_view">
+    <div class="mid-heading">
+    <p>Slab Wise Total Paid Interest Details</p>
+
+    </div>
+    <div class="cmt-area">
+
+    <?php
+    if(count($slab_interest_details)>0){
+    ?>
+    <table class="list-tbl" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr class="headings">
+    <td align=center width=5%>Slab</td>
+    <td align=left width=15%>From Starting</td>
+    <td align=left width=15%>To End</td>
+    <td align=right width=8%>ROI</td>
+    <?php if($customer_data['scheme_type']=='flat') {  ?>
+    <td align=right width=15%>Principle</td>
+    <?php } ?>
+    <td align=right width=15%>Interest</td>
+    <td align=right width=12%>Additional</td>
+    <td align=right width=15%>Total Pay</td>
+
+    </tr>
+    <?php
+    $slab = 1;
+
+    foreach($slab_interest_details as $slab_interest){
+    $slab_interest_data = explode(",",$slab_interest['interest_details']);
+    $keys = array("principle_amount","interest_amount","additional_amount","total_amount");
+    if(count($slab_interest_data)==count($keys)){
+    $pay_data = array_combine($keys,$slab_interest_data);
+    //print_r($pay_data);
+    }else{
+    $pay_data = array_combine($keys,array("","","",""));
+    }
+    if($slab_interest['start_date'] <= date("Y-m-d"))
+    {
+    ?>
+    <tr>
+    <td valign=top bgcolor="#eeeeee"><font color="#880000"><?php echo "Slab-".$slab ; ?></font></td>
+    <td align=left><?php echo htmlentities(stripslashes($slab_interest['start']), ENT_QUOTES); ?></td>
+    <td align=left><?php echo htmlentities(stripslashes($slab_interest['end']), ENT_QUOTES); ?></td>
+    <td align=right><?php echo htmlentities(stripslashes($slab_interest['rate_of_interest']), ENT_QUOTES); ?> % </td>
+    <?php if($customer_data['scheme_type']=='flat') {  ?>
+    <td align=right><?php echo convertToCurrency(htmlentities(stripslashes($pay_data['principle_amount']), ENT_QUOTES)); ?>
+    </td>
+    <?php } ?>
+    <td align=right><?php echo convertToCurrency(htmlentities(stripslashes($pay_data['interest_amount']), ENT_QUOTES)); ?>
+    </td>
+    <td align=right><?php echo convertToCurrency(htmlentities(stripslashes($pay_data['additional_amount']), ENT_QUOTES)); ?>
+    </td>
+    <td align=right><?php echo convertToCurrency(htmlentities(stripslashes($pay_data['total_amount']), ENT_QUOTES)); ?></td>
+    </tr>
+    <?php
+    }
+    $slab ++;
+    }
+    ?>
+    </table>
+
+    <?php
+    }
+
+    ?>
+    </div>
+    </div>

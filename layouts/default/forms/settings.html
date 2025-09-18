@@ -1,0 +1,87 @@
+<?php  if($settings_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }   
+?>
+ <div class="clear clearfix"></div>
+    <div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td ><a href="javascript:;">Home</a> &raquo;<a href="javascript:;">Master</a> &raquo;<a href="javascript:;">Settings Master</a></td >
+        <td ><span class="btn-rht">
+        <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+        <a href="javascript:;" class="greybtn" onclick="return create_function('content_div', '<?php echo $module_name; ?>','<?php echo $search_args; ?>');">RESET</a> <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div>
+<div id="contentarea">  
+<form name="settings_form" method="post" style="margin: 0px;">      
+<div id="msg"></div>
+<table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">  
+ <tr>
+        <td class="title">Settings Master</td>
+ </tr>
+  <tr>
+      
+    <td width="50%">
+    
+    <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">        
+      
+      <tr>
+        <td id="config_name"><span class="add">Name<span class="star">*</span></span></td>
+        <td><input name="pval[config_name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('config_name');" value = "<?php echo stripslashes($settings_data['config_name']);?>"></td>
+      </tr>
+      <tr>
+        <td id="config_value"><span class="add">Value<span class="star">*</span> </span></td>
+        <td><input name="pval[config_value]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('config_value');" value = "<?php echo stripslashes($settings_data['config_value']);?>"></td>
+      </tr>
+</table>
+</div>
+  
+      <div class="pagination">      
+            <div class="pagi-rht">
+            <div class="no-list"></div>
+        </div>
+    </div>
+            
+      <?php if($uval[id] != '' ){ ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+          
+          <?php }?>
+         </td>
+     </tr>
+     </table>
+    </form>
+<div class="clear clearfix"></div>
+</div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){   
+        
+        enable_save_action();
+        
+        $("input,select,textarea").not( $(":button,:hidden") ).keypress(function (evt) {
+            if (evt.keyCode == 13) {
+                iname = $(this).val();
+                if (iname !== 'Submit'){    
+                    var fields = $(this).parents('form:eq(0),body').find('button,input:text,input:radio,input:checkbox,textarea,select');                   
+                    
+                    var index = fields.index( this );
+                    if ( index > -1 && ( index + 1 ) < fields.length) {
+                        fields.eq( index + 1 ).focus();
+                    }
+                    else
+                    {                   
+                      settings_process('content_div','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');
+                    }
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+</html>

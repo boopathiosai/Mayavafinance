@@ -1,0 +1,70 @@
+<?php 
+
+/*********  Principle Payment Form  *************/
+
+
+if(strtolower($product_data['interest_type'])=='flat') {
+
+?>
+    <div id="other-detail" class="box-hd-bg">
+                     <h3>Principle Details</h3>
+<table class="frm-tbl" border="0" cellpadding="0" cellspacing="0" width="98%">
+  
+
+<?php
+if(floatval($principle_remain_amount) <= 0) {
+?>
+<tr><td colspan=100%>
+    <p align=center> <font color=#A33D98> <b>All Principle Amount Paid, Customer can Redeam Theire Product </b> </font> </p>
+</td></tr>    
+<?php
+}
+?>
+<tr>
+<td><span class="add"><span id="amount">Total Amount to Pay </span></span></td>
+<td align="left">
+<?php echo convertToCurrency($principle_loan_amount); ?>
+</td>
+</tr>
+<tr>
+<td>Total Paid Amount </td>
+<td align="left">
+<?php echo convertToCurrency($principle_total_paid); ?>
+</td>
+</tr>
+<tr>
+<td><span class="add">Amount for a Month  </td>
+<td align="left">
+<?php echo convertToCurrency($principle_unit_payment); ?>
+</td>
+</tr>
+<tr>
+<td><span class="add">Remining Amount</td>
+<td align="left">
+<?php echo convertToCurrency($principle_remain_amount); ?>
+<input type="hidden" id="principle_remain" name="principle_remain" value="<?php echo unitDisplay($principle_remain_amount,false); ?>">
+</td>
+</tr>
+
+<tr>
+<td><span class="add"><span id="amount">Principle Amount to Pay</span></span></td>
+<td align="left">
+<input type="hidden" id="princ_amt" name="princ_amt" value="<?php echo unitDisplay($principle_to_add,false); ?>">
+<input type="text" class="calc currency" id="principle_amt" name="pval[principle_amount]" value="<?php echo unitDisplay($principle_to_add,false); ?>" onfocus="remove_red('principle_amount')" onchange="setTotalAmount()">
+Rs.
+
+<?php //echo convertToCurrency($principle_to_pay); ?>
+</td>
+</tr>
+
+<tr><td colspan=2 align=left>
+
+<input type="checkbox" <?php echo ($principle_to_add>0) ? "checked" : ""; ?> name="pay_principle" id="pay_principle" value="1" onclick="setPrinceple(this.checked)" class="checkbox" />
+Include Pay Principle Amount
+</td></tr>
+</table>
+</div>
+<?php
+
+}
+?>

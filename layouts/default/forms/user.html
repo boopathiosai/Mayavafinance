@@ -1,0 +1,153 @@
+<?php  if($user_data['status'] == "0") {
+        $inactive="checked";
+    }else{
+        $active="checked";
+    }
+    
+    ?>
+<div class="clear clearfix"></div>
+<div class="breadcrumbs">
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>Masters</a> &raquo;<a href="users.php">User Master</a></td >
+        <td ><span class="btn-rht">
+        <a id="save_action_btn" href="javascript:;" class="greybtn" onclick="return save_action('content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');">SAVE</a>
+        <a href="javascript:;" class="greybtn" onclick="return edit_function('content_div','<?php echo $module_name; ?>','<?php echo $uval[id]; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>');">RESET</a> <a href="javascript:;" class="greybtn" onclick = "return back('content_div', '<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args ?>');">BACK</a></span></td>
+      </tr>
+      </table>
+ </div> 
+<div id="contentarea">
+<form name="user_form" method="post" style="margin: 0px;">
+<table class="frm-cntr" width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="title">User Master</td>
+      </tr>
+      <tr>
+        <td width="50%">
+        <table class="frm-tbl"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          <tr>
+            <td id="name" width="12%">Username* </td>
+            <td width="61%" align="left"><input name="pval[name]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('name');" value = "<?php echo stripslashes($user_data['name']); ?>" id="username"></td>
+          </tr>
+        <tr>
+        <td id="branch_id"><span class="add"> Branch Name <span class="star">*</span></span></td>
+        <td>
+        
+                <?php 
+                if(!is_superadmin($_SESSION['session_usergroupname']))
+                { 
+                    echo "<input type='hidden' name='pval[branch_id]'  value='$_SESSION[session_user_branch_id]'/>";
+                    echo $_SESSION['session_user_branch_name'];
+                } 
+                else 
+                {
+                    //Get Branch name from branch table
+                       $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);       
+                ?>
+                 <select name="pval[branch_id]" onchange="remove_red('branch_id');">
+                <option value="">-- Select Branch --</option>
+                   <?php              
+                    echo build_select_options($branch_data,$user_data['branch_id']); 
+                   ?>
+                </select>
+                <?php
+                }?>
+        
+        </td>
+        </tr> 
+        <tr>
+        <td id='user_group_id'>User type*</td>
+        <td>
+       <?php 
+
+        if($user_data['user_group_id'] != 1){
+         //Get the user groups from the user group table
+          // $user_group_data = get_dropdown_list(USER_GROUP);                
+           //$user_group_data = get_dropdown_list_with_field_user_group('id', 'name', USER_GROUP);
+           $query = "SELECT id, name FROM ".USER_GROUP." WHERE id >= '".$_SESSION['session_usertype']."' AND name <> 'Super Admin'";
+           $user_group_data = $app->getrows($query);
+         ?>
+        
+        <?php if($_SESSION['session_usertype']!=1){ 
+            //echo "<strong name='pval[user_group_id]' onfocus='remove_red(user_group_id);'>".$_SESSION['session_usergroupname']."</strong>";
+           // echo "<input type='hidden' name='pval[user_group_id]'  value='".$_SESSION[session_usertype]."'/>";
+        }
+        //else
+        { ?>
+        <select name="pval[user_group_id]" onchange="remove_red('user_group_id');">
+        <option value="">-- Select User Type --</option>
+           <?php              
+           buildDropDownBox($user_group_data,$user_data['user_group_id']); 
+           ?>
+        </select>
+        <?php } 
+        }else{
+            ?>
+            Super Admin
+            <input name="pval[user_group_id]" type=hidden value="<?php echo $user_data['user_group_id']; ?>" />
+            <?php
+        }
+        ?>
+        </td>
+        </tr>          
+
+          <tr>
+            <td id="password">Password* </td>
+            <td align="left"><input name="pval[password]" maxlength="40" type="password" class="textfield-m" onfocus="remove_red('password');" value = "<?php echo stripslashes(base64_decode($user_data['password'])); ?>"></td>
+          </tr>
+          <tr>
+            <td id="email">Email Id* </td>
+            <td align="left"><input name="pval[email]" maxlength="40" type="text" class="textfield-m" onfocus="remove_red('email');" value = "<?php echo stripslashes($user_data['email']); ?>"></td>
+          </tr>
+            <tr>
+            <td ><span class="add"> Contact no </span></td>
+            <td><input name="pval[contact_no]" maxlength="40" type="text" class="textfield" id="contact_no_input"  value = "<?php echo stripslashes($user_data['contact_no']); ?>"></td>
+          </tr>
+
+        <tr>
+            <td id="address"><span class="add"> Address </span></td>
+            <td><textarea name="pval[address]" onfocus="remove_red('address');"><?php echo stripslashes($user_data['address']);?></textarea></td>
+        </tr>
+         
+           <tr>
+            <td>Status </td>
+            <td><label>
+              <input name="pval[status]" type="radio" class="radio" value="1" <?php echo $active; ?> />
+              Active</label>
+                <label>
+                <input name="pval[status]" type="radio" class="radio" value="0" <?php echo $inactive; ?> />
+              Inactive </label></td>
+          </tr>
+           <tr>
+             <td colspan="2"><span id="mand_note">* indicates mandatory fields</span> </td>
+           </tr>   
+        </table>
+      </td>
+      </tr>
+    </table>
+            
+      <?php if($uval[id] > 0){ ?>
+          <input name="type"  type="hidden"  value = "update">  
+          <input name="id"  type="hidden"  value = "<?php echo $uval[id];?>">
+          <?php  }else{ ?>
+          <input name="type"  type="hidden"  value = "add">
+          
+          <?php }?>
+    </form>
+<div class="clear clearfix"></div>
+
+</div>
+
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){         
+        //$('#username').focus(); 
+		document.user_form.username.focus();
+	   	form_enter_focus(jQuery('input[name="pval[name]"]'),7,'content_div','<?php echo $module_name; ?>','<?php echo $page_no; ?>','<?php echo $search_args; ?>','<?php echo $uval[id]; ?>');
+        enable_save_action();
+        $("#postal_code_input").numeric();
+        $("#contact_no_input").numeric({allow:"+- "});
+
+    });
+</script>
+</html>

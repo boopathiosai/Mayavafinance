@@ -1,0 +1,388 @@
+<div id="print_content" >
+<?php  
+//echo '<pre>';
+//print_r($customer_data);
+//exit;
+    $product_data = $customer_data;
+    $categories = $customer_data;
+    $customer_data = $customer_data[0];
+	
+	$weight_net = floatval($customer_data['total_net_weight']);
+	$weight_net_gs =  intval($weight_net);
+	$weight_net_mgs =  intval(floatval($weight_net - intval($weight_net)) * 1000);
+	//$customer_data['total_net_weight'] = $weight_net_gs . " Gm ".$weight_net_mgs." Ms";
+	$customer_data['total_net_weight'] = $weight_net_gs . " கி ".$weight_net_mgs." Ms";
+
+	$weight_gross = floatval($customer_data['total_gross_weight']);
+	$weight_gross_gs =  intval($weight_gross);
+	$weight_gross_mgs =  intval(floatval($weight_gross - intval($weight_gross)) * 1000);
+	//$customer_data['total_gross_weight'] = $weight_gross_gs . " Gm ".$weight_gross_mgs." Ms";
+	$tamil_font = "மி கி";
+
+$customer_data['total_gross_weight'] = $weight_gross_gs . " கி ".$weight_gross_mgs.$tamil_font;
+    
+?>
+<style>
+	.tamil_font tr td{
+		font-size:10px;
+	}
+	.frm-bor{
+	border-top:1px solid #000000;
+	border-bottom:1px solid #000000;
+	
+	}
+	
+	.frm-bor1{
+	border-top:2px solid #000000;
+	border-bottom:1px solid #000000;
+	
+	}
+	.frm-bor2{
+	border-top:2px solid #000000;
+	border-bottom:2px solid #000000;
+	
+	}
+	.frm-bor3{
+	border-top:1px solid #000000;
+	border-bottom:1px solid #000000;
+	}
+
+	.tam td{
+		background:#000;
+		color:#fff;	
+	}
+
+	.tot_bor td{
+		border-top:1px solid #000;
+	}
+	
+	
+
+	@media print
+  {
+  #remove_text {visibility:hidden;}
+
+	.frm-bor1 td {
+	padding-bottom:1px !important;
+	}
+
+	.frm-cntr{
+	position:relative;
+	top:98px;
+	}
+	
+
+  .frm-bor{
+	border-top:0px;
+	border-bottom:0px;
+	border-left:0px;
+	border-right:0px;
+	
+	}
+	
+	.frm-bor1{
+	border-top:0px;
+	border-bottom:0px;
+	border-left:0px;
+	border-right:0px;
+	
+	}
+	.frm-bor2{
+	border-top:0px;
+	border-bottom:0px;
+	border-left:0px;
+	border-right:0px;
+	
+	}
+	.frm-bor3{
+	border-top:0px;
+	border-bottom:0px;
+	border-left:0px;
+	border-right:0px;
+	}
+
+	.tam td{
+		background:#000;
+		color:#fff;	
+	}
+
+	.tot_bor td{
+		border-top:0px;
+	}	
+  }
+
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+	#pro_nam { padding-left: 108px !important;	width: 126px !important;}
+  }
+  .fir,  x:-moz-any-link, x:default  { display:none !important  }
+</style>
+<?php
+$fetch_cust_id = $customer_data['customer_id'];
+
+	  $query = "SELECT DISTINCT P.id, P.sub_branch_id, P.loan_id, P.customer_id, PD.pledge_id, PD.product_id,PS.name, C.name, B.name as sub_branch_name, B.sub_branch_code, B.license_no, B.address, B.location, B.contact_no, B.license_no
+                FROM mf_pledge as P
+                LEFT JOIN mf_pledge_details as PD ON P.id = PD.pledge_id
+                LEFT JOIN mf_customers as C ON C.id = P.customer_id
+		        LEFT JOIN mf_products as PS ON PS.id = PD.product_id
+                LEFT JOIN mf_sub_branch as B ON P.sub_branch_id = B.id
+		        WHERE 1 = 1 AND P.customer_id = '$fetch_cust_id'";
+                
+                $data_sub_addr = $app->getrows($query);
+?>
+ <div id="contentarea">
+<form name="customer_form" method="post" style="margin: 0px;" class="tamil_font ">
+      <table class="frm-cntr frm-bor" width="95%" border="0"  align="center" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
+      <tr>
+        <td width="100%"> 
+          <table class="frm-tbl frm-bor1"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          <tr class="bg1">
+            <td colspan="4" class="name-head">
+			
+			<strong><h1 id='remove_text'> <?php 
+			echo $data_sub_addr[0]['sub_branch_name'];			
+			//echo  $customer_data['organization_name'] ?></h1></strong>
+			<?php echo "<br/>";
+			echo $data_sub_addr[0]['license_no']; ?>
+			<div id='remove_text' style="font-weight: normal; width: 400px; text-align: center; padding: 0px 150px;">
+				<?php 
+				echo $data_sub_addr[0]['location'];
+				echo "<br/>";
+				echo nl2br($data_sub_addr[0]['address']);
+				echo "<br/>";
+				echo $data_sub_addr[0]['contact_no'];
+				//echo  $customer_data['address'] ?>
+			</div>
+
+			</td>
+          </tr>
+		  <tr class="bg1">
+            <td colspan="4" class="name-head" id='remove_text'><center><strong><h3> அடகு  சீட்டு </h3></strong></center></td>
+          </tr>
+			</table>
+		  <div style="width:100%;height:2px" >
+				&nbsp;
+		  </div>
+		   <div style="width:100%;height:6px" class="fir">
+				&nbsp;
+		  </div>
+		   <div style="width:100%;height:6px" class="fir">
+				&nbsp;
+		  </div>
+		   <div style="width:100%;height:6px" class="fir">
+				&nbsp;
+		  </div>
+		  <div style="width:100%;height:6px;" class="fir">
+				&nbsp;
+		  </div>
+		  <div class="fir" style="height:8px;" ><span>&nbsp;</span></div>
+          <div style="font-size:10px;color:#000000;font-weight:bold;float:left;width: 180px;padding-left:110px">
+          
+			  <span width="172px" id='remove_text'>அடகு எண்  :</span>
+              <span width="50px" colspan="3"> 
+                  <strong><?php echo (trim($customer_data['loan_id']) == "")? "-":stripslashes($customer_data['loan_id']);; ?></strong>
+			  </span>
+		  </div>
+
+		  <div style="font-size:10px;color:#000000;font-weight:bold;float:left;width: 192px;">
+				  <span id='remove_text' style="padding-left:2px;">ஸ்கீம் :</span>
+				  <span style="padding-left:10px;"><?php echo $customer_data['scheme_name']; ?> </span>
+
+		  </div>
+
+		  <div style="font-size:10px;color:#000000;font-weight:bold;float:left">
+				  <span id='remove_text' style="padding-left:2px;">தேதி :</span>
+				  <span style="padding-left:10px;"><?php echo date("d/m/Y"); ?> </span>
+              </span>			  
+          </div>
+		   <div style="width:100%;height:4px">
+				&nbsp;
+		  </div>
+
+		  <div style="font-size:10px;color:#000000;font-weight:bold;clear:both;padding-left:110px">
+
+			   <span id='remove_text'>அடகு வைத்தவரின் பெயர் :</span>
+			   <span align="left" class="name-disp">  <strong><?php echo (trim($customer_data['customer_name']) == "")? "-":stripslashes($customer_data['customer_name']); ?></strong>
+			   </span>			   
+		  </div>
+		  <div style="font-size:10px;color:#000000;font-weight:bold;clear:both;padding-left:110px">
+		  <span id='remove_text'>உறவினர் பெயர்:</span>
+			   <span align="left" class="name-disp">  <strong><?php echo (trim($customer_data['relation_name']) == "")? "-":stripslashes($customer_data['relation_name']); ?> - <?php echo (trim($customer_data['relationship_type']) == "")? "-":stripslashes($customer_data['relationship_type']); ?></strong>
+			   </span>
+		  </div>
+		  <div style="font-size:10px;color:#000000;font-weight:bold;_height:54px;padding-left:110px">			
+			<span style="float:left" id='remove_text;'> விலாசம் :</span>
+			  <span style="float:left;line-height:12px;margin-left:99px;">
+			   <?php 
+						
+					echo (trim($customer_data['customer_street']) =="" )? "-" : stripslashes($customer_data['customer_street']);
+					echo '<br>&nbsp;&nbsp;';
+					echo (trim($customer_data['customer_location']) =="" )? "-" : stripslashes($customer_data['customer_location']);
+					echo '<br>&nbsp;&nbsp;';
+					echo (trim($customer_data['district']) =="" )? "-" : stripslashes($customer_data['district']);
+					echo ' - ';
+					echo (trim($customer_data['customer_postal_code']) == "")? "-":stripslashes($customer_data['customer_postal_code']); 
+					$lamountw = intval($customer_data['loan_amount']);
+				?>
+			  </span>
+		   </div>
+		   <div style="font-size:10px;color:#000000;font-weight:bold;_height:54px;padding-left:110px">
+				<span style="float:left;clear:both" id='remove_text'> அசல் :</span>
+				 <span style="float:left;padding-left:20px;padding-left:116px;"><?php echo (trim($customer_data['loan_amount']) == "")? "-":stripslashes($customer_data['loan_amount']); ?></span>
+				  <span style="float:left;padding-left:20px">(<?php echo translateToWords($lamountw); ?> Only)</span> 
+		   </div>
+		   <div style="font-size:10px;color:#000000;font-weight:bold;clear:both;padding-left:110px">
+			<span style="float:left" id='remove_text' >போன் எண் : </span>
+			  <span style="float:left;margin-left:84px;"><?php echo (trim($customer_data['contact_no']) == "")? "-":stripslashes($customer_data['contact_no']); ?></span> 
+            </div>
+           
+
+          <?php
+            $i=1;
+            if(count($categories)>0){
+         ?>   
+          <table class="frm-tbl frm-bor2"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+         
+          <tr class="tam">
+              <!-- <td> S.NO </td>  
+              <td> CATEGORY </td> -->
+              <td colspan="2" id='remove_text' align="center"> அடகு சொத்தின் விபரம்  </td>
+              <td id='remove_text'><!-- எண்ணிகை  --> </td>
+			  <td id='remove_text'>எண்ணிக்கை</td>
+              <td id='remove_text' align="left"> எடை கிராம்  </td>
+              <!--<td> GROSS WT </td>
+              <td> NET WT </td>-->
+              <td id='remove_text'> சொத்தின் மதிப்பு  </td>
+          </tr>  
+          <?php
+			
+			$tot_count = 0;
+            foreach($categories as $category){
+
+				$tot_count =  $customer_data['product_items'] + $tot_count;
+            
+          ?>  
+          <tr class="<?php echo (($i % 2) == 1) ? 'bg1' : 'bg'; ?>">
+             
+              <td class="disp-light" colspan="3" style="padding-left:80px;width:150px" align="center" id="pro_nam"> <?php echo (trim($category["product_name"])=='') ? "-" : $category["product_name"]; ?> </td>
+			   <td class="disp-light" align="center"><?php echo  (trim($customer_data['product_items'])=='') ? "-" : $customer_data['product_items'] ; ?> </td>
+               <td class="disp-light" align="left"> <?php if($i ==1) { echo (trim($customer_data['total_gross_weight'])=='') ? "-" : $customer_data['total_gross_weight'] ; } ?>  </td> 
+              <td class="disp-light" style="padding-left:50px"> <?php if($i ==1) {echo  (trim($category["market_rate"])=='') ? "-" : $category["market_rate"] ; } ?>  </td>
+          </tr>
+
+          <?php
+          $i++;
+          }
+		  if($i == 2){ ?>
+			<tr><td colspan=6>&nbsp;</td></tr>
+			<tr><td colspan=6>&nbsp;</td></tr>
+			<tr><td colspan=6>&nbsp;</td></tr>
+		  <?php }elseif($i == 3) { ?>
+			<tr><td colspan=6>&nbsp;</td></tr>
+			<tr><td colspan=6>&nbsp;</td></tr>			
+		  <?php }elseif($i == 4) { ?>
+		    <tr><td colspan=6>&nbsp;</td></tr>
+		  <?php } ?>
+
+		  <tr>
+				<td colspan=2>&nbsp;</td>
+				<td>மொத்தம்</td>
+				<td align="center"><?php echo $tot_count; ?></td>
+				<td ><?php echo $customer_data['total_gross_weight']; ?></td>
+				<td style="padding-left:50px"><?php echo $customer_data['market_rate']; ?></td>
+		  </tr>
+          
+
+          </table> 
+		  
+		 <table class="frm-tbl frm-bor3"  width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          <tr class="bg">
+            <td  colspan="5"  id='remove_text'>1. நான்  மேலே  குறிப்பிட்டுள்ள   தங்க  நகைகளை   ஈடாக   தருகிறேன். </td>
+            
+          </tr> 
+		  <tr class="bg">
+            <td  colspan="5"  id='remove_text'>2. இந்த நகைகள் என்னுடையவை. </td>
+            
+          </tr> 
+		  <tr class="bg">
+            <td  colspan="5" id='remove_text' >3.  இந்த  கடன்  தொகை மற்றும் வட்டி சேர்த்து மறுபக்கத்தில்  குறிப்பிட்டுள்ள  கால  அவகாசத்ற்குள் திருப்பி அடைக்க  சம்மதிக்கிறேன். </td>
+            
+          </tr> 
+		  <tr class="bg">
+            <td  colspan="5"  id='remove_text'>4. இந்த படிவதில் கூறப்பட்டு்ள்ள  யாவும் உண்மையென   நான்  உறுதி கூறுகிறேன் </td>
+            
+          </tr> 
+		  <tr class="bg">
+            <td  colspan="5" id='remove_text' >5.  பின்  பக்கதில்  கொடுத்திருகும்   நிபந்தனைகளையும்  விதிமுறைகளையும்    ஏற்று    கொள்கிறேன் </td>
+            
+          </tr> 
+		   <tr class="bg">
+            <td  colspan="5" >&nbsp;</td>
+            
+          </tr> 
+		   <tr class="bg">
+            <td  colspan="4" id='remove_text' >அடகு  வைத்தவரின்   கையொப்பம்  ( அல்லது ) இடதுகைப்பெருவிரல்   ரேகை</td>
+			<td  colspan="1" align="right" id='remove_text' >for <?php 
+			echo $data_sub_addr[0]['sub_branch_name'];
+			//echo $customer_data['organization_name'] ?>&nbsp; &nbsp; &nbsp; &nbsp; </td>
+            
+          </tr> 
+		  </table>
+          <?php
+          }
+          ?>
+          
+         
+       
+<?php
+	//if($customer_data['interest_type'] == "Floating"){
+	// $schemeInterest = Scheme::SchemeInterestDetail($customer_data['scheme_id'],$customer_data['date_of_loan'], $customer_data['loan_amount']);
+	//print_r($schemeInterest);
+  
+ 
+	/*
+	$j=1;
+	$initialRate = 0;
+	if(count($schemeInterest)>0){
+	foreach($schemeInterest as $scheme)
+	{
+	$div_days = $scheme['div_days'];
+	$start_date = ($scheme['start_date']);
+	$end_date = $scheme['end_date'];
+
+	$slab_days = floatval($scheme['slab_days']);
+	$no_days = floatval($scheme['no_days']);
+
+	$loan_amount = floatval($scheme['loan_amount']);
+
+	if($j==1){
+	$initial_rate = floatval($scheme['rate_of_interest']);
+	}
+
+	$calc_interest_rate = (strtolower($scheme['scheme_type'])=='flat') ? ($initial_rate) : floatval($scheme['rate_of_interest']);
+
+	//$i = (strtolower($scheme_details[0]['scheme_type'])=='flat') ? ($i * 12) : $i;
+
+	$normal_amount = ((floatval($loan_amount/100) * $initial_rate ) / $div_days) *  $slab_days;
+	$penalty_amount = ((floatval($loan_amount/100) * $calc_interest_rate ) / $div_days) *  $no_days;   
+	$monthly_amount = ($penalty_amount /  $no_days) * 30;
+	*/
+	?>
+
+
+	<?php
+	/*$i++; 
+	$j++;
+	//if($j>3) break;
+	}
+	}else{*/
+
+//}
+?>
+
+</td></tr></table>
+
+</form>
+
+</div>
+</div>   
+<!-- <iframe id="print_frame" name="print_frame" width="0px" height="0px" src="tmp/tmp.html" style=" overflow:hidden" scroll=no ></iframe> -->

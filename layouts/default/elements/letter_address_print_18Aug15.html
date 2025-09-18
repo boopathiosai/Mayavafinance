@@ -1,0 +1,59 @@
+<style>
+#letter_print {
+margin-top:20px;
+}
+
+.print_letter {
+  float: left;
+  margin-left: 90px;
+}
+</style>
+<table width="100%" border="0" cellpadding="3" cellspacing="0">
+<tr style="height:90px">
+    <td width="30%">&nbsp;</td>
+    <td width="50%">&nbsp;</td>
+    <td width="20%">&nbsp;</td>
+</tr>
+<tr>
+    <td>&nbsp;</td>
+    <td valign="top">
+	<?php
+	foreach($product_data as $product_datas)
+	{
+	?>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" id="letter_print">
+			<tr style="height:30px"><td></td></tr>
+            <tr style="height:25px"><th align="left"><font size="+2"><span class="print_letter"><?php echo $product_datas['customer_name']; ?></span></font></th></tr>
+            <tr style="height:25px"><th align="left"><font size="+1"><span class="print_letter"><?php echo $product_datas['customer_street']; ?></span></font></th></tr>
+            <tr style="height:25px"><th align="left"><font size="+1"><span class="print_letter"><?php echo $product_datas['customer_location']; ?></span></font></th></tr>
+            <tr style="height:25px"><th align="left"><font size="+1"><span class="print_letter"><?php echo "PH:".$product_datas['contact_no']; ?></span></font></th></tr>
+            <tr style="height:25px"><th align="right"  style="float: right; margin-right: 5px;"><font size="+1"><?php echo $product_datas['customer_postal_code']; ?></font></th></tr>
+        </table>
+	<?php
+	} ?>
+    </td>
+    <td>&nbsp;</td>
+</tr>
+<tr style="height:120px">
+    <td width="30%">&nbsp;</td>
+    <td width="50%">&nbsp;</td>
+    <td width="10%">&nbsp;</td>
+</tr>
+<tr>
+    <td>&nbsp;</td>
+    <td>
+	<?php
+		foreach($product_data as $product_datas){
+		?>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" >
+            <tr><th align="center">
+            <font size="+2"><?php echo $product_datas['organization_name']; ?></font><br/>
+            <font size="+1"><?php echo nl2br($product_datas['branch_address']);?></font>
+            </th></tr>
+        </table>
+		<?php
+		}?>
+    </td>
+    <td>&nbsp;</td>
+</tr>
+</table>

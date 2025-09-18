@@ -1,0 +1,104 @@
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="list-tbl">
+
+          <tr class="subheadings">
+          <td width="8%">Date</td>
+          <td >Loan ID</td>
+          <td >Purpose</td>    
+          <td align="center">Pledge Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <td align="center">Redeem Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <td align="center">Renewal Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <td align="center">Excess Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <td align="center">Partial Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <td align="center">Auction Interest(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <td align="center">Auction Profit(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <td align="center">Service Charge(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <td align="center">Additional Amount(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          <td align="right">Total Income(<?php echo CURRENCY_SYMBOL; ?>)</td>
+          </tr>   
+          <?php
+              if(count($data) > 0) {
+            //print_r($data);
+                for($i=0;$i<count($data);$i++){ 
+                
+                /*$change_status = ($data[$i]['status'] == 1) ? 0 : 1;                
+                $pay_interest_details = unserialize($data[$i]['interest_details']);
+                $interest_loan_id = $data[$i]['interest_loan_id'];
+
+                
+                $chash_id = $data[$i]['cash_flow_id'];
+                $pay_id = $data[$i]['pay_id'];
+                
+
+                    $query = "SELECT id FROM ".RENEWAL." WHERE pay_id ='".$pay_id."'";
+                    $rei_ids = $app->getrows($query);
+                    $i_id = $rei_ids[0];
+                    if($i_id > 0){
+                        $data[$i]['renew_interest_amount'] = $data[$i]['interest_amount'];
+                    }else{
+                        $query = "SELECT id FROM ".PARTIAL_AMOUNT_PAYMENT." WHERE pay_id ='".$pay_id."'";
+                        $ppi_ids = $app->getrows($query);
+                        $i_id = $ppi_ids[0];
+                        if($i_id > 0){
+                            $data[$i]['partial_interest_amount'] = $data[$i]['interest_amount'];
+                        }else{
+                            $query = "SELECT id FROM ".PAY_EXCESS_AMOUNT." WHERE pay_id ='".$pay_id."'";
+                            $pei_ids = $app->getrows($query);
+                            $i_id = $pei_ids[0];
+                            if($i_id > 0){
+                                $data[$i]['excess_interest_amount'] = $data[$i]['interest_amount'];
+                            }else{
+                                
+                                $query = "SELECT id FROM ".REDEMPTION." WHERE pay_id ='".$pay_id."'";
+                                $ri_ids = $app->getrows($query);
+                                $i_id = $ri_ids[0];
+                                if($i_id > 0){
+                                    $data[$i]['redeem_interest_amount'] = $data[$i]['interest_amount'];
+                                }else{
+                                
+                                $data[$i]['normal_interest_amount'] = $data[$i]['interest_amount'];
+                            }
+
+                        }
+
+                    }
+                    
+                }*/
+                if($data[$i]['redeem_interest'] > 0 && $data[$i]['renew_interest'] > 0) 
+					$data[$i]['redeem_interest'] = '';
+                
+                
+          ?>
+          <tr class="row0" id="<?php echo $data[$i]['id']; ?>">
+
+
+          <td align="left"><strong><?php echo htmlentities(stripslashes($data[$i]['pay_date']), ENT_QUOTES); ?></strong></td>     
+          <td align="left"><strong><?php echo htmlentities(stripslashes($data[$i]['loan_id']), ENT_QUOTES); ?></strong></td>
+          <td align="left"><strong><?php echo htmlentities(stripslashes($data[$i]['purpose']), ENT_QUOTES); ?></strong></td>
+
+          <td align="right"><?php echo convertToCurrency($data[$i]['pledge_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($data[$i]['redeem_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($data[$i]['renew_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($data[$i]['excess_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($data[$i]['partial_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($data[$i]['auction_interest'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($data[$i]['auction_profit'],false); ?></td>
+          
+          <td align="right"><?php echo convertToCurrency($data[$i]['service_charge'],false); ?></td>
+          <td align="right"><?php echo convertToCurrency($data[$i]['additional_amount'],false); ?></td>
+
+          
+          <td align="right"><?php echo convertToCurrency($data[$i]['income'],false); ?></td>
+
+         </tr> 
+            <?php
+                }
+            } else {
+            ?>
+            <tr class="bg-row">
+            <td colspan="13" align="center" height="50">No records found</td>
+            </tr>
+            <?php
+            }
+            ?>
+   
+   </table>

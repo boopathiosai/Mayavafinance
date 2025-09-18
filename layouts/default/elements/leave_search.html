@@ -1,0 +1,51 @@
+<div id="search_table" <?php echo $diaply_style;?> >
+<form id="search_form" name="search_form">
+<table class="search-tbl" width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr class="row0">
+      <td align="left" class="title" colspan="3">Search</td>         
+      <td align="right" class="title">
+        <a href="javascript:;"  onclick="document.location='leaves.php'" class="button">VIEW ALL</a>
+        <a href="javascript:;"  onclick="search_items('<?php echo  $module_name; ?>');" class="button">SEARCH</a>
+      </td>
+    </tr>
+    <tr class="row0">
+    <td align="left" width="18%">Search by Name :</td>
+    <td align="left"><input name="key" type="text" id="key"  class="text-field" value="<?php echo $search_key; ?>"/></td>
+     <td id="branch_id"><span class="add"> Branch Name <span class="star">*</span></span></td>
+                        <td>
+                        
+                <?php 
+                if($_SESSION['session_usertype']!=1)
+                { 
+                    echo "<input type='hidden' name='pval[branch_id]'  value='$_SESSION[session_user_branch_id]'/>";
+                    echo $_SESSION['session_user_branch_name'];
+                } 
+                else 
+                {
+                    //Get Branch name from branch table
+                       $branch_data = get_dropdown_list_with_field('id', 'name', BRANCH);       
+                ?>
+                 <select name="branch_id"  id="branch_id" class="text-field">
+                <option value="">-- Select Branch --</option>
+                   <?php              
+                    echo build_select_options($branch_data,$department_data['branch_id']); 
+                   ?>
+                </select>
+                <?php
+                }?>
+                            
+                        </td>
+    </tr>
+
+</table>
+</form>
+</div>
+
+<script>
+jQuery(document).ready(function(){ 
+
+//search_enter_action('<?php echo $module_name; ?>');
+
+}
+);
+</script>

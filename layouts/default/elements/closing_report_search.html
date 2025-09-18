@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#search_table { margin-bottom: 20px; }
+.search-tbl { width: 100%; border-collapse: collapse; background: #f9f9f9; }
+.search-tbl td { padding: 12px 10px; }
+.search-tbl .header-row { background: #e0e0e0; font-weight: bold; font-size: 18px; color: #A33D98; }
+.search-tbl .header-row td { padding: 16px 10px; background-color: #e9e9e9; }
+.search-tbl a.button { display: inline-block; padding: 5px 12px; background: #007bff; color: #fff; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: 500; }
+.search-tbl a.button:hover { background: #0056b3; }
+.filter-title { font-size: 20px; font-weight: bold; color: #A33D98; }
+#result_table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+#result_table th, #result_table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+#result_table th { background-color: #A33D98; color: #fff; }
+.nested-outer { display: none; overflow: hidden; transition: all 0.4s ease; }
+.nested-outer.open { display: table-row; }
+.nested-table { margin: 10px 0 10px 0; width: 100%; border-collapse: collapse; background: #fff; }
+.nested-table th, .nested-table td { border: 1px solid #ccc; padding: 6px; font-size: 13px; }
+.nested-table th { background-color: #A33D98; color: #fff; }
+.cash-in { color: green; font-weight: bold; text-align: right !important; padding-right: 12px; }
+.cash-out { color: red; font-weight: bold; text-align: right !important; padding-right: 12px; }
+</style>
+</head>
+<body>
+
+<div id="search_table">
+    <table class="search-tbl" cellpadding="6" cellspacing="0">
+        <tr class="header-row">
+            <td colspan="2"><span class="filter-title">Closing Report</span></td>
+            <td colspan="2" align="right">
+                <a href="#" class="button" onclick="resetFilters()">RESET</a>
+                <a id="search_btn" href="javascript:;" class="button" onclick="applyFilters()">SEARCH</a>
+            </td>
+        </tr>
+        <tr>
+            <td>From Date:</td>
+            <td><input type="date" id="sdate"></td>
+            <td>To Date:</td>
+            <td><input type="date" id="edate"></td>
+        </tr>
+    </table>
+</div>
+
+<table id="result_table" style="display:none">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Particulars</th>
+            <th>Cash In (Rs)</th>
+            <th>Cash Out (Rs)</th>
+        </tr>
+    </thead>
+    <tbody id="result_body"></tbody>
+</table>
+
+<script>
+// 🔹 Dummy Closing Report Transactions
+const transactions = [
+  { date: "2025-08-01", type: "Stock", cashIn: 0, cashOut: 5000 },
+  { date: "2025-08-01", type: "Interest", cashIn: 2000, cashOut: 0 },
+  { date: "2025-08-01", type: "Salary", cashIn: 0, cashOut: 8000, salaries: [
+      { name: "Staff A", amount: 3000 },
+      { name: "Staff B", amount: 5000 }
+    ]
+  },
+  { date: "2025-08-01", type: "Service Charge", cashIn: 1500, cashOut: 0 },
+  { date: "2025-08-01", type: "Expenses 1", cashIn: 0, cashOut: 1200 },
+  { date: "2025-08-01", type: "Expenses 2", cashIn: 0, cashOut: 900 },
+
+  { date: "2025-08-02", type: "Stock", cashIn: 0, cashOut: 4000 },
+  { date: "2025-08-02", type: "Interest", cashIn: 2500, cashOut: 0 },
+  { date: "2025-08-02", type: "Salary", cashIn: 0, cashOut: 6000, salaries: [
+      { name: "Staff C", amount: 2500 },
+      { name: "Staff D", amount: 3500 }
+    ]
+  },
+  { date: "2025-08-02", type: "Service Charge", cashIn: 2000, cashOut: 0 },
+  { date: "2025-08-02", type: "Expenses 1", cashIn: 0, cashOut: 1000 },
+  { date: "2025-08-02", type: "Expenses 2", cashIn: 0, cashOut: 700 }
+];
+
+// 🔹 Format helpers
+function formatDate(d){ const dt=new Date(d); return `${dt.getDate().toString().padStart(2,"0")}-${(dt.getMonth()+1).toString().padStart(2,"0")}-${dt.getFullYear()}`; }
+function formatNumber(num){ return num?num.toLocaleString('en-IN'):""; }
+
+// 🔹 Default From Date (FY start)
+function setDefaultFromDate() {
+    const fromDate = document.getElementById("sdate");
+    const year = 2025;
+    fromDate.value = `${year}-04-01`;
+}
+window.onload = function(){ setDefaultFromDate(); };
+
+// 🔹 Apply Filters
+function applyFilters(){
+  const sdate=document.getElementById('sdate').value;
+  const edate=document.getElementById('edate').value;
+  if(!sdate||!edate){ alert("From Date and To Date required"); return; }
+
+  const tbody=document.getElementById('result_body'); tbody.innerHTML="";
+  const table=document.getElementById('result_table');
+
+  const filtered=transactions.filter(t=> t.date>=sdate && t.date<=edate );
+
+  if(!filtered.length){
+    tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;">No records found</td></tr>`;
+    table.style.display='table'; return;
+  }
+
+  filtered.forEach((t,index)=>{   
+        const tr=document.createElement('tr');
+        tr.innerHTML=`
+        <td>
+            ${t.salaries ? `<img id="img_drop_${index}" src="./images/plus-sign.jpg" width="14" style="cursor:pointer" onclick="toggleDetails(${index})">` : ""}
+            ${formatDate(t.date)}
+        </td>
+        <td>${t.type}</td>
+        <td class="cash-in">${formatNumber(t.cashIn)}</td>
+        <td class="cash-out">${formatNumber(t.cashOut)}</td>
+        `;
+
+    tbody.appendChild(tr);
+
+    if(t.salaries){
+      const ntr=document.createElement('tr'); ntr.id=`nested-${index}`; ntr.classList.add("nested-outer");
+      const ntd=document.createElement('td'); ntd.colSpan=4;
+      let html=`<table class="nested-table">
+                  <tr><th>Staff</th><th>Amount</th></tr>`;
+      t.salaries.forEach(s=> html+=`<tr><td>${s.name}</td><td class="cash-out">${formatNumber(s.amount)}</td></tr>`);
+      html+="</table>";
+      ntd.innerHTML=html; ntr.appendChild(ntd); tbody.appendChild(ntr);
+    }
+  });
+  table.style.display='table';
+}
+
+// 🔹 Toggle Expand
+function toggleDetails(index){
+  const tr=document.getElementById(`nested-${index}`);
+  const icon=document.getElementById(`img_drop_${index}`);
+  if(tr.classList.contains("open")){ tr.classList.remove("open"); icon.src="./images/plus-sign.jpg"; }
+  else { tr.classList.add("open"); icon.src="./images/minus-sign.jpg"; }
+}
+
+// 🔹 Reset
+function resetFilters(){
+  setDefaultFromDate();
+  document.getElementById('edate').value='';
+  document.getElementById('result_body').innerHTML=`<tr><td colspan="4" style="text-align:center;">No records to display. Please select filters and click SEARCH.</td></tr>`;
+  document.getElementById('result_table').style.display='none';
+}
+</script>
+
+</body>
+</html>
