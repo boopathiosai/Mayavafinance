@@ -65,6 +65,53 @@ function json_out($arr){
 
 $page = $module_name;
 
+if(isset($_POST['type']) && $_POST['type'] == "filter"){
+    $sdate = !empty($_POST['sdate']) ? date("Y-m-d", strtotime($_POST['sdate'])) : '';
+    $edate = !empty($_POST['edate']) ? date("Y-m-d", strtotime($_POST['edate'])) : '';
+    $branch_id = !empty($_POST['branch_id']) ? (int)$_POST['branch_id'] : 0;
+    $sub_branch_id = !empty($_POST['sub_branch_id']) ? (int)$_POST['sub_branch_id'] : 0;
+
+    $where = " WHERE 1=1 ";
+    if ($sdate && $edate) {
+        $where .= " AND DATE(E.expenses_date) BETWEEN '$sdate' AND '$edate' ";
+    }
+    if ($branch_id > 0) {
+        $where .= " AND E.branch_id = $branch_id ";
+    }
+    if ($sub_branch_id > 0) {
+        $where .= " AND E.sub_branch_id = $sub_branch_id ";
+    }
+
+    $query = "SELECT E.*, B.name AS branch_name, SB.name AS sub_branch_name, C.name AS category_name
+              FROM ".EXPENSES." E
+              LEFT JOIN ".BRANCH." B ON E.branch_id=B.id
+              LEFT JOIN ".SUB_BRANCH." SB ON E.sub_branch_id=SB.id
+              LEFT JOIN ".EXPENSES_CATEGORY." C ON E.category_id=C.id
+              $where
+              ORDER BY E.expenses_date DESC, E.id DESC";
+
+    $rows = $app->getrows($query);
+
+    if ($rows && count($rows) > 0) {
+        foreach ($rows as $r) {
+            echo "<tr>
+                    <td>".date("d-m-Y", strtotime($r['expenses_date']))."</td>
+                    <td>".htmlspecialchars($r['branch_name'])."</td>
+                    <td>".htmlspecialchars($r['sub_branch_name'])."</td>
+                    <td>".htmlspecialchars($r['category_name'])."</td>
+                    <td>".htmlspecialchars($r['description'])."</td>
+                    <td>".$r['opening_balance']."</td>
+                    <td>".$r['amount']."</td>
+                    <td>".$r['cash_type']."</td>
+                  </tr>";
+        }
+    } else {
+        echo "<tr><td colspan='8' style='text-align:center;color:red;'>No Records Found</td></tr>";
+    }
+    exit;
+}
+
+
 /* ------------------ SWITCH ------------------ */
 switch ($type) {
 

@@ -10,7 +10,7 @@
 <table class="frm-tbl" width="1026px" border="1" align="center" cellpadding="0" cellspacing="0">
   <!-- Header Title -->
   <tr>
-    <td colspan="7" class="name-head">
+    <td colspan="8" class="name-head">
       <?php
         if($heading_suffix_cur == "")
             echo $title = $page_title." - ". $branch_name." - Date:".date("d-m-Y h:i:sa");
@@ -31,6 +31,7 @@
     <th width="23%">Description</th>
     <th align="right">Cash In (<?php echo CURRENCY_SYMBOL;?>)</th>
     <th align="right">Cash Out (<?php echo CURRENCY_SYMBOL;?>)</th>
+    <th align="right">Closing Balance (<?php echo CURRENCY_SYMBOL;?>)</th> 
   </tr>
 
  <?php
@@ -46,6 +47,7 @@
         $total_in  += $cash_in;
         $total_out += $cash_out;
         $last_opening = $opening_balance; // keep track of last opening
+         $row_closing = $opening_balance + $cash_in - $cash_out;
 ?>
   <tr class="<?php echo (($i % 2) == 0) ? 'bg' : 'bg1'; ?>">
     <td><?php echo htmlentities($row['report_date'], ENT_QUOTES); ?></td>
@@ -55,6 +57,7 @@
     <td><?php echo htmlentities($description, ENT_QUOTES); ?></td>
     <td align="right" style="color:green;"><?php echo convertToCurrency($cash_in, false); ?></td>
     <td align="right" style="color:red;"><?php echo convertToCurrency($cash_out, false); ?></td>
+    <td align="right"><?php echo convertToCurrency($row_closing, false); ?></td> 
   </tr>
 <?php
         $i++;
@@ -70,11 +73,11 @@
     <td align="right" style="color:red;"><?php echo convertToCurrency($total_out, false); ?></td>
   </tr>
 
-  <!-- Closing balance -->
+  <!-- Closing balance
   <tr style="font-weight:bold; background:#ddd;">
     <td colspan="5" align="right">Closing Balance :</td>
     <td colspan="2" align="right"><?php echo convertToCurrency($closing_balance, false); ?></td>
-  </tr>
+  </tr> -->
 
 
   <?php } else { ?>

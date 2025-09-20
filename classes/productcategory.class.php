@@ -61,10 +61,13 @@ class ProductCategory {
                 if ($count > 0) {
                     Paging::set_max( $count );
                     Paging::calc();// calculation for paging
-                    $query = "SELECT id,description,status,IF(status = 0, 'disable', 'enable') AS status_text
-                             FROM ".EXPENSES_CATEGORY." WHERE 1 ORDER BY id DESC ". Paging::get_sql_limit();
+                    $query = "SELECT id,category,quality,product_info, status,
+                              IF(status = 0, 'disable', 'enable') AS status_text
+                                FROM ".CATEGORIES."
+                                WHERE 1
+                                ORDER BY id DESC ". Paging::get_sql_limit();
                     return $app->getrows($query);
-                     }
+                }
     }
     public static function Detail($userid) {
             /*

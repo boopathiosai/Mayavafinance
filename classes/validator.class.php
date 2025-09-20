@@ -67,6 +67,7 @@ class Validator {
         }
 
         $vars  = get_class_vars($class);
+        // print_r($vars); exit;
 
         /*if(count($vars) > 0){
             foreach($vars as $key=>$val){
@@ -76,14 +77,15 @@ class Validator {
                 }
             }
         }
-
-        print_r($data);*/
+*/
+        //print_r($data);
 
         if (count( $vars) > 0 ) {
 
-        //p_arr($vars);
+       // p_arr($vars);
 
-            foreach ($vars as $key => $value) {
+            foreach ($vars as $key => $value) {             
+              
 
                 if( strpos( $key, '_text' ) === false && strpos( $key, '_labels' ) === false) {
                      //p_arr($data);p_arr($value);p_arr(${$value.'_labels'});
@@ -226,8 +228,14 @@ class Validator {
         $email = $_POST[pval]['email'];
         $user_group_id = $_POST[pval]['user_group_id'];
         $sub_branch_code = $_POST[pval]['sub_branch_code'];
-        $leave_date = $_POST[pval]['leave_date']; // Leave date
+        $leave_date = $_POST[pval]['leave_date']; // Leave date  
+        
+        
         foreach ($fields as $field) {
+
+            if($GLOBALS['module_name'] == 'expenses_sub_category'){
+                if($field == 'category_id') continue;
+            }
             if($data[$field]!="")
             {
              if(!empty($b_id)){
@@ -247,10 +255,16 @@ class Validator {
                      $where['conditions'] = array( "$field LIKE " => $app->escape($data[$field]), "branch_id =" => $b_id);
                  }
              }else{
+                if($GLOBALS['module_name'] == 'expenses_sub_category'){
+                     $where['conditions'] = array( "$field LIKE " => $app->escape($data[$field]), "category_id=" => $data['category_id']);
+                }else{
                  $where['conditions'] = array( "$field LIKE " => $app->escape($data[$field]));
+                }
              }
 
-            if ($uval['id']){
+             //print_r($where['conditions']);
+
+            if ($uval['id']){               
                 if(!empty($b_id) && !empty($email)){
                         $where['conditions'] = array("$field LIKE " => $data[$field], 'id != ' => $uval['id'], 'branch_id =' => $b_id);
                     }elseif(!empty($b_id)){
@@ -262,8 +276,6 @@ class Validator {
                         $where['conditions'] = array("$field LIKE " => $data[$field], 'id != ' => $uval['id'], 'branch_id =' => $b_id);
                         //$where['conditions'] = array("$field LIKE " => $data[$field], 'branch_id =' =>$b_id);
                     } 
-
-
                     else{
                         $where['conditions'] = array("$field LIKE " => $data[$field], 'id != ' => $uval['id']);
                         //$where['conditions'] = array("$field LIKE " => $data[$field], 'branch_id =' =>$b_id);
@@ -284,9 +296,9 @@ class Validator {
             //     //exit;
             // }
 
-            //echo '<pre>'; print_r($select_fields); print_r($where);
+           // echo '<pre>'; print_r($select_fields); print_r($where);
 
-            $result = $app->find($select_fields, $where);
+                $result = $app->find($select_fields, $where);
             }
 //            echo count($result);
             if (count( $result ) > 0) {

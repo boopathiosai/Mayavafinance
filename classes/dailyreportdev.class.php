@@ -451,15 +451,14 @@ class DailyReportDev {
         LEFT JOIN " . PLEDGE . " AS P5 ON  PA.loan_id = P5.id  LEFT JOIN " . SUB_BRANCH . " AS SB ON SB.id = P.sub_branch_id";
             }*/
             }
-            // Sub Branch Privilege    
-            $set_sb = 0;
-            $check_sub_brnch = self::SubbranchStatus($set_sb);
+           $reportObj = new DailyReportDev();
+        $check_sub_brnch = $reportObj->SubbranchStatus($set_sb);
 
-            if ($check_sub_brnch) {
-                if (!is_superadmin($_SESSION['session_usergroupname'])) {
-                    $search_condition .= self::SubbranchData($set_sb);
-                }
+        if ($check_sub_brnch) {
+            if (!is_superadmin($_SESSION['session_usergroupname'])) {
+                $search_condition .= $reportObj->SubbranchData($set_sb);
             }
+        }
 
             if ($s_sdate != "" && $s_edate != "") {
                 $search_condition .= " AND  ( CF.date_transaction BETWEEN '" . date("Y-m-d", strtotime($s_sdate)) . "' AND '" . date("Y-m-d", strtotime($s_edate)) . "')";
@@ -585,7 +584,7 @@ class DailyReportDev {
          (module_type != 11 $get_sub_brnch_condition " . $search_condition . $search_condition_interest . ")         
          " . $order_by;
 
-//          echo $query; exit;
+        // echo $query; exit;
 
             /*
               BEFORE MODIFICATION QUERY(19-SEp-2016)
@@ -669,7 +668,47 @@ class DailyReportDev {
                 //       print_r($array_1);
                 // exit;
 
-            $result = self::tallyData($preresult, $s_sub_branch, $count_res, $count_res_pledge, $new_array,$set_sb);
+                //Write the query from expenses table category wise
+               
+               // --- Expenses category wise totals --- //
+                   $sub_branch_ids = array();
+                    if (is_array($s_sub_branch) && count($s_sub_branch) > 0) {
+                        foreach ($s_sub_branch as $sb) {
+                            if (is_numeric($sb)) {
+                                $sub_branch_ids[] = $sb;
+                            }
+                        }
+                    }
+                    
+
+                      $expQuery = "
+                                SELECT 
+                                    E.expenses_date AS report_date,
+                                    E.category_id,
+                                    C.name AS category_name,
+                                    SUM(CASE WHEN E.cash_type = 'Cash In'  THEN E.amount ELSE 0 END) AS cash_in,
+                                    SUM(CASE WHEN E.cash_type = 'Cash Out' THEN E.amount ELSE 0 END) AS cash_out
+                                FROM ".EXPENSES." E
+                                INNER JOIN ".EXPENSES_CATEGORY." C 
+                                        ON C.id = E.category_id
+                                WHERE E.branch_id = '".$s_branch."' 
+                                    AND E.expenses_date BETWEEN '".date("Y-m-d", strtotime($s_sdate))."' 
+                                                            AND '".date("Y-m-d", strtotime($s_edate))."'
+                                GROUP BY E.category_id
+                                ORDER BY C.name ASC
+                                ";
+            //         echo '<pre>';
+            // print_r($expQuery); 
+
+$expensesData = $app->getrows($expQuery);
+                  /*   echo '<pre>';
+            print_r($expQuery); */
+
+               //end data
+
+            $result = self::tallyData($preresult,$expensesData, $s_sub_branch, $count_res, $count_res_pledge, $new_array,$set_sb);
+            // echo '<pre>';
+            // print_r($result); 
                 $count = count($result);
                 if ($count > 0) {
                     /*
@@ -797,8 +836,10 @@ class DailyReportDev {
         }
     }
 
-    private static function tallyData($reports, $sub_branch_select, $sublist = true, $pledge_count, $new_array, $set_sb) {
-       // echo "<pre>"; print_r($reports); exit();
+
+
+    private static function tallyData($reports,$expensesData, $sub_branch_select, $sublist = true, $pledge_count, $new_array, $set_sb) {
+    //    echo "<pre>"; print_r($expensesData); exit();
         global $app;
         $pledge_loan_count = count($pledge_count);
         $report_count = count($reports);
@@ -844,9 +885,62 @@ class DailyReportDev {
                     $rows['cash_out'] = $rows['amnt'];
                 }
                 /* End */
-                $opening_amount = floatval($rows['opening_balance']);
-                $closing_amount = floatval($rows['closing_balance']);
+
+               
+// --- Get branch_id properly (case-sensitive fix) ---
+$branch_id = 0;
+if (!empty($rows['branch_id'])) {
+    $branch_id = (int)$rows['branch_id'];
+} elseif (!empty($rows['Branch_id'])) {
+    $branch_id = (int)$rows['Branch_id'];
+} elseif (!empty($erow['branch_id'])) {
+    $branch_id = (int)$erow['branch_id'];
+}
+
+// --- Start with report opening balance (cash flow) ---
+$opening_amount = floatval($rows['opening_balance']);
+
+// Latest expenses opening balance (category wise till report_date)
+$exp_opening_balance = 0;
+
+if ($branch_id > 0) {
+    $exp_ob_query = "
+        
+            SELECT E.opening_balance
+            FROM ".EXPENSES." E
+          
+                
+                WHERE branch_id = $branch_id
+                  AND expenses_date = '".$rows['report_date']."'
+                GROUP BY category_id
+                ORDER BY E.id DESC
+                 LIMIT 0,1
+            
+    ";
+
+    // Debug query print
+    // echo "<pre>".$exp_ob_query."</pre>";
+
+    $exp_ob_row = $app->getrow($exp_ob_query);
+
+    // Depending on getrow return format, try both
+    if (isset($exp_ob_row['total_opening'])) {
+        $exp_opening_balance = floatval($exp_ob_row['total_opening']);
+    } elseif (isset($exp_ob_row[0])) {
+        $exp_opening_balance = floatval($exp_ob_row[0]);
+    }
+}
+
+// ✅ Final Opening (same as main table)
+$opening_amount = $opening_amount + $exp_opening_balance;
+
+// Closing balance auto adjust
+$closing_amount = $opening_amount + $total_cash_in - $total_cash_out;
+
+// echo "Query: ".$exp_ob_query."<br>";
+// print_r($exp_ob_row);
                 if($rows['particulars'] == 'Service Charge') {
+                    
                     $service_charge_amount += (int)$rows['amnt'];
                 }
                 $total_cash_in += (int) $rows['cash_in'];
@@ -855,6 +949,7 @@ class DailyReportDev {
                 $cash_purpose_close = CASHFLOW_PURPOSE_CLOSING;
 
 //                $cash_purpose_total = $rows['particulars'] == 'Auction' ? 'Auction amount' : CASHFLOW_PURPOSE_TOTAL;
+
                 $cash_purpose_total = $rows['particulars'] == 'Auction' ? 'Total' : CASHFLOW_PURPOSE_TOTAL;
                 $cash_in = floatval($rows['cash_in']);
                 $cash_out = floatval($rows['cash_out']);
@@ -876,13 +971,50 @@ class DailyReportDev {
 
                     $tally[$id . '_' . $order_id . '_' . $cash_purpose_open]['cash_out'] = '';
                     $open_to_cal_cls = $opening_amount;
+
+
                 }
 
+                // echo("we are here");    
+
                 $loan_count++;
+                
                 if (($key + 1) == $report_count) {
+
+
+                    /*** expenses details data  start*/
+                
+                    foreach ($expensesData as $erow) {
+                        /* echo '<pre>';
+                        print_r($erow); */
+                        
+                            $id = $erow['report_date'];
+                            $order_id = '09'; // expenses row order, 20+ to avoid clash
+                            $cash_purpose = $erow['category_name'];
+
+                            $key_exp = $id . '_' . $order_id . '_' . $cash_purpose;
+
+                            $tally[$key_exp]['id'] = 0; // no cashflow_id for pure expenses
+                            $tally[$key_exp]['report_date'] = $id;
+                            $tally[$key_exp]['trans_date'] = $id;
+                            $tally[$key_exp]['order_id'] = $order_id;
+                            $tally[$key_exp]['branch_id'] = $erow['branch_id'];
+                            $tally[$key_exp]['branch_name'] = $rows['branch_name']; // same branch name as cashflow row
+                            $tally[$key_exp]['particulars'] = $cash_purpose;
+                            $tally[$key_exp]['cash_in'] = (float)$erow['cash_in'];
+                            $tally[$key_exp]['cash_out'] = (float)$erow['cash_out'];
+
+                            $total_cash_in  += (float)$erow['cash_in'];
+                             $total_cash_out += (float)$erow['cash_out'];
+                        }
+                                            
+
+                    
+
+                    /*** expenses details data  end*/
 					//echo "$closing_amount ="."((".$open_to_cal_cls." +". $total_cash_in.") - "."(".$total_cash_out."))"."</br>";
                     $closing_amount = (($open_to_cal_cls + $total_cash_in) - ($total_cash_out));
-                    $order_id = '09';
+                    $order_id = '10';
                     $tally[$id . '_' . $order_id . '_' . $cash_purpose_total]['id'] = $rows['id'];
                     $tally[$id . '_' . $order_id . '_' . $cash_purpose_total]['report_date'] = $rows['report_date'];
                     $tally[$id . '_' . $order_id . '_' . $cash_purpose_total]['trans_date'] = $rows['trans_date'];
@@ -897,7 +1029,7 @@ class DailyReportDev {
                     $tally[$id . '_' . $order_id . '_' . $cash_purpose_total]['cash_in'] = $total_cash_in;
                     $tally[$id . '_' . $order_id . '_' . $cash_purpose_total]['cash_out'] = $total_cash_out;
 
-                    $order_id = '12';
+                    $order_id = '11';
                     $tally[$id . '_' . $order_id . '_' . $cash_purpose_close]['id'] = $rows['id'];
                     $tally[$id . '_' . $order_id . '_' . $cash_purpose_close]['report_date'] = $rows['report_date'];
                     $tally[$id . '_' . $order_id . '_' . $cash_purpose_close]['trans_date'] = $rows['trans_date'];
@@ -943,6 +1075,7 @@ class DailyReportDev {
                     $rcid = $app->getrow($rquery);
 
                     if ((int) $rcid[0] > 0) {
+                        
                         $cash_purpose = CASHFLOW_PURPOSE_REDEEMED;
                         $loan_id = (int) $rcid[0];
                         $order_id = '03';
@@ -971,6 +1104,7 @@ class DailyReportDev {
                             $loan_code1 = $pr1[1];
                         }
                     } else {
+                        // echo("i am here");
                         $apquery = "SELECT loan_id,amount_difference,profit_status,auction_amount FROM " . PRODUCT_AUCTION . " WHERE cash_in_id =  " . $rows['cash_flow_id'];
                         $apcid = $app->getrow($apquery);
                         if ((int) $apcid[0] > 0) {
@@ -986,6 +1120,8 @@ class DailyReportDev {
                                 $cash_purpose = CASHFLOW_PURPOSE_AUCTION;
                             }
                         } else {
+
+                            // echo("i am here");
                             $piquery = "SELECT loan_id, interest_amount FROM " . PRODUCT_INTERESTS . " WHERE cash_flow_id = " . $rows['cash_flow_id'];
                             $picid = $app->getrow($piquery);
                             if ((int) $picid[0] > 0) {
@@ -1008,6 +1144,7 @@ class DailyReportDev {
                 }
                 // echo $loan_id."<br>";
                 if ($loan_id > 0) {
+                    // echo("i am here");
                     //print_r($sub_branch_select);exit;
 //                     if(!is_superadmin($_SESSION['session_usergroupname'])){
 //                        echo "<pre>";
@@ -1043,9 +1180,11 @@ class DailyReportDev {
                     // END//
                     $or_date = $id;
                     // $b[]=$cash_purpose;
+                    // echo $cash_purpose;
                     switch ($cash_purpose) {
 
                         case CASHFLOW_PURPOSE_PLEDGED:
+                            // echo("i am here");
                             $ax[] = $loan_id;
 //                        $pledge_amount += (int)$pr[0];                        
                             $pledge_amount += (int) $pr[0]; //changed 25_OCT_2017                        
@@ -1103,10 +1242,11 @@ class DailyReportDev {
                             $rows['order_id'] = $order_id;
                             $rows['cash_out'] = $pledge_amount;
 
-
+                            // echo("i am here");
                             break;
 
                         case CASHFLOW_PURPOSE_REDEEMED:
+                            
                             /* Manimaran */
                             $z[] = $rows['redeem_del_status'];
                             $redeem_amount += $loan_amount_redeem; // DSSK 02_APR_2019
@@ -1155,6 +1295,7 @@ class DailyReportDev {
                             break;
 
                         case PAY_INTEREST:
+                            
                             $io[] = $rows['cash_flow_id'];
                             $interest_amount += $int_amt;
                             $rows['particulars'] = $cash_purpose;
@@ -1162,7 +1303,7 @@ class DailyReportDev {
                             $rows['order_id'] = $order_id;
                             $rows['cash_out'] = '';
                             break;
-
+                        
                         default:
 
                             $cash_in = (int) $other_total_cash_in[$id . '_' . $order_id . '_' . $cash_purpose] + $rows['cash_in'];
@@ -1239,6 +1380,7 @@ class DailyReportDev {
                         $tally[$id . '_' . $order_id . '_' . $cash_purpose]['cash_out'] = $rows['cash_out'];
                     }
                     if($cash_purpose == 'Service Charge') {
+                        
                         $tally[$id . '_' . $order_id . '_' . $cash_purpose]['cash_in'] =  $service_charge_amount;
                     }
 //                    echo CASHFLOW_PURPOSE_AUCTION;

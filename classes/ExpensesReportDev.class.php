@@ -17,7 +17,7 @@ class ExpensesReportDev {
     * ---------------------------
     * NOTE: made these static so calls like self::SubbranchSet(...) work.
     */
-    public static function SubbranchSet($set_sb) {
+    public static function SubbranchSet($set_sb) { 
         $app = $GLOBALS['app'];
         if ($_SESSION['session_usertype'] != 1 && $set_sb == 0) {
             $query_sub_branch = "SELECT id FROM mf_sub_branch WHERE status = 1 AND branch_id = " . (int)$_SESSION['session_user_branch_id'];
@@ -129,150 +129,130 @@ class ExpensesReportDev {
         return isset($data[0]) ? (int)$data[0] : 0;
     }
 
-    public static function Listview() {
-        // Params: branch, sdate, edate, sub_branch, category, sub_category, page_type
-        $args = func_get_args();
-        $app = $GLOBALS['app'];
+public static function Listview() {
+    $args = func_get_args();
+    $app = $GLOBALS['app'];
 
-        $s_branch = isset($args[0]) ? $args[0] : "";
-        $s_sdate = isset($args[1]) ? $args[1] : "";
-        $s_edate = isset($args[2]) ? $args[2] : "";
-        $s_sub_branch = isset($args[3]) ? $args[3] : "";
-        $s_category = isset($args[4]) ? $args[4] : 0;
-        $s_sub_category = isset($args[5]) ? $args[5] : 0;
-        $type_of_page = isset($args[6]) ? $args[6] : 1;
+    $s_branch = isset($args[0]) ? $args[0] : "";
+    $s_sdate = isset($args[1]) ? $args[1] : "";
+    $s_edate = isset($args[2]) ? $args[2] : "";
+    $s_sub_branch = isset($args[3]) ? $args[3] : "";
+    $s_category = isset($args[4]) ? $args[4] : 0;
+    $s_sub_category = isset($args[5]) ? $args[5] : 0;
+    $type_of_page = isset($args[6]) ? $args[6] : 1;
 
-        $search_condition = "";
+    $search_condition = "";
 
-        // Default quick range (2 days window) if requested
-        $start_date = date('Y-m-d', strtotime("-1 days"));
-        $end_date   = date('Y-m-d', strtotime("+1 days"));
-        if ($type_of_page == 1 || ($s_sdate == "" && $s_edate == "")) {
-            $search_condition .= " AND (DATE(E.expenses_date) BETWEEN '".$start_date."' AND '".$end_date."')";
-        }
-$s_sub_branch = isset($_POST['search_sub_branch_id']) ? $_POST['search_sub_branch_id'] : "";
+    // Default quick range
+    $start_date = date('Y-m-d', strtotime("-1 days"));
+    $end_date   = date('Y-m-d', strtotime("+1 days"));
+    if ($type_of_page == 1 || ($s_sdate == "" && $s_edate == "")) {
+        $search_condition .= " AND (DATE(E.expenses_date) BETWEEN '".$start_date."' AND '".$end_date."')";
+    }
 
-// branch filter
-if ($s_branch != "") {
-    $search_condition .= " AND (E.branch_id = '" . addslashes($s_branch) . "')";
-}
+    // branch filter
+    if (!empty($s_branch)) {
+        $search_condition .= " AND (E.branch_id = '" . addslashes($s_branch) . "')";
+    }
 
-// sub-branch filter
-if (!empty($s_sub_branch)) {
-    $s_sub_branch = (array)$s_sub_branch;
-    $s_sub_branch = array_filter($s_sub_branch);
-
+    // sub-branch filter (license based)
     if (!empty($s_sub_branch)) {
-        $rows = $app->getrows("
-            SELECT DISTINCT license_no 
-            FROM mf_sub_branch 
-            WHERE id IN(".implode(',', array_map('intval',$s_sub_branch)).")
-        ");
-        $license_nos = array_column($rows, "license_no");
+        $s_sub_branch = (array)$s_sub_branch;
+        $s_sub_branch = array_filter($s_sub_branch);
 
-        if (!empty($license_nos)) {
-            $license_list = implode("','", array_map("addslashes", $license_nos));
-            $search_condition .= " AND (E.license_no IN('".$license_list."'))";
+        if (!empty($s_sub_branch)) {
+            $rows = $app->getrows("
+                SELECT DISTINCT license_no 
+                FROM mf_sub_branch 
+                WHERE id IN(".implode(',', array_map('intval',$s_sub_branch)).")
+            ");
+            $license_nos = array_column($rows, "license_no");
+            if (!empty($license_nos)) {
+                $license_list = implode("','", array_map("addslashes", $license_nos));
+                $search_condition .= " AND (E.license_no IN('".$license_list."'))";
+            }
         }
     }
-}
 
-// var_dump($s_sub_branch);
-// echo $search_condition;
-// exit;
-        if ($s_sdate != "" && $s_edate != "") {
-            $search_condition .= " AND (DATE(E.expenses_date) BETWEEN '" . date("Y-m-d", strtotime($s_sdate)) . "' AND '" . date("Y-m-d", strtotime($s_edate)) . "')";
-        } elseif ($s_sdate != "" && $s_edate == "") {
-            $search_condition .= " AND (DATE(E.expenses_date) >= '" . date("Y-m-d", strtotime($s_sdate)) . "')";
-        } elseif ($s_sdate == "" && $s_edate != "") {
-            $search_condition .= " AND (DATE(E.expenses_date) <= '" . date("Y-m-d", strtotime($s_edate)) . "')";
-        }
+    // category filter
+    if (!empty($s_category)) {
+        $search_condition .= " AND E.category_id = " . (int)$s_category;
+    }
+    if (!empty($s_sub_category)) {
+        $search_condition .= " AND E.sub_category_id = " . (int)$s_sub_category;
+    }
 
-        if (!is_superadmin($_SESSION['session_usergroupname'])) {
-            $search_condition .= (!empty($_SESSION['session_user_branch_id'])) ? " AND E.branch_id = '" . (int)$_SESSION['session_user_branch_id'] . "'" : "";
-        }
+    // date filter
+    if (!empty($s_sdate) && !empty($s_edate)) {
+        $search_condition .= " AND (DATE(E.expenses_date) BETWEEN '" . date("Y-m-d", strtotime($s_sdate)) . "' AND '" . date("Y-m-d", strtotime($s_edate)) . "')";
+    } elseif (!empty($s_sdate)) {
+        $search_condition .= " AND (DATE(E.expenses_date) >= '" . date("Y-m-d", strtotime($s_sdate)) . "')";
+    } elseif (!empty($s_edate)) {
+        $search_condition .= " AND (DATE(E.expenses_date) <= '" . date("Y-m-d", strtotime($s_edate)) . "')";
+    }
 
-        // Build the header list query (grouped by branch, sub-branch, date)
-        // DATE(MIN(E.expenses_date)) AS report_date_min,
-        $query = "
-    SELECT 
-        B.id AS branch_id,     
-        DATE(MIN(E.expenses_date)) AS report_date_min,
-        DATE(MAX(E.expenses_date)) AS report_date,
-        CONCAT(SB.license_no,'-',SB.id,'-',DATE(MAX(E.expenses_date))) AS id,
-        DATE_FORMAT(MAX(E.expenses_date),'%d-%b-%Y') AS trans_date,
+    if (!is_superadmin($_SESSION['session_usergroupname'])) {
+        $search_condition .= (!empty($_SESSION['session_user_branch_id'])) ? " AND E.branch_id = '" . (int)$_SESSION['session_user_branch_id'] . "'" : "";
+    }
 
-        -- Fix: pick the exact selected sub-branch name if filtered
-        CASE 
-            WHEN '".implode(',', (array)$s_sub_branch)."' <> '' 
-            THEN (
-                SELECT name 
-                FROM mf_sub_branch 
-                WHERE license_no = SB.license_no 
-                  AND id IN(".implode(',', array_map('intval',(array)$s_sub_branch)).") 
-                LIMIT 1
-            )
-            ELSE SB.name
-        END AS sub_branch_name,
+    $query = "
+        SELECT 
+            B.id AS branch_id,     
+            DATE(MIN(E.expenses_date)) AS report_date_min,
+            DATE(MAX(E.expenses_date)) AS report_date,
+            CONCAT(SB.license_no,'-',SB.id,'-',DATE(MAX(E.expenses_date))) AS id,
+            DATE_FORMAT(MAX(E.expenses_date),'%d-%b-%Y') AS trans_date,
+            SB.name AS sub_branch_name,
+            CONCAT(SB.name,' - (',COALESCE(SB.sub_branch_code,''),')') AS sub_details,
+            SB.id AS sub_branch_id,
+            SB.license_no,
+            B.name AS branch_name,
 
-        CONCAT(
-            CASE 
-                WHEN '".implode(',', (array)$s_sub_branch)."' <> '' 
-                THEN (
-                    SELECT name 
-                    FROM mf_sub_branch 
-                    WHERE license_no = SB.license_no 
-                      AND id IN(".implode(',', array_map('intval',(array)$s_sub_branch)).") 
-                    LIMIT 1
-                )
-                ELSE COALESCE(SB.name,'')
-            END,
-            ' - (',COALESCE(SB.sub_branch_code,''),')'
-        ) AS sub_details,
-
-        SB.id AS sub_branch_id,
-        SB.license_no,
-        B.name AS branch_name,
-
-        -- ✅ Latest opening balance (license_no based)
-        (
-            SELECT E2.opening_balance
-            FROM mf_expenses E2
-            WHERE E2.branch_id = B.id
-              AND E2.license_no = SB.license_no
-              AND DATE(E2.expenses_date) <= '".date("Y-m-d", strtotime($s_edate))."' 
-            ORDER BY E2.expenses_date DESC, E2.id DESC
-            LIMIT 1
-        ) AS opening_balance,
-
-        SUM(CASE WHEN E.cash_type = 'Cash In' THEN E.amount ELSE 0 END) AS cash_in,
-        SUM(CASE WHEN E.cash_type = 'Cash Out' THEN E.amount ELSE 0 END) AS cash_out,
-
-        (
+            -- ✅ Opening balance with category + subcategory filter
             (
                 SELECT E2.opening_balance
                 FROM mf_expenses E2
                 WHERE E2.branch_id = B.id
                   AND E2.license_no = SB.license_no
-                ORDER BY E2.expenses_date DESC, E2.id DESC
+                  AND DATE(E2.expenses_date) >= '" . date("Y-m-d", strtotime($s_sdate)) . "'
+                  " . (!empty($s_category) ? " AND E2.category_id = " . (int)$s_category : "") . "
+                  " . (!empty($s_sub_category) ? " AND E2.sub_category_id = " . (int)$s_sub_category : "") . "
+                ORDER BY E2.expenses_date ASC, E2.id DESC
                 LIMIT 1
-            )
-            + SUM(CASE WHEN E.cash_type = 'Cash In' THEN E.amount ELSE 0 END)
-            - SUM(CASE WHEN E.cash_type = 'Cash Out' THEN E.amount ELSE 0 END)
-        ) AS closing_balance
+            ) AS opening_balance,
 
-    FROM mf_expenses AS E
-    LEFT JOIN mf_branch AS B ON B.id = E.branch_id
-    LEFT JOIN mf_sub_branch AS SB ON SB.id = E.sub_branch_id
-    WHERE 1 ".$search_condition."
-    GROUP BY B.id, SB.license_no 
-    ORDER BY MAX(E.expenses_date) DESC
-";
-        
+            SUM(CASE WHEN E.cash_type = 'Cash In' THEN E.amount ELSE 0 END) AS cash_in,
+            SUM(CASE WHEN E.cash_type = 'Cash Out' THEN E.amount ELSE 0 END) AS cash_out,
 
+            (
+                (
+                    SELECT E2.opening_balance
+                    FROM mf_expenses E2
+                    WHERE E2.branch_id = B.id
+                      AND E2.license_no = SB.license_no
+                      AND DATE(E2.expenses_date) >= '" . date("Y-m-d", strtotime($s_sdate)) . "'
+                      " . (!empty($s_category) ? " AND E2.category_id = " . (int)$s_category : "") . "
+                      " . (!empty($s_sub_category) ? " AND E2.sub_category_id = " . (int)$s_sub_category : "") . "
+                    ORDER BY E2.expenses_date ASC, E2.id DESC
+                    LIMIT 1
+                )
+                + SUM(CASE WHEN E.cash_type = 'Cash In' THEN E.amount ELSE 0 END)
+                - SUM(CASE WHEN E.cash_type = 'Cash Out' THEN E.amount ELSE 0 END)
+            ) AS closing_balance
 
-        return $app->getrows($query);
-    }
+        FROM mf_expenses AS E
+        LEFT JOIN mf_branch AS B ON B.id = E.branch_id
+        LEFT JOIN mf_sub_branch AS SB ON SB.id = E.sub_branch_id
+        WHERE 1 ".$search_condition."
+        GROUP BY B.id, SB.license_no 
+        ORDER BY MAX(E.expenses_date) DESC
+    ";
+    //  echo "<pre>"; print_r($query); 
+    
+
+    return $app->getrows($query);
+}
+
 
     /*
     * subListview: returns detailed expense rows for a selected branch + date (used by ajax/sublist expansion, export and preview)
@@ -284,6 +264,8 @@ public static function subListview($sdate = NULL, $edate = NULL, $branch_id = 0,
     if (!empty($sdate)) {
         $condition .= " AND DATE(E.expenses_date) >= '" . date('Y-m-d', strtotime($sdate)) . "'";
     }
+    // print_r($sdate);
+    // exit;
     if (!empty($edate)) {
         $condition .= " AND DATE(E.expenses_date) <= '" . date('Y-m-d', strtotime($edate)) . "'";
     }
@@ -295,7 +277,7 @@ public static function subListview($sdate = NULL, $edate = NULL, $branch_id = 0,
         $condition .= " AND E.license_no = '" . $data['license_no']."'";
     }
     
-    if (!empty($category_id)) {        
+    if (!empty($category_id)) {         
         $condition .= " AND E.category_id = " . (int)$category_id;
     }
     if (!empty($sub_category_id)) {
@@ -313,6 +295,7 @@ $sql = "SELECT
             E.description,
             C.name AS category_name,
             SC.name AS sub_category_name,
+            E.opening_balance,   -- ✅ include here
             (CASE WHEN E.cash_type = 'Cash In'  THEN E.amount ELSE 0 END) AS cash_in,
             (CASE WHEN E.cash_type = 'Cash Out' THEN E.amount ELSE 0 END) AS cash_out  
         FROM mf_expenses AS E
@@ -329,6 +312,7 @@ $sql = "SELECT
             E.sub_category_id, 
             E.expenses_date
         ORDER BY report_date ";
+
 
 
 

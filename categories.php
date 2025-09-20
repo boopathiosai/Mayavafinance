@@ -329,6 +329,7 @@ switch($type) {
          * Make the pages with header and footer
          */
         $data = ProductCategory::Listview($search_key,$search_category);
+        //echo '<pre>';print_r($data); exit;
         $count = ProductCategory::ListviewCount($search_key,$search_category);
         include ADMIN_LAYOUT_PATH . 'common/header.html';
         include ADMIN_LAYOUT_PATH . 'categories.html';

@@ -73,78 +73,78 @@
           </tr> 
 
           <!-- Table Headings -->
-<tr class="headings">
-  <td align="center" width="5%">
-    <input type="checkbox" id="selall" onclick="chk_all(),highlight_all();"/>
-  </td>
-  <td width="10%">Expenses Date</td> <!-- 👈 First column -->
-  <td>Branch Details</td>
-  <td width="15%">Category Details</td>
-  <td width="10%">Opening Balance</td>    
-  <td width="20%">Description</td>
-  <td width="10%">Amount</td>
-  <td width="10%">Cash Type</td>
-  <td width="5%">Action</td>
-</tr>
+            <tr class="headings">
+              <td align="center" width="5%">
+                <input type="checkbox" id="selall" onclick="chk_all(),highlight_all();"/>
+              </td>
+              <td width="10%">Expenses Date</td> <!-- 👈 First column -->
+              <td>Branch Details</td>
+              <td width="15%">Category Details</td>
+              <td width="10%">Opening Balance</td>    
+              <td width="20%">Description</td>
+              <td width="10%">Amount</td>
+              <td width="10%">Cash Type</td>
+              <td width="5%">Action</td>
+            </tr>
 
-<?php if(count($data) > 0) { foreach($data as $i=>$row){ ?>
-<tr class="row0" id="row_<?php echo $row['id']; ?>">
-  <td align="center">
-    <input type="checkbox" name="list[]" value="<?php echo $row['id']; ?>" onclick="chkselcount('list[]'),highlight(this);"/>
-  </td>
+            <?php if(count($data) > 0) { foreach($data as $i=>$row){ ?>
+            <tr class="row0" id="row_<?php echo $row['id']; ?>">
+              <td align="center">
+                <input type="checkbox" name="list[]" value="<?php echo $row['id']; ?>" onclick="chkselcount('list[]'),highlight(this);"/>
+              </td>
 
-  <!-- Expenses Date -->
-  <td><?php echo date("d-m-Y", strtotime($row['expenses_date'])); ?></td>
+              <!-- Expenses Date -->
+              <td><?php echo date("d-m-Y", strtotime($row['expenses_date'])); ?></td>
 
-  <!-- Branch + Sub Branch -->
-<td>
-  <span style="font-weight:bold; font-size:13px; color:#222;">
-    <?php echo htmlentities($row['branch_name']); ?>
-  </span><br>
-  <span style="font-weight:600; font-size:12px; color:#666; margin-left:5px;">
-    - <?php echo htmlentities($row['sub_branch_name']); ?>
-  </span>
-</td>
+              <!-- Branch + Sub Branch -->
+            <td>
+              <span style="font-weight:bold; font-size:13px; color:#222;">
+                <?php echo htmlentities($row['branch_name']); ?>
+              </span><br>
+              <span style="font-weight:600; font-size:12px; color:#666; margin-left:5px;">
+                - <?php echo htmlentities($row['sub_branch_name']); ?>
+              </span>
+            </td>
 
-<!-- Category + Sub Category -->
-<td>
-  <span style="font-weight:bold; font-size:13px; color:#222;">
-    <?php echo htmlentities($row['category']); ?>
-  </span><br>
-  <span style="font-weight:600; font-size:12px; color:#666; margin-left:5px;">
-    - <?php echo htmlentities($row['sub_category']); ?>
-  </span>
-</td>
+            <!-- Category + Sub Category -->
+            <td>
+              <span style="font-weight:bold; font-size:13px; color:#222;">
+                <?php echo htmlentities($row['category']); ?>
+              </span><br>
+              <span style="font-weight:600; font-size:12px; color:#666; margin-left:5px;">
+                - <?php echo htmlentities($row['sub_category']); ?>
+              </span>
+            </td>
 
-  <!-- Opening Balance -->
-  <td><?php echo htmlentities($row['opening_balance']); ?></td>
+              <!-- Opening Balance -->
+              <td><?php echo htmlentities($row['opening_balance']); ?></td>
 
-  <!-- Description -->
-  <td><?php echo htmlentities($row['description']); ?></td>
+              <!-- Description -->
+              <td><?php echo htmlentities($row['description']); ?></td>
 
-  <!-- Amount -->
-<td style="color:<?php echo ($row['cash_type'] == 'Cash In') ? 'green' : 'red'; ?>; font-weight:bold;">
-  <?php echo number_format((float)$row['amount'],2); ?>
-</td>
+              <!-- Amount -->
+            <td style="color:<?php echo ($row['cash_type'] == 'Cash In') ? 'green' : 'red'; ?>; font-weight:bold;">
+              <?php echo number_format((float)$row['amount'],2); ?>
+            </td>
 
-<!-- Cash Type -->
-<td><?php echo htmlentities($row['cash_type']); ?></td>
+            <!-- Cash Type -->
+            <td><?php echo htmlentities($row['cash_type']); ?></td>
 
-  <!-- Action -->
-  <td align="center">
-    <a href="javascript:;" onclick="editRow('<?php echo $row['id']; ?>')" title="Edit">
-      <img src="images/edit.jpg"/>
-    </a>
-    <a href="javascript:;" onclick="deleteRow('<?php echo $row['id']; ?>')" title="Delete">
-      <img src="images/delete.jpg"/>
-    </a>
-  </td>
-</tr>
-<?php } } else { ?>
-<tr id="no_records_row">
-  <td colspan="9" align="center" height="50">No records found</td>
-</tr>
-<?php } ?>
+              <!-- Action -->
+              <td align="center">
+                <a href="javascript:;" onclick="editRow('<?php echo $row['id']; ?>')" title="Edit">
+                  <img src="images/edit.jpg"/>
+                </a>
+                <a href="javascript:;" onclick="deleteRow('<?php echo $row['id']; ?>')" title="Delete">
+                  <img src="images/delete.jpg"/>
+                </a>
+              </td>
+            </tr>
+            <?php } } else { ?>
+            <tr id="no_records_row">
+              <td colspan="9" align="center" height="50">No records found</td>
+            </tr>
+            <?php } ?>
           <tr class="">
             <td colspan="11"><?php include ADMIN_LAYOUT_PATH . 'common/expand_paging.html'; ?></td>
           </tr>

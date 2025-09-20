@@ -52,10 +52,11 @@ class ExpensesSubCategory {
         }
 
         // Check duplication
-        $dup_query = "SELECT * FROM ".EXPENSES_SUBCATEGORY." 
+        $dup_query = "SELECT * FROM ".EXPENSES_SUB_CATEGORY." 
               WHERE category_id='".intval($data['category_id'])."' 
               AND name='".trim($data['name'])."'";
               echo $dup_query; exit;
+              
 if(count($app->getrows($dup_query)) > 0){
     return array("success"=>false,"error"=>"Subcategory already exists in this category!");
 }

@@ -777,8 +777,8 @@ function save_action(div_id,module,page_value, search_args, id){
 
 
                         }else{
-
-                            //var styleclass='alert';
+                            
+                            // var styleclass='alert';
 
                             var Errorfields = jobj.args.fields.split(",");
                             var Errorlabels = jobj.args.labels.split(",");
@@ -803,6 +803,7 @@ function save_action(div_id,module,page_value, search_args, id){
                             enable_save_action();
 
                         if(jobj.isAlert){
+                            // alert('test');
                             jalert("<h4>"+jobj.content+"</h4>  "+errList);
                         }else{
                             //jQuery("span").removeClass("required");

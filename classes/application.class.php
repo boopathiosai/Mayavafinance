@@ -146,7 +146,7 @@ Class Application extends DB
         //echo $where_condition;
 
         //echo '<br> SELECT '.implode(', ', $select).' FROM '.$this->access_table.' WHERE '.implode(' AND ', $where_condition) .' '.$sort_order.' '.$limit.' '.$group_by;
-        //exit;
+       // exit;
         $result_array = $this->getrows('SELECT '
                         .implode(', ', $select).'
                         FROM
