@@ -4,40 +4,83 @@
  * ---------------------------------------------------------------
  * - Pure front-end markup/CSS/JS. No PHP logic, no DB access, no AJAX/fetch/XHR.
  * - Does NOT call sms::sendData() or any SMS provider. No message is ever sent.
- * - All rows shown are fabricated sample data (fake loan ids, fake names,
- *   fake 0000-series mobile numbers) and are labelled MOCK in the UI.
+ * - All rows are generated sample data (fake loan ids, fake names, fake
+ *   0000-series mobile numbers, fake template ids) and are labelled MOCK in the UI.
  * - Included once from layouts/default/summary_reports_stock_report.html.
  *   It may be re-included when the report tab reloads via AJAX, so the script
  *   keeps state on window.MfSmsMock and re-binds idempotently.
  */
 ?>
 <style type="text/css">
-.sms-mock-note { font-size: 11px; color: #8a4b00; background: #fff4e0; border: 1px solid #f0c987; border-radius: 4px; padding: 4px 8px; margin: 0 0 8px 0; }
+/* Header buttons (Send Reminder / History) - purple, per approved design */
+a.sms-btn-purple, a.sms-btn-purple:hover { background: #7a1c7d; background-image: none; border: 1px solid #5f1462; color: #fff !important; text-decoration: none; }
+a.sms-btn-off, a.sms-btn-off:hover { background: #b9a2ba; background-image: none; border: 1px solid #a48ba5; color: #f3eaf3; cursor: default; }
+.sms-btn-ico { width: 14px; height: 14px; vertical-align: -2px; margin-right: 6px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .sms-mock-feedback { display: none; font-size: 12px; color: #383838; background: #eef6ee; border: 1px solid #b9d9b9; border-radius: 4px; padding: 5px 10px; margin: 6px 10px 6px 0; float: right; }
-.sms-hist-filters { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: flex-end; margin-bottom: 10px; }
-.sms-hist-filters label { display: block; font-size: 11px; font-weight: bold; color: #383838; margin-bottom: 2px; }
-.sms-hist-filters input[type=text], .sms-hist-filters select { font-size: 12px; padding: 3px 5px; min-width: 140px; max-width: 100%; box-sizing: border-box; }
-.sms-hist-filters .greybtn { float: none; cursor: pointer; margin-right: 0; display: inline-block; }
-.sms-hist-actions { margin-left: auto; display: flex; gap: 8px; }
-.sms-hist-scroll { overflow-x: auto; }
-.sms-hist-tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
-.sms-hist-tbl th { background: #F0F0F0; text-align: left; padding: 6px; border: 1px solid #ddd; white-space: nowrap; }
-.sms-hist-tbl td { padding: 6px; border: 1px solid #ddd; vertical-align: top; }
-.sms-hist-empty { text-align: center; padding: 20px; color: #666; }
-.sms-badge { display: inline-block; padding: 1px 7px; border-radius: 9px; font-size: 11px; font-weight: bold; white-space: nowrap; }
-.sms-badge-PENDING { background: #fff4e0; color: #8a4b00; }
-.sms-badge-SUBMITTED { background: #e6f0fb; color: #1d4f8c; }
-.sms-badge-FAILED { background: #fdeaea; color: #a12020; }
-.sms-badge-SKIPPED { background: #eee; color: #555; }
-.sms-hist-pager { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px; }
-.sms-hist-pager a { text-decoration: none; border: 1px solid #C7C7C7; border-radius: 4px; padding: 2px 8px; color: #383838; background: #DDDDDD; cursor: pointer; }
-.sms-hist-pager a.sms-active { background: #383838; color: #fff; }
-.sms-hist-pager a.sms-disabled { color: #A8A8A8; background: #eee; cursor: default; }
-.sms-hist-pager .sms-count { margin-left: auto; color: #666; }
-@media (max-width: 640px) {
-    .sms-hist-filters > div { flex: 1 1 100%; }
-    .sms-hist-filters input[type=text], .sms-hist-filters select { width: 100%; }
-    .sms-hist-actions { margin-left: 0; }
+
+/* History dialog */
+.sms-hist-dlg.ui-dialog { padding: 0; border: 0; border-radius: 6px; box-shadow: 0 8px 30px rgba(60,10,70,.35); background: #fff; }
+.sms-hist-dlg .ui-dialog-titlebar { background: #7a1c7d; border: 0; border-radius: 6px 6px 0 0; padding: 12px 18px; }
+.sms-hist-dlg .ui-dialog-title { font-size: 18px; font-weight: bold; color: #fff; }
+.sms-hist-dlg .ui-dialog-titlebar-close { background: none; border: 0; width: 28px; height: 28px; top: 50%; margin-top: -14px; right: 12px; cursor: pointer; }
+.sms-hist-dlg .ui-dialog-titlebar-close .ui-icon { display: none; }
+.sms-hist-dlg .ui-dialog-titlebar-close:before { content: "\00d7"; color: #fff; font-size: 26px; line-height: 26px; position: absolute; left: 6px; top: 0; }
+.sms-hist-dlg .ui-dialog-content { background: #fff; padding: 12px 16px 14px 16px; border-radius: 0 0 6px 6px; font-size: 13px; color: #222; }
+
+.sms-mock-note { font-size: 11px; color: #8a4b00; background: #fff4e0; border: 1px solid #f0c987; border-radius: 4px; padding: 3px 8px; margin: 0 0 8px 0; }
+.sms-exports { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 10px; }
+.sms-xbtn { display: inline-flex; align-items: center; gap: 8px; color: #fff; font-weight: bold; font-size: 14px; text-decoration: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; border: 0; }
+.sms-xbtn svg { width: 18px; height: 18px; }
+.sms-xbtn, .sms-xbtn:link, .sms-xbtn:visited, .sms-xbtn:hover { color: #fff !important; text-decoration: none !important; }
+.sms-xbtn-xls { background: #0c7a43; }
+.sms-xbtn-pdf { background: #e03131; }
+
+.sms-filters { display: grid; grid-template-columns: auto minmax(160px, 1fr) auto minmax(160px, 1fr) minmax(230px, 1.1fr); gap: 10px 12px; align-items: center; margin-bottom: 12px; }
+.sms-filters label { font-weight: bold; text-align: right; white-space: nowrap; }
+.sms-filters input[type=text], .sms-filters select { width: 100%; box-sizing: border-box; font-size: 13px; padding: 7px 9px; border: 1px solid #ccc; border-radius: 3px; background: #fff; height: 34px; }
+.sms-gsearch { grid-column: 5; grid-row: 1; }
+.sms-gsearch input { padding-right: 30px !important; }
+.sms-gsearch { position: relative; }
+.sms-gsearch svg { position: absolute; right: 9px; top: 9px; width: 16px; height: 16px; stroke: #888; fill: none; stroke-width: 2; }
+.sms-fbtns { grid-column: 5; grid-row: 2; display: flex; gap: 10px; }
+.sms-fbtns a { flex: 1; text-align: center; font-weight: bold; font-size: 14px; padding: 8px 0; border-radius: 4px; text-decoration: none; cursor: pointer; }
+.sms-fbtn-search, .sms-fbtn-search:link, .sms-fbtn-search:visited, .sms-fbtn-search:hover { background: #7a1c7d; color: #fff !important; border: 1px solid #5f1462; }
+.sms-fbtn-reset, .sms-fbtn-reset:link, .sms-fbtn-reset:visited, .sms-fbtn-reset:hover { background: #eee; color: #222 !important; border: 1px solid #ccc; }
+.sms-msg { display: none; font-size: 12px; background: #eef6ee; border: 1px solid #b9d9b9; border-radius: 4px; padding: 5px 10px; margin-bottom: 8px; }
+
+.sms-tbl-wrap { overflow: auto; max-height: 380px; border: 1px solid #e6cfe8; border-radius: 3px; }
+.sms-tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sms-tbl th { position: sticky; top: 0; background: #f6e8f7; color: #7a1c7d; font-weight: bold; text-align: center; padding: 8px 6px; border: 1px solid #e6cfe8; white-space: nowrap; }
+.sms-tbl td { padding: 6px 8px; border: 1px solid #ececec; text-align: center; white-space: nowrap; }
+.sms-tbl td.sms-left { text-align: left; }
+.sms-empty { padding: 24px; color: #666; }
+.sms-badge { display: inline-block; min-width: 64px; padding: 2px 10px; border-radius: 4px; font-size: 13px; }
+.sms-badge-Success { background: #d9f5df; color: #1c7a35; }
+.sms-badge-Failed { background: #fbd9dc; color: #d11a2a; font-weight: bold; }
+.sms-badge-Pending { background: #fff0cc; color: #8a5a00; }
+
+.sms-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; margin-top: 12px; }
+.sms-foot .sms-showing { font-size: 13px; }
+.sms-foot .sms-pageof { text-align: right; font-size: 13px; }
+.sms-pager { display: flex; align-items: center; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.sms-pager a { min-width: 24px; text-align: center; padding: 3px 5px; color: #7a1c7d !important; text-decoration: none; cursor: pointer; border-radius: 3px; font-size: 14px; }
+.sms-pager a.sms-active { background: #7a1c7d; color: #fff !important; font-weight: bold; }
+.sms-pager a.sms-disabled { color: #c9b3ca !important; cursor: default; }
+.sms-pager span { color: #555; }
+.sms-closerow { text-align: right; margin-top: 8px; }
+.sms-closebtn { display: inline-block; font-weight: bold; font-size: 14px; padding: 9px 30px; border: 1px solid #ccc; border-radius: 4px; background: #eee; color: #222 !important; text-decoration: none; cursor: pointer; }
+
+@media (max-width: 900px) {
+    .sms-filters { grid-template-columns: auto 1fr; }
+    .sms-gsearch, .sms-fbtns { grid-column: 1 / -1; grid-row: auto; }
+    .sms-foot { grid-template-columns: 1fr; text-align: center; }
+    .sms-foot .sms-pageof { text-align: center; }
+}
+@media (max-width: 520px) {
+    .sms-filters { grid-template-columns: 1fr; }
+    .sms-filters label { text-align: left; }
+    .sms-exports { justify-content: stretch; }
+    .sms-xbtn { flex: 1; justify-content: center; }
 }
 </style>
 
@@ -47,44 +90,49 @@
 
     // State survives re-inclusion of this partial (report tabs reload via AJAX).
     var S = window.MfSmsMock = window.MfSmsMock || { initiated: false, rows: null, page: 1, filtered: null, seq: 0 };
-    var PAGE_SIZE = 5;
-    var STATUSES = ["PENDING", "SUBMITTED", "FAILED", "SKIPPED"];
+    var PAGE_SIZE = 30;
+    var STATUSES = ["Success", "Failed", "Pending"];
+    var SVG_SEND = '<svg class="sms-btn-ico" viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+    var SVG_HIST = '<svg class="sms-btn-ico" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/></svg>';
+    var SVG_XLS = '<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2" fill="#fff"/><path d="M7 8l5 8M12 8l-5 8" stroke="#0c7a43" stroke-width="2" fill="none"/></svg>';
+    var SVG_PDF = '<svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z" fill="#fff"/><path d="M9 15h6M9 18h6M9 12h3" stroke="#e03131" stroke-width="1.6" fill="none"/></svg>';
+    var SVG_SRCH = '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>';
 
-    // ---- MOCK DATA (fabricated; not read from the database) -------------------
+    // ---- MOCK DATA (generated; not read from the database) -------------------
     function seedRows() {
-        var base = [
-            ["MOCK-1001", "Sample Customer A", "0000000001", "SUBMITTED", "Simulated: handed to mock queue"],
-            ["MOCK-1002", "Sample Customer B", "0000000002", "FAILED",    "Simulated: invalid mobile number"],
-            ["MOCK-1003", "Sample Customer C", "0000000003", "PENDING",   "Simulated: waiting in mock queue"],
-            ["MOCK-1004", "Sample Customer D", "0000000004", "SKIPPED",   "Simulated: no reminder due"],
-            ["MOCK-1005", "Sample Customer E", "0000000005", "SUBMITTED", "Simulated: handed to mock queue"],
-            ["MOCK-1006", "Sample Customer F", "0000000006", "FAILED",    "Simulated: gateway not connected (mock)"],
-            ["MOCK-1007", "Sample Customer G", "0000000007", "PENDING",   "Simulated: waiting in mock queue"],
-            ["MOCK-1008", "Sample Customer H", "0000000008", "SUBMITTED", "Simulated: handed to mock queue"]
-        ];
-        var rows = [], i, t = new Date();
-        for (i = 0; i < base.length; i++) {
-            rows.push(mk(base[i], new Date(t.getTime() - (i + 1) * 3600000)));
+        var pre = ["POS", "POK", "POW", "POY"], names = ["Sample Customer A", "Sample Customer B", "Sample Customer C", "Sample Customer D", "Sample Customer E", "Sample Customer F", "Sample Customer G", "Sample Customer H"],
+            bad = ["Invalid Mobile Number", "API Error (101)", "DND Number"], rows = [], i, t0 = new Date(2026, 8, 21, 10, 30, 0), failed;
+        for (i = 0; i < 450; i++) {
+            failed = (i % 4 === 2);
+            S.seq += 1;
+            rows.push({
+                loan: "MOCK-" + pre[(i + (i >> 2)) % 4] + (29000 + i),
+                name: names[i % names.length],
+                mobile: "0000" + ("000000" + (i + 1)).slice(-6),
+                tpl: "1000000000000000001",
+                status: failed ? "Failed" : "Success",
+                remarks: failed ? bad[(i >> 2) % bad.length] : "-",
+                sent: new Date(t0.getTime() + i * 60000)
+            });
         }
-        return rows;
-    }
-    function mk(b, created) {
-        S.seq += 1;
-        return { id: S.seq, loan: b[0], name: b[1], mobile: b[2], status: b[3], remarks: b[4], created: created, updated: created };
+        return rows.reverse();
     }
     function pad(n) { return (n < 10 ? "0" : "") + n; }
     function fmt(d) {
-        return pad(d.getDate()) + "-" + pad(d.getMonth() + 1) + "-" + d.getFullYear() + " " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+        var h = d.getHours(), ap = h >= 12 ? "PM" : "AM"; h = h % 12; if (h === 0) { h = 12; }
+        return pad(d.getDate()) + "-" + pad(d.getMonth() + 1) + "-" + d.getFullYear() + " " + pad(h) + ":" + pad(d.getMinutes()) + " " + ap;
     }
     function esc(s) { return $("<div/>").text(s).html(); }
 
-    // ---- Buttons -----------------------------------------------------------
+    // ---- Header buttons ------------------------------------------------------
     function refreshButtons() {
-        var $h = $("#sms_history_btn");
+        var $h = $("#sms_history_btn"), $s = $("#sms_send_btn");
+        if (!$s.data("iconed")) { $s.html(SVG_SEND + "Send Reminder").addClass("sms-btn-purple").data("iconed", 1); }
+        if (!$h.data("iconed")) { $h.html(SVG_HIST + "History").data("iconed", 1); }
         if (S.initiated) {
-            $h.removeClass("greybtn-off").addClass("greybtn").removeAttr("aria-disabled").attr("title", "Open SMS Reminder History (mock data)");
+            $h.removeClass("greybtn-off sms-btn-off").addClass("greybtn sms-btn-purple").removeAttr("aria-disabled").attr("title", "Open SMS Reminder History (mock data)");
         } else {
-            $h.removeClass("greybtn").addClass("greybtn-off").attr("aria-disabled", "true").attr("title", "Available after a reminder has been initiated");
+            $h.removeClass("greybtn sms-btn-purple").addClass("greybtn-off sms-btn-off").attr("aria-disabled", "true").attr("title", "Available after a reminder has been initiated");
         }
     }
 
@@ -98,74 +146,91 @@
         refreshButtons();
         $f.text("MOCK: reminder request in progress (simulated). No SMS is being sent.").show();
         window.setTimeout(function () {
-            S.rows.unshift(mk(["MOCK-" + (2000 + S.seq), "Sample Customer " + S.seq, "00000" + pad(S.seq) + "00", "PENDING", "Simulated: queued by mock send action"], new Date()));
+            S.seq += 1;
+            S.rows.unshift({ loan: "MOCK-NEW" + S.seq, name: "Sample Customer", mobile: "0000" + ("000000" + S.seq).slice(-6), tpl: "1000000000000000001", status: "Pending", remarks: "Queued by mock send action", sent: new Date() });
             $f.text("MOCK: simulated request recorded in History. No SMS was sent and no provider was contacted.");
             $b.data("busy", false).css("opacity", 1);
         }, 800);
     }
 
-    // ---- History modal --------------------------------------------------------
+    // ---- History modal -------------------------------------------------------
     function modalHtml() {
         var opts = '<option value="">All</option>', i;
         for (i = 0; i < STATUSES.length; i++) { opts += '<option value="' + STATUSES[i] + '">' + STATUSES[i] + '</option>'; }
         return '' +
-        '<div class="sms-mock-note"><strong>MOCK DATA</strong> &ndash; sample records for UI review only. Nothing here reflects real SMS delivery.</div>' +
-        '<form id="sms_hist_form" onsubmit="return false;" autocomplete="off">' +
-        '<div class="sms-hist-filters">' +
-          '<div><label for="sms_f_loan">Loan ID</label><input type="text" id="sms_f_loan" maxlength="30"></div>' +
-          '<div><label for="sms_f_name">Customer Name</label><input type="text" id="sms_f_name" maxlength="60"></div>' +
-          '<div><label for="sms_f_mobile">Mobile Number</label><input type="text" id="sms_f_mobile" maxlength="15"></div>' +
-          '<div><label for="sms_f_status">Status</label><select id="sms_f_status">' + opts + '</select></div>' +
-          '<div><a href="javascript:;" class="greybtn" id="sms_f_search">Search</a> <a href="javascript:;" class="greybtn" id="sms_f_reset">Reset</a></div>' +
-          '<div class="sms-hist-actions"><a href="javascript:;" class="greybtn" id="sms_f_xls">Excel</a> <a href="javascript:;" class="greybtn" id="sms_f_pdf">PDF</a></div>' +
+        '<div class="sms-mock-note"><strong>MOCK DATA</strong> &ndash; generated sample records for UI review. Nothing here reflects real SMS delivery.</div>' +
+        '<div class="sms-exports"><a class="sms-xbtn sms-xbtn-xls" id="sms_f_xls">' + SVG_XLS + 'Excel</a><a class="sms-xbtn sms-xbtn-pdf" id="sms_f_pdf">' + SVG_PDF + 'PDF</a></div>' +
+        '<form id="sms_hist_form" onsubmit="return false;" autocomplete="off"><div class="sms-filters">' +
+          '<label for="sms_f_loan">Loan ID :</label><input type="text" id="sms_f_loan" maxlength="30" placeholder="Enter Loan ID">' +
+          '<label for="sms_f_name">Customer Name :</label><input type="text" id="sms_f_name" maxlength="60" placeholder="Enter Customer Name">' +
+          '<div class="sms-gsearch"><input type="text" id="sms_f_global" maxlength="60" placeholder="Search Loan ID, Customer Name or Mobile">' + SVG_SRCH + '</div>' +
+          '<label for="sms_f_status">Status :</label><select id="sms_f_status">' + opts + '</select>' +
+          '<label for="sms_f_mobile">Mobile No :</label><input type="text" id="sms_f_mobile" maxlength="15" placeholder="Enter Mobile Number">' +
+          '<div class="sms-fbtns"><a id="sms_f_search" class="sms-fbtn-search">Search</a><a id="sms_f_reset" class="sms-fbtn-reset">Reset</a></div>' +
         '</div></form>' +
-        '<div id="sms_hist_msg" class="sms-mock-feedback" style="float:none;margin:0 0 8px 0;"></div>' +
-        '<div class="sms-hist-scroll"><table class="sms-hist-tbl"><thead><tr>' +
-          '<th>S.No</th><th>Loan ID</th><th>Customer Name</th><th>Mobile Number</th><th>Status</th><th>Remarks</th><th>Created</th><th>Updated</th>' +
+        '<div id="sms_hist_msg" class="sms-msg"></div>' +
+        '<div class="sms-tbl-wrap"><table class="sms-tbl"><thead><tr>' +
+          '<th>S.No</th><th>Loan ID</th><th>Customer Name</th><th>Mobile Number</th><th>Template ID</th><th>Status</th><th>Remarks</th><th>Sent Date</th>' +
         '</tr></thead><tbody id="sms_hist_body"></tbody></table></div>' +
-        '<div class="sms-hist-pager" id="sms_hist_pager"></div>' +
-        '<div style="text-align:right;margin-top:10px;"><a href="javascript:;" class="greybtn" id="sms_f_close" style="float:none;display:inline-block;margin-right:0;">Close</a></div>';
+        '<div class="sms-foot"><div class="sms-showing" id="sms_hist_showing"></div><div class="sms-pager" id="sms_hist_pager"></div><div class="sms-pageof" id="sms_hist_pageof"></div></div>' +
+        '<div class="sms-closerow"><a class="sms-closebtn" id="sms_f_close">Close</a></div>';
     }
 
     function applyFilters() {
         var loan = $.trim($("#sms_f_loan").val()).toLowerCase(),
             name = $.trim($("#sms_f_name").val()).toLowerCase(),
             mob = $.trim($("#sms_f_mobile").val()),
+            g = $.trim($("#sms_f_global").val()).toLowerCase(),
             st = $("#sms_f_status").val();
         S.filtered = $.grep(S.rows || [], function (r) {
             return (!loan || r.loan.toLowerCase().indexOf(loan) > -1) &&
                    (!name || r.name.toLowerCase().indexOf(name) > -1) &&
                    (!mob || r.mobile.indexOf(mob) > -1) &&
-                   (!st || r.status === st);
+                   (!st || r.status === st) &&
+                   (!g || r.loan.toLowerCase().indexOf(g) > -1 || r.name.toLowerCase().indexOf(g) > -1 || r.mobile.indexOf(g) > -1);
         });
         S.page = 1;
         render();
     }
 
+    function pageList(cur, pages) {
+        var out = [], i;
+        if (pages <= 7) { for (i = 1; i <= pages; i++) { out.push(i); } return out; }
+        out.push(1);
+        if (cur <= 4) { out.push(2, 3, 4, "…"); }
+        else if (cur >= pages - 3) { out.push("…", pages - 3, pages - 2, pages - 1); }
+        else { out.push("…", cur - 1, cur, cur + 1, "…"); }
+        out.push(pages);
+        return out;
+    }
+
     function render() {
         var rows = S.filtered || S.rows || [], total = rows.length,
-            pages = Math.max(1, Math.ceil(total / PAGE_SIZE)), i, html = "", start, slice, p, pg = "";
+            pages = Math.max(1, Math.ceil(total / PAGE_SIZE)), i, html = "", start, slice, pg = "", pl, a;
         if (S.page > pages) { S.page = pages; }
         start = (S.page - 1) * PAGE_SIZE;
         slice = rows.slice(start, start + PAGE_SIZE);
-        if (!slice.length) {
-            html = '<tr><td colspan="8" class="sms-hist-empty">No records found</td></tr>';
-        }
+        if (!slice.length) { html = '<tr><td colspan="8" class="sms-empty">No records found</td></tr>'; }
         for (i = 0; i < slice.length; i++) {
             var r = slice[i];
-            html += '<tr><td>' + (start + i + 1) + '</td><td>' + esc(r.loan) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.mobile) +
-                '</td><td><span class="sms-badge sms-badge-' + r.status + '">' + r.status + '</span></td><td>' + esc(r.remarks) +
-                '</td><td>' + fmt(r.created) + '</td><td>' + fmt(r.updated) + '</td></tr>';
+            html += '<tr><td>' + (start + i + 1) + '</td><td>' + esc(r.loan) + '</td><td class="sms-left">' + esc(r.name) + '</td><td>' + esc(r.mobile) +
+                '</td><td>' + esc(r.tpl) + '</td><td><span class="sms-badge sms-badge-' + r.status + '">' + r.status + '</span></td><td>' + esc(r.remarks) +
+                '</td><td>' + fmt(r.sent) + '</td></tr>';
         }
         $("#sms_hist_body").html(html);
 
-        pg += '<a href="javascript:;" data-p="' + (S.page - 1) + '" class="' + (S.page <= 1 ? 'sms-disabled' : '') + '">&laquo; Prev</a>';
-        for (p = 1; p <= pages; p++) {
-            pg += '<a href="javascript:;" data-p="' + p + '" class="' + (p === S.page ? 'sms-active' : '') + '">' + p + '</a>';
+        pg += '<a data-p="1" title="First" class="' + (S.page <= 1 ? 'sms-disabled' : '') + '">&laquo;</a>';
+        pg += '<a data-p="' + (S.page - 1) + '" title="Previous" class="' + (S.page <= 1 ? 'sms-disabled' : '') + '">&lsaquo;</a>';
+        pl = pageList(S.page, pages);
+        for (i = 0; i < pl.length; i++) {
+            a = pl[i];
+            pg += (a === "…") ? '<span>…</span>' : '<a data-p="' + a + '" class="' + (a === S.page ? 'sms-active' : '') + '">' + a + '</a>';
         }
-        pg += '<a href="javascript:;" data-p="' + (S.page + 1) + '" class="' + (S.page >= pages ? 'sms-disabled' : '') + '">Next &raquo;</a>';
-        pg += '<span class="sms-count">' + total + ' record(s) &ndash; page ' + S.page + ' of ' + pages + '</span>';
+        pg += '<a data-p="' + (S.page + 1) + '" title="Next" class="' + (S.page >= pages ? 'sms-disabled' : '') + '">&rsaquo;</a>';
+        pg += '<a data-p="' + pages + '" title="Last" class="' + (S.page >= pages ? 'sms-disabled' : '') + '">&raquo;</a>';
         $("#sms_hist_pager").html(pg);
+        $("#sms_hist_showing").text(total ? "Showing " + (start + 1) + " - " + (start + slice.length) + " of " + total + " records" : "Showing 0 of 0 records");
+        $("#sms_hist_pageof").text("Page " + S.page + " / " + pages);
     }
 
     function mockExport(kind) {
@@ -175,16 +240,17 @@
     function openHistory() {
         if (!S.initiated) { return; }
         $("#sms_history_dialog").remove();
-        var $d = $('<div id="sms_history_dialog" title="SMS Reminder History (MOCK)"></div>').html(modalHtml()).appendTo("body");
-        var w = Math.min(1000, $(window).width() - 20);
+        var $d = $('<div id="sms_history_dialog" title="SMS Reminder History"></div>').html(modalHtml()).appendTo("body");
+        var w = Math.min(1280, $(window).width() - 20);
         S.filtered = null; S.page = 1;
         $d.dialog({
-            modal: true, width: w, maxHeight: Math.max(300, $(window).height() - 60), resizable: false, closeOnEscape: true,
+            modal: true, width: w, maxHeight: Math.max(300, $(window).height() - 40), resizable: false, closeOnEscape: true,
+            dialogClass: "sms-hist-dlg",
             close: function () { $d.dialog("destroy").remove(); }
         });
         $d.on("click", "#sms_f_search", applyFilters)
           .on("click", "#sms_f_reset", function () {
-              $("#sms_f_loan,#sms_f_name,#sms_f_mobile").val(""); $("#sms_f_status").val("");
+              $("#sms_f_loan,#sms_f_name,#sms_f_mobile,#sms_f_global").val(""); $("#sms_f_status").val("");
               $("#sms_hist_msg").hide(); S.filtered = null; S.page = 1; render();
           })
           .on("keypress", "#sms_hist_form input", function (e) { if (e.which === 13) { applyFilters(); } })
@@ -201,7 +267,7 @@
         render();
     }
 
-    // ---- Bind (idempotent) ------------------------------------------------
+    // ---- Bind (idempotent) ---------------------------------------------------
     $(document).off("click.smsMock");
     $(document).on("click.smsMock", "#sms_send_btn", function () { sendReminder(); });
     $(document).on("click.smsMock", "#sms_history_btn", function () { openHistory(); });

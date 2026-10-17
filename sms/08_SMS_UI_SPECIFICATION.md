@@ -30,18 +30,22 @@ Placement: Summary Reports → **Stock Report** tab (assumption A1 in the scope 
 - Enabled **as soon as Send Reminder is initiated** (not on completion); stays enabled for the page session.
 
 ## 6. SMS Reminder History modal
-jQuery UI dialog (the project's existing dialog mechanism), modal, title "SMS Reminder History (MOCK)", width `min(1000px, window − 20px)`, max-height window − 60px.
+**Design reference:** client mock-up image (purple title bar "SMS Reminder History", green Excel / red PDF buttons top-right, filter grid, purple table headers, pager footer). jQuery UI dialog (existing project mechanism), modal, `dialogClass: sms-hist-dlg`, width `min(1280px, window - 20px)`.
 | Area | Spec |
 |---|---|
-| Banner | "MOCK DATA – sample records for UI review only…" |
-| Filters | **Loan ID** (contains, case-insensitive), **Customer Name** (contains), **Mobile Number** (contains), **Status** (All / PENDING / SUBMITTED / FAILED / SKIPPED). Filters combine with AND. Enter key in a text field = Search. |
-| Search / Reset | Search applies filters and returns to page 1. Reset clears all inputs/messages and shows all rows. |
-| Export | **Excel** and **PDF** buttons. Mock: show "MOCK: Excel/PDF export is a UI placeholder. No file was generated and nothing was sent." |
-| Columns | S.No · Loan ID · Customer Name · Mobile Number · Status (badge) · Remarks · Created · Updated (`dd-mm-yyyy hh:mm:ss`, browser local time) |
-| Empty result | Row "No records found" |
-| Pagination | 5 rows/page (mock); Prev / page numbers / Next; "N record(s) – page X of Y"; disabled Prev/Next at limits; filter change resets to page 1. |
-| Closing | Close button, title-bar ✖, **Esc**, click on overlay. Dialog DOM is destroyed on close; reopening resets filters. |
-| Escaping | All cell text is HTML-escaped before rendering. |
+| Banner | Small "MOCK DATA – generated sample records…" strip (kept so mock rows are never mistaken for real delivery) |
+| Export | **Excel** (green) and **PDF** (red) buttons, top-right. Mock: show "MOCK: Excel/PDF export is a UI placeholder. No file was generated and nothing was sent." |
+| Filters | Row 1: **Loan ID :**, **Customer Name :**, global search box "Search Loan ID, Customer Name or Mobile". Row 2: **Status :** (All / Success / Failed / Pending), **Mobile No :**, **Search** (purple) and **Reset** (grey). All filters combine with AND; Enter key searches. |
+| Columns | S.No · Loan ID · Customer Name · Mobile Number · **Template ID** · Status (badge: Success green / Failed red / Pending amber) · Remarks (`-` when none) · **Sent Date** (`dd-mm-yyyy hh:mm AM/PM`) |
+| Body | Scrollable (max-height 380px) with sticky purple-tinted header; "No records found" when empty |
+| Pagination | 30 rows/page; footer left "Showing 1 - 30 of N records", centre pager « ‹ 1 2 3 4 … last › », right "Page X / Y"; filter change resets to page 1 |
+| Close | Close button (bottom-right), title-bar ×, Esc, overlay click. Dialog DOM destroyed on close; reopening resets filters. |
+| Escaping | All cell text HTML-escaped |
+| Mock data | 450 generated rows (`MOCK-POS29xxx`, "Sample Customer A…", `0000xxxxxx` numbers, template id `1000000000000000001`) plus one row per mock Send Reminder click. Remarks samples copied from the design: Invalid Mobile Number, API Error (101), DND Number. |
+
+Design note: the mock-up labels statuses "Success/Failed". In this release they are **sample labels on generated data only**; the real lifecycle (and whether "Success" may mean *delivered* or only *accepted by provider*) is client decision D11. The earlier "Updated" column was dropped to follow the design (single "Sent Date"); Template ID was added per the design (value is a fake placeholder).
+
+Header buttons: **Send Reminder** (paper-plane icon) and **History** (clock icon) are purple per the mock-up; History is greyed until Send Reminder is initiated.
 
 ## 7. Removed elements
 **From Date, To Date and Success Rate are not present** anywhere (controls, labels, totals, exports). Do not reintroduce in Phase 2 without a new approval.
